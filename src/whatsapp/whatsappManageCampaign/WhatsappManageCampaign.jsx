@@ -9,6 +9,7 @@ import IosShareOutlinedIcon from "@mui/icons-material/IosShareOutlined";
 import { IoSearch } from "react-icons/io5";
 import Checkbox from "@mui/material/Checkbox";
 import { getWabaList } from "../../apis/whatsapp/whatsapp.js";
+import toast from "react-hot-toast";
 
 import InputField from "../../components/layout/InputField";
 import Loader from "../components/Loader";
@@ -72,7 +73,7 @@ const WhatsappManageCampaign = () => {
   const [toDate, settoDate] = useState(new Date());
   const [fromDate, setfromDate] = useState(new Date());
   const [isMonthWise, setIsMonthWise] = useState(false);
-  const [selectedWaBaNumber, setSelectedWaBaNumber] = useState("1");
+  const [selectedWaBaNumber, setSelectedWaBaNumber] = useState("");
   const [WabaList, setWabaList] = useState([]);
   const [summaryReport, setSummaryReport] = useState([]);
 
@@ -193,12 +194,16 @@ const WhatsappManageCampaign = () => {
   };
 
   const handleSummary = async () => {
+    if(!selectedWaBaNumber){
+      toast.error("Please select a WABA number.");
+      return
+    }
     const result = await getSummaryReport({
       fromDate: new Date(fromDate).toLocaleDateString("en-GB"),
       summaryType: "waba,date,type,country",
       toDate: new Date(toDate).toLocaleDateString("en-GB"),
       whatsappTypes: null,
-      wabaNumber: selectedWaBaNumber,
+      wabaNumber: "1",
     });
 
     setSummaryReport(result);

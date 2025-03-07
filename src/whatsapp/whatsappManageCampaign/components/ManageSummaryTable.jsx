@@ -75,7 +75,7 @@ const CustomPagination = ({
   );
 };
 
-const ManageSummaryTable = ({ id, name, data = [] }) => {
+const ManageSummaryTable = ({ id, name, data = [], isMonthWise = false }) => {
   const [selectedRows, setSelectedRows] = React.useState([]);
 
   // const paginationModel = { page: 0, pageSize: 10 };
