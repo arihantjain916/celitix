@@ -75,7 +75,7 @@ const CustomPagination = ({
   );
 };
 
-const ManageSummaryTable = ({ id, name, data = [], isMonthWise = false }) => {
+const ManageSummaryTable = ({ id, name, data = [], isMonthWise }) => {
   const [selectedRows, setSelectedRows] = React.useState([]);
 
   // const paginationModel = { page: 0, pageSize: 10 };
@@ -84,39 +84,67 @@ const ManageSummaryTable = ({ id, name, data = [], isMonthWise = false }) => {
     pageSize: 10,
   });
 
-  const columns = [
-    { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
-    { field: "displayName", headerName: "Name", flex: 1, minWidth: 120 },
-    { field: "sentDate", headerName: "Sent Date", flex: 1, minWidth: 120 },
-    { field: "country", headerName: "Country", flex: 1, minWidth: 120 },
-    { field: "type", headerName: "Type", flex: 1, minWidth: 120 },
-    { field: "count", headerName: "Count", flex: 1, minWidth: 120 },
-    { field: "userCharge", headerName: "User Charge", flex: 1, minWidth: 120 },
-    // { field: 'sent', headerName: 'Sent', flex: 1, minWidth: 120 },
-    // { field: 'delivered', headerName: 'Delivered', flex: 1, minWidth: 120 },
-    // { field: 'read', headerName: 'Read', flex: 1, minWidth: 120 },
-    // { field: 'undelivered', headerName: 'Undelivered', flex: 1, minWidth: 120 },
-    // { field: 'sentDate', headerName: 'Sent Date', flex: 1, minWidth: 120 },
-  ];
+  let columns = [];
+  let rows = [];
 
-  const rows = Array.isArray(data)
-    ? data.map((item, index) => ({
-        id: index + 1,
-        sn: index + 1,
-        displayName: "Proactive_Celitix",
-        sentDate: "2025-01-01",
-        country: "IN",
-        type: item.whatsappType,
-        count: 2,
-        userCharge: 26.0,
-        // utility: 2.0,
-        // month: "January",
-        // year: 2025,
-        // categoryCreditUsage: 2,
-        // countryCode: "IN",
-        // offWhatSrno: 1,
-      }))
-    : [];
+  if (isMonthWise) {
+    columns = [
+      { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
+      { field: "displayName", headerName: "Name", flex: 1, minWidth: 120 },
+      { field: "month", headerName: "Month", flex: 1, minWidth: 120 },
+      { field: "year", headerName: "Year", flex: 1, minWidth: 120 },
+      { field: "country", headerName: "Country", flex: 1, minWidth: 120 },
+      { field: "type", headerName: "Type", flex: 1, minWidth: 120 },
+      { field: "count", headerName: "Count", flex: 1, minWidth: 120 },
+      {
+        field: "userCharge",
+        headerName: "User Charge",
+        flex: 1,
+        minWidth: 120,
+      },
+    ];
+
+    rows = Array.isArray(data)
+      ? data.map((item, index) => ({
+          id: index + 1,
+          sn: index + 1,
+          displayName: item.displayName,
+          month: item.month,
+          year: item.year,
+          country: item.country,
+          type: item.whatsappType,
+          count: 2,
+          userCharge: 26.0,
+        }))
+      : [];
+  } else {
+    columns = [
+      { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
+      { field: "displayName", headerName: "Name", flex: 1, minWidth: 120 },
+      { field: "sentDate", headerName: "Sent Date", flex: 1, minWidth: 120 },
+      { field: "country", headerName: "Country", flex: 1, minWidth: 120 },
+      { field: "type", headerName: "Type", flex: 1, minWidth: 120 },
+      { field: "count", headerName: "Count", flex: 1, minWidth: 120 },
+      {
+        field: "userCharge",
+        headerName: "User Charge",
+        flex: 1,
+        minWidth: 120,
+      },
+    ];
+    rows = Array.isArray(data)
+      ? data.map((item, index) => ({
+          id: index + 1,
+          sn: index + 1,
+          displayName: item.displayName,
+          sentDate: item.sentDate,
+          country: item.country,
+          type: item.whatsappType,
+          count: 2,
+          userCharge: 26.0,
+        }))
+      : [];
+  }
 
   // "marketing": 1.0000,
   // "whatsappType": "MARKETING",
