@@ -77,9 +77,7 @@ const WhatsappManageCampaign = () => {
   const [selectedWaBaNumber, setSelectedWaBaNumber] = useState("");
   const [WabaList, setWabaList] = useState([]);
   const [summaryReport, setSummaryReport] = useState([]);
-  const [selectedMonth, setSelectedMonth] = useState(
-    new Date(new Date().getFullYear(), new Date().getMonth(), 1)
-  );
+  const [selectedMonth, setSelectedMonth] = useState(new Date());
   const [selectedYear, setSelectedYear] = useState("");
 
   const handleInputChange = (e) => {
@@ -205,15 +203,26 @@ const WhatsappManageCampaign = () => {
       toast.error("Please select a WABA number.");
       return;
     }
+
+    let FinalFromDate = new Date(
+      new Date(selectedMonth).getFullYear(),
+      new Date(selectedMonth).getMonth(),
+      1
+    ).toLocaleDateString("en-GB");
+
+    let FinalToDate = new Date(
+      new Date(
+        new Date(selectedMonth).getFullYear(),
+        new Date(selectedMonth).getMonth() + 1,
+        0
+      )
+    );
+
     if (isMonthWise) {
       result = await getSummaryReport({
-        fromDate: selectedMonth.toLocaleDateString("en-GB"),
+        fromDate: FinalFromDate,
         summaryType: "waba,date,type,country",
-        toDate: new Date(
-          new Date(selectedMonth).getFullYear(),
-          new Date(selectedMonth).getMonth() + 1,
-          0
-        ).toLocaleDateString("en-GB"),
+        toDate: FinalToDate.toLocaleDateString("en-GB"),
         whatsappTypes: null,
         wabaNumber: selectedWaBaNumber,
       });
@@ -522,43 +531,20 @@ const WhatsappManageCampaign = () => {
                       <UniversalDatePicker
                         id="manageFromDate"
                         name="manageFromDate"
-                        label="Month"
+                        label="Month and Year"
                         value={selectedMonth}
-                        views={["month"]}
-                        onChange={(newValue) =>
-                          setSelectedMonth(
-                            new Date(
-                              new Date(newValue).getFullYear(),
-                              new Date(newValue).getMonth(),
-                              1
-                            )
-                          )
-                        }
-                        placeholder="Pick a start date"
-                        tooltipContent="Select the current date"
+                        views={["month", "year"]}
+                        onChange={(newValue) => setSelectedMonth(newValue)}
+                        placeholder="Pick a month"
+                        tooltipContent="Select the month"
                         tooltipPlacement="right"
-                        error={!fromDate}
+                        error={!selectedMonth}
                         minDate={new Date().setMonth(new Date().getMonth() - 3)}
                         maxDate={new Date()}
-                        errorText="Please select a valid date"
+                        errorText="Please select a valid month"
                       />
                     </div>
-                    <div className="w-full sm:w-56">
-                      <AnimatedDropdown
-                        id="selectYear"
-                        name="selectYear"
-                        label="Year"
-                        tooltipContent="Select Year"
-                        tooltipPlacement="right"
-                        options={[
-                          { value: "2024", label: "2024" },
-                          { value: "2025", label: "2025" },
-                        ]}
-                        value={selectedYear}
-                        onChange={(value) => setSelectedYear(value)}
-                        placeholder="2024"
-                      />
-                    </div>
+                   
                   </>
                 ) : (
                   <>
@@ -609,7 +595,7 @@ const WhatsappManageCampaign = () => {
                     }))}
                     value={selectedWaBaNumber}
                     onChange={(value) => setSelectedWaBaNumber(value)}
-                    placeholder="Status"
+                    placeholder="Waba Account"
                   />
                 </div>
                 <div className="w-full sm:w-56">
@@ -622,7 +608,7 @@ const WhatsappManageCampaign = () => {
                     />
                   </FormGroup>
                 </div>
-                <div className="w-max-content ">
+                <div className="w-full sm:w-56">
                   <UniversalButton
                     id="manageCampaignLogsShowhBtn"
                     name="manageCampaignLogsShowhBtn"
