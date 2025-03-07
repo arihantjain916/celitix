@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+* {
+  font-family: "Poppins", sans-serif;
+
+  &::-webkit-scrollbar {
+    width: 3px;
+    height: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #999;
+    border-radius: 10px;
+    height: 20px;
+  }
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  scroll-behavior: smooth;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Hide number input arrows in Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+#root {
+  height: 100%;
+}
+
+.outlet-container {
+  border-top-left-radius: 1rem;
+}
+
+.font-p {
+  font-family: "Poppins", sans-serif;
+}
+
+.font-m {
+  font-family: "Montserrat", serif;
+}
+
+li {
+  list-style-type: none;
+}
+
+a {
+  text-decoration: none;
+}
+
+.transition-height {
+  transition: height 0.3s ease-in-out !important;
+}
+
+.css-9bnhb1-option {
+  background-color: #dde7ee !important;
+}
