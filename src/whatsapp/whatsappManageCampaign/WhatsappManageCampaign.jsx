@@ -153,30 +153,28 @@ const WhatsappManageCampaign = () => {
       setIsLoading(false);
     };
     fetchData();
-    
-    
   }, []);
-  
+
   useEffect(() => {
     const fetchWabaList = async () => {
-        try {
-            setIsLoading(true);
-            const response = await getWabaList();
-            if (response) {
-                setWabaList(response);
-            } else {
-                console.error("Failed to fetch WABA details");
-                // toast.error("Failed to load WABA details!");
-            }
-        } catch (error) {
-            console.error("Error fetching WABA list:", error);
-            // toast.error("Error fetching WABA list.");
-        } finally {
-            setIsLoading(false);
+      try {
+        setIsLoading(true);
+        const response = await getWabaList();
+        if (response) {
+          setWabaList(response);
+        } else {
+          console.error("Failed to fetch WABA details");
+          // toast.error("Failed to load WABA details!");
         }
+      } catch (error) {
+        console.error("Error fetching WABA list:", error);
+        // toast.error("Error fetching WABA list.");
+      } finally {
+        setIsLoading(false);
+      }
     };
     fetchWabaList();
-}, []);
+  }, []);
 
   // Fetch initial data - for to load data on page load
 
@@ -195,36 +193,16 @@ const WhatsappManageCampaign = () => {
   };
 
   const handleSummary = async () => {
-    console.log(new Date(toDate).toLocaleDateString("en-US"));
-    console.log(fromDate);
-    console.log(isMonthWise);
-
-    // const result = await getSummaryReport({
-    //   fromDate: new Date(fromDate).toLocaleDateString("en-US"),
-    //   summaryType: "waba,date,type,country",
-    //   toDate: new Date(toDate).toLocaleDateString("en-US"),
-    //   whatsappTypes: null,
-    //   wabaNumber: "1",
-    // });
     const result = await getSummaryReport({
-      fromDate: "01/01/2025",
+      fromDate: new Date(fromDate).toLocaleDateString("en-GB"),
       summaryType: "waba,date,type,country",
-      toDate: "10/01/2025",
+      toDate: new Date(toDate).toLocaleDateString("en-GB"),
       whatsappTypes: null,
-      wabaNumber: "1",
-    })
-    
-    setSummaryReport(result)
-  }
+      wabaNumber: selectedWaBaNumber,
+    });
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     setIsLoading(true);
-  //     await new Promise((resolve) => setTimeout(resolve, 1000));
-  //     setIsLoading(false);
-  //   };
-  //   fetchData();
-  // }, []);
+    setSummaryReport(result);
+  };
 
   return (
     <div className="w-full ">
@@ -514,6 +492,22 @@ const WhatsappManageCampaign = () => {
               <div className="flex items-end justify-start w-full gap-4 pb-5 align-middle flex--wrap">
                 <div className="w-full sm:w-56">
                   <UniversalDatePicker
+                    id="manageFromDate"
+                    name="manageFromDate"
+                    label="From Date"
+                    value={fromDate}
+                    onChange={(newValue) => setfromDate(newValue)}
+                    placeholder="Pick a start date"
+                    tooltipContent="Select the current date"
+                    tooltipPlacement="right"
+                    error={!fromDate}
+                    minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                    maxDate={new Date()}
+                    errorText="Please select a valid date"
+                  />
+                </div>
+                <div className="w-full sm:w-56">
+                  <UniversalDatePicker
                     id="manageToDate"
                     name="manageToDate"
                     label="To Date"
@@ -524,20 +518,8 @@ const WhatsappManageCampaign = () => {
                     tooltipPlacement="right"
                     error={!settoDate}
                     errorText="Please select a valid date"
-                  />
-                </div>
-                <div className="w-full sm:w-56">
-                  <UniversalDatePicker
-                    id="manageFromDate"
-                    name="manageFromDate"
-                    label="From Date"
-                    value={fromDate}
-                    onChange={(newValue) => setfromDate(newValue)}
-                    placeholder="Pick a start date"
-                    tooltipContent="Select the current date"
-                    tooltipPlacement="right"
-                    error={!fromDate}
-                    errorText="Please select a valid date"
+                    minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                    maxDate={new Date()}
                   />
                 </div>
                 <div className="w-full sm:w-56">
@@ -550,9 +532,9 @@ const WhatsappManageCampaign = () => {
                     options={WabaList?.map((waba) => ({
                       value: waba.wabaSrno,
                       label: waba.name,
-                  }))}
-                    value={campaignStatus}
-                    onChange={(value) => setCampaignStatus(value)}
+                    }))}
+                    value={selectedWaBaNumber}
+                    onChange={(value) => setSelectedWaBaNumber(value)}
                     placeholder="Status"
                   />
                 </div>
