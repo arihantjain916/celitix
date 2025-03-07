@@ -10,6 +10,7 @@ import { IoSearch } from "react-icons/io5";
 import Checkbox from "@mui/material/Checkbox";
 import { getWabaList } from "../../apis/whatsapp/whatsapp.js";
 import toast from "react-hot-toast";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 import InputField from "../../components/layout/InputField";
 import Loader from "../components/Loader";
@@ -194,17 +195,28 @@ const WhatsappManageCampaign = () => {
   };
 
   const handleSummary = async () => {
-    if(!selectedWaBaNumber){
+    let result = {};
+    if (!selectedWaBaNumber) {
       toast.error("Please select a WABA number.");
-      return
+      return;
     }
-    const result = await getSummaryReport({
-      fromDate: new Date(fromDate).toLocaleDateString("en-GB"),
-      summaryType: "waba,date,type,country",
-      toDate: new Date(toDate).toLocaleDateString("en-GB"),
-      whatsappTypes: null,
-      wabaNumber: "1",
-    });
+    if (isMonthWise) {
+      result = await getSummaryReport({
+        fromDate: "01/01/2025",
+        summaryType: "waba,date,type,country",
+        toDate: "10/01/2025",
+        whatsappTypes: null,
+        wabaNumber: selectedWaBaNumber,
+      });
+    } else {
+      result = await getSummaryReport({
+        fromDate: new Date(fromDate).toLocaleDateString("en-GB"),
+        summaryType: "waba,date,type,country",
+        toDate: new Date(toDate).toLocaleDateString("en-GB"),
+        whatsappTypes: null,
+        wabaNumber: selectedWaBaNumber,
+      });
+    }
 
     setSummaryReport(result);
   };
@@ -495,12 +507,15 @@ const WhatsappManageCampaign = () => {
           <CustomTabPanel value={value} index={2}>
             <div className="w-full">
               <div className="flex items-end justify-start w-full gap-4 pb-5 align-middle flex--wrap">
-                <div className="w-full sm:w-56">
-                  <UniversalDatePicker
+                {isMonthWise ? (
+                  <>
+                    <div className="w-full sm:w-56">
+                      <UniversalDatePicker
                     id="manageFromDate"
                     name="manageFromDate"
-                    label="From Date"
+                    label="Month"
                     value={fromDate}
+                    views={["month"]}
                     onChange={(newValue) => setfromDate(newValue)}
                     placeholder="Pick a start date"
                     tooltipContent="Select the current date"
@@ -510,23 +525,61 @@ const WhatsappManageCampaign = () => {
                     maxDate={new Date()}
                     errorText="Please select a valid date"
                   />
-                </div>
-                <div className="w-full sm:w-56">
-                  <UniversalDatePicker
-                    id="manageToDate"
-                    name="manageToDate"
-                    label="To Date"
-                    value={toDate}
-                    onChange={(newValue) => settoDate(newValue)}
-                    placeholder="Pick a start date"
-                    tooltipContent="Select the date you want to search from."
-                    tooltipPlacement="right"
-                    error={!settoDate}
-                    errorText="Please select a valid date"
-                    minDate={new Date().setMonth(new Date().getMonth() - 3)}
-                    maxDate={new Date()}
-                  />
-                </div>
+                    </div>
+                    <div className="w-full sm:w-56">
+                      <UniversalDatePicker
+                        id="manageToDate"
+                        name="manageToDate"
+                        label="Year"
+                        value={toDate}
+                        views={["month"]}
+                        onChange={(newValue) => settoDate(newValue)}
+                        placeholder="Pick a start date"
+                        tooltipContent="Select the date you want to search from."
+                        tooltipPlacement="right"
+                        error={!settoDate}
+                        errorText="Please select a valid date"
+                        minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                        maxDate={new Date()}
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="w-full sm:w-56">
+                      <UniversalDatePicker
+                        id="manageFromDate"
+                        name="manageFromDate"
+                        label="From Date"
+                        value={fromDate}
+                        onChange={(newValue) => setfromDate(newValue)}
+                        placeholder="Pick a start date"
+                        tooltipContent="Select the current date"
+                        tooltipPlacement="right"
+                        error={!fromDate}
+                        minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                        maxDate={new Date()}
+                        errorText="Please select a valid date"
+                      />
+                    </div>
+                    <div className="w-full sm:w-56">
+                      <UniversalDatePicker
+                        id="manageToDate"
+                        name="manageToDate"
+                        label="To Date"
+                        value={toDate}
+                        onChange={(newValue) => settoDate(newValue)}
+                        placeholder="Pick a start date"
+                        tooltipContent="Select the date you want to search from."
+                        tooltipPlacement="right"
+                        error={!settoDate}
+                        errorText="Please select a valid date"
+                        minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                        maxDate={new Date()}
+                      />
+                    </div>
+                  </>
+                )}
                 <div className="w-full sm:w-56">
                   <AnimatedDropdown
                     id="manageWaBaAccount"
@@ -574,6 +627,7 @@ const WhatsappManageCampaign = () => {
                     id="whatsAppSummaryReport"
                     name="whatsAppSummaryReport"
                     data={summaryReport}
+                    isMonthWise={isMonthWise}
                   />
                 </div>
               )}
