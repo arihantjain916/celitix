@@ -77,6 +77,10 @@ const WhatsappManageCampaign = () => {
   const [selectedWaBaNumber, setSelectedWaBaNumber] = useState("");
   const [WabaList, setWabaList] = useState([]);
   const [summaryReport, setSummaryReport] = useState([]);
+  const [selectedMonth, setSelectedMonth] = useState(
+    new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+  );
+  const [selectedYear, setSelectedYear] = useState("");
 
   const handleInputChange = (e) => {
     const newValue = e.target.value.replace(/\s/g, "");
@@ -195,16 +199,21 @@ const WhatsappManageCampaign = () => {
   };
 
   const handleSummary = async () => {
-    let result = {};
+    let result;
+
     if (!selectedWaBaNumber) {
       toast.error("Please select a WABA number.");
       return;
     }
     if (isMonthWise) {
       result = await getSummaryReport({
-        fromDate: "01/01/2025",
+        fromDate: selectedMonth.toLocaleDateString("en-GB"),
         summaryType: "waba,date,type,country",
-        toDate: "10/01/2025",
+        toDate: new Date(
+          new Date(selectedMonth).getFullYear(),
+          new Date(selectedMonth).getMonth() + 1,
+          0
+        ).toLocaleDateString("en-GB"),
         whatsappTypes: null,
         wabaNumber: selectedWaBaNumber,
       });
@@ -511,36 +520,43 @@ const WhatsappManageCampaign = () => {
                   <>
                     <div className="w-full sm:w-56">
                       <UniversalDatePicker
-                    id="manageFromDate"
-                    name="manageFromDate"
-                    label="Month"
-                    value={fromDate}
-                    views={["month"]}
-                    onChange={(newValue) => setfromDate(newValue)}
-                    placeholder="Pick a start date"
-                    tooltipContent="Select the current date"
-                    tooltipPlacement="right"
-                    error={!fromDate}
-                    minDate={new Date().setMonth(new Date().getMonth() - 3)}
-                    maxDate={new Date()}
-                    errorText="Please select a valid date"
-                  />
-                    </div>
-                    <div className="w-full sm:w-56">
-                      <UniversalDatePicker
-                        id="manageToDate"
-                        name="manageToDate"
-                        label="Year"
-                        value={toDate}
+                        id="manageFromDate"
+                        name="manageFromDate"
+                        label="Month"
+                        value={selectedMonth}
                         views={["month"]}
-                        onChange={(newValue) => settoDate(newValue)}
+                        onChange={(newValue) =>
+                          setSelectedMonth(
+                            new Date(
+                              new Date(newValue).getFullYear(),
+                              new Date(newValue).getMonth(),
+                              1
+                            )
+                          )
+                        }
                         placeholder="Pick a start date"
-                        tooltipContent="Select the date you want to search from."
+                        tooltipContent="Select the current date"
                         tooltipPlacement="right"
-                        error={!settoDate}
-                        errorText="Please select a valid date"
+                        error={!fromDate}
                         minDate={new Date().setMonth(new Date().getMonth() - 3)}
                         maxDate={new Date()}
+                        errorText="Please select a valid date"
+                      />
+                    </div>
+                    <div className="w-full sm:w-56">
+                      <AnimatedDropdown
+                        id="selectYear"
+                        name="selectYear"
+                        label="Year"
+                        tooltipContent="Select Year"
+                        tooltipPlacement="right"
+                        options={[
+                          { value: "2024", label: "2024" },
+                          { value: "2025", label: "2025" },
+                        ]}
+                        value={selectedYear}
+                        onChange={(value) => setSelectedYear(value)}
+                        placeholder="2024"
                       />
                     </div>
                   </>
