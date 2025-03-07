@@ -34,14 +34,14 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
       headers,
     });
 
-    if (response.status === 401) {
-      console.error("Session expired. Redirecting to login...");
-      localStorage.removeItem("token");
-      window.location.href = "/login";
-      return null;
-    } else if (response.status === 400) {
-      return response.data;
-    }
+    // if (response.status === 401) {
+    //   console.error("Session expired. Redirecting to login...");
+    //   localStorage.removeItem("token");
+    //   window.location.href = "/login";
+    //   return null;
+    // } else if (response.status === 400) {
+    //   return response.data;
+    // }
 
     if (response.statusText !== "OK") {
       console.error(`API Error: ${response.status} ${response.statusText}`);
