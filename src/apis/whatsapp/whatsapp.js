@@ -137,17 +137,13 @@ export const getWhatsappCampaignReport = async (filters = {}) => {
 };
 
 // Get Whatsapp Campaign Details Report
-export const getWhatsappCampaignDetailsReport = async (campaignSrno) => {
+export const getWhatsappCampaignDetailsReport = async (data) => {
   try {
     const response = await fetchWithAuth(
       "/proCpaasRest/whatsapp/whatsappCampaginDetailsReport",
       {
         method: "POST",
-        body: JSON.stringify({
-          campSrno: campaignSrno,
-          mobno: "",
-          status: "status",
-        }),
+        body: JSON.stringify(data),
       }
     );
 
@@ -158,7 +154,7 @@ export const getWhatsappCampaignDetailsReport = async (campaignSrno) => {
       return [];
     }
 
-    return response.data || [];
+    return response;
   } catch (error) {
     console.error("Error fetching campaign details report:", error);
     return [];
