@@ -1,25 +1,12 @@
-import * as React from "react";
-import IconButton from "@mui/material/IconButton";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import FileCopyIcon from "@mui/icons-material/FileCopy";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import usePagination from "@mui/material/usePagination";
 import { styled } from "@mui/material/styles";
-import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
-import {
-  DataGrid,
-  GridFooterContainer,
-  GridPagination,
-} from "@mui/x-data-grid";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import { DataGrid, GridFooterContainer } from "@mui/x-data-grid";
 import { Paper, Typography, Box, Button } from "@mui/material";
-import { getWhatsappCampaignReport } from "../../../apis/whatsapp/whatsapp.js";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { useEffect } from "react";
-import CustomTooltip from "../../../components/common/CustomTooltip.jsx";
 
-import CustomNoRowsOverlay from "../../components/CustomNoRowsOverlay.jsx";
+// import CustomNoRowsOverlay from "../../components/CustomNoRowsOverlay.jsx";
+import CustomNoRowsOverlay from "../../whatsapp/components/CustomNoRowsOverlay";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -103,35 +90,7 @@ const ManageIpDetailsTable = ({ id, name, data = [] }) => {
     });
   };
 
-  //   {
-  //     // "ip": "152.59.108.195",
-  //     "network": "152.59.96.0/20",
-  //     // "version": "IPv4",
-  //     // "city": "Jaipur",
-  //     // "region": "Rajasthan",
-  //     // "region_code": "RJ",
-  //     // "country": "IN",
-  //     // "country_name": "India",
-  //     // "country_code": "IN",
-  //     // "country_code_iso3": "IND",
-  //     "country_capital": "New Delhi",
-  //     "country_tld": ".in",
-  //     "continent_code": "AS",
-  //     "in_eu": false,
-  //     // "postal": "302016",
-  //     // "latitude": 26.9136,
-  //     // "longitude": 75.7858,
-  //     // "timezone": "Asia/Kolkata",
-  //     "utc_offset": "+0530",
-  //     "country_calling_code": "+91",
-  //     "currency": "INR",
-  //     "currency_name": "Rupee",
-  //     "languages": "en-IN,hi,bn,te,mr,ta,ur,gu,kn,ml,or,pa,as,bh,sat,ks,ne,sd,kok,doi,mni,sit,sa,fr,lus,inc",
-  //     "country_area": 3287590.0,
-  //     "country_population": 1352617328,
-  //     // "asn": "AS55836",
-  //     // "org": "Reliance Jio Infocomm Limited"
-  // }
+ 
 
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
@@ -216,8 +175,8 @@ const ManageIpDetailsTable = ({ id, name, data = [] }) => {
           (acc, col) => ({
             ...acc,
             id: index + 1,
-            sn: index + 1, 
-            [col.field]: item[col.field] ?? "",
+            sn: index + 1,
+            [col.field]: item[col.field] ?? "-",
           }),
           {}
         );
