@@ -36,6 +36,7 @@ import ManageContacts from '../../managecontacts/ManageContacts';
 // profile
 import Settings from '../../profile/pages/Settings';
 import ProfilePage from "../../profile/pages/Profile"
+import LoginIpDetails from '../../profile/pages/LoginIpDetails';
 
 
 const Approutes = () => {
@@ -65,6 +66,7 @@ const Approutes = () => {
                 {/* profile */}
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/settings" element={<Settings />} />
+                <Route path="/loginIpdetails" element={<LoginIpDetails />} />
 
                 {/* manage funds */}
                 <Route path="/recharge" element={<Recharge />} />
@@ -78,7 +80,7 @@ const Approutes = () => {
 
             <Route path="*" element={
                 <div className='flex items-center justify-center min-h-[100vh]'>
-                    <span className="text-3xl text-gray-700 font-semibold">
+                    <span className="text-3xl font-semibold text-gray-700">
                         404 Not Found
                     </span>
                 </div>
