@@ -38,6 +38,11 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
         handleProfileMenu();
         navigate("/profile");
     }, [navigate]);
+    
+    const handleLoginIpDetails = useCallback(() => {
+        handleProfileMenu();
+        navigate("/loginIpdetails");
+    }, [navigate]);
 
     const handleViewSetting = useCallback(() => {
         handleProfileMenu();
@@ -54,9 +59,9 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
     const handleMenu = useCallback((event) => setMenuAnchorEl(event?.currentTarget || null), []);
 
     return (
-        <nav className="w-full bg-white h-14 lg:h-16 md:h-15 flex items-center px-4">
+        <nav className="flex items-center w-full px-4 bg-white h-14 lg:h-16 md:h-15">
             <div className="flex items-center gap-4">
-                <button onClick={toggleSidebar} className="text-gray-700 focus:outline-none cursor-pointer">
+                <button onClick={toggleSidebar} className="text-gray-700 cursor-pointer focus:outline-none">
                     <FaBars />
                 </button>
                 {/* <span className="text-xl font-medium tracking-wider text-gray-800 lg:block">Celitix</span> */}
@@ -65,7 +70,7 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
 
             {/* ✅ Large Screen Navbar */}
             {!isMobile ? (
-                <div className="ml-auto flex gap-3">
+                <div className="flex gap-3 ml-auto">
                     {[
                         { title: "Account Info", Icon: InfoIcon, action: () => setShowModal(true) },
                         { title: "Add Funds", Icon: PaymentsIcon },
@@ -93,6 +98,7 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
                     <Menu anchorEl={profileAnchorEl} open={Boolean(profileAnchorEl)} onClose={() => handleProfileMenu()}>
                         {[
                             { text: "Profile", icon: <AccountIcon />, action: handleViewProfile },
+                            { text: "Ip Details", icon: <AccountIcon />, action: handleLoginIpDetails },
                             { text: "Settings", icon: <SettingsIcon />, action: handleViewSetting },
                             { text: "Transaction History", icon: <HistoryIcon /> },
                             { text: "Logout", icon: <LogoutIcon />, action: handleLogout },
