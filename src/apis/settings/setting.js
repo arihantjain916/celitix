@@ -16,3 +16,10 @@ export const updateApiKey = async (newAPIKey) => {
     }
   );
 };
+
+// fetch Login Ip Details
+export const fetchIpDetails = async () => {
+  return await fetchWithAuth("/proCpaasRest/settings/showIpDetails", {
+    method: "POST",
+  });
+};
