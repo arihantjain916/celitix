@@ -12,6 +12,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import GeneratePasswordSettings from "../components/GeneratePasswordSettings"
 import UniversalButton from '../../whatsapp/components/UniversalButton';
 import outlined from '@material-tailwind/react/theme/components/timeline/timelineIconColors/outlined';
+import { getApiKey } from '../../apis/settings/setting';
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -55,9 +56,9 @@ const Settings = () => {
 
 
     // Handler for the button click to generate a new API key.
-    const handleGenerateAPIKey = () => {
-        const apiKey = generateAPIKey();
-        setNewAPIKey(apiKey);
+    const handleGenerateAPIKey = async() => {
+        const apiKey = await getApiKey();
+        setNewAPIKey(apiKey.Key);
     };
 
     const handleChange = (event, newValue) => {
@@ -164,7 +165,7 @@ const Settings = () => {
                                 />
                                 <div
                                     onClick={handleTogglePassword}
-                                    className='absolute right-1 top-11 transform -translate-y-1/2 cursor-pointer px-2'
+                                    className='absolute px-2 transform -translate-y-1/2 cursor-pointer right-1 top-11'
                                 >
                                     {showPassword ? <VisibilityOff fontSize='small' /> : <Visibility fontSize='small' />}
                                 </div>
@@ -193,7 +194,7 @@ const Settings = () => {
                                 label='Old key'
                                 placeholder='Enter Old key'
                             />
-                            <div className="flex gap-2 items-end">
+                            <div className="flex items-end gap-2">
                                 <div className='flex-1 '>
                                     <InputField
                                         id="newapikey"
@@ -209,7 +210,7 @@ const Settings = () => {
                                 <div>
                                     <button
                                         onClick={handleGenerateAPIKey}
-                                        className="bg-blue-400 hover:bg-blue-500 text-white text-sm py-2 px-2 rounded-md shadow-md focus:outline-none"
+                                        className="px-2 py-2 text-sm text-white bg-blue-400 rounded-md shadow-md hover:bg-blue-500 focus:outline-none"
                                     >
                                         Generate Key
                                     </button>
