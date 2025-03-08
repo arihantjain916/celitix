@@ -29,6 +29,7 @@ import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import ManageSummaryTable from "./components/ManageSummaryTable.jsx";
 import { exportToPDF } from "../../export/pdf.js";
+import { exportToExcel } from "../../export/excel.js";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -80,6 +81,7 @@ const WhatsappManageCampaign = () => {
   const [summaryReport, setSummaryReport] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState(new Date());
   const [selectedYear, setSelectedYear] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleInputChange = (e) => {
     const newValue = e.target.value.replace(/\s/g, "");
@@ -197,6 +199,10 @@ const WhatsappManageCampaign = () => {
     setFilteredData([]);
   };
 
+  function handleShowOption() {
+    setIsOpen(!isOpen);
+  }
+
   const handleSummary = async () => {
     let result;
 
@@ -240,7 +246,7 @@ const WhatsappManageCampaign = () => {
     setSummaryReport(result);
   };
 
-  function handleExport() {
+  function handleExport(type) {
     const col = [
       "S.No",
       "Created On",
@@ -251,70 +257,6 @@ const WhatsappManageCampaign = () => {
       "Status",
       "Total Audience",
     ];
-    // const rows = [
-    //   [
-    //     "David",
-    //     "david@example.com",
-    //     "Sweden",
-    //     "ds",
-    //     "David",
-    //     "david@example.com",
-    //     "Sweden",
-    //     "ds",
-    //   ],
-    //   [
-    //     "David",
-    //     "david@example.com",
-    //     "Sweden",
-    //     "ds",
-    //     "David",
-    //     "david@example.com",
-    //     "Sweden",
-    //     "ds",
-    //   ],
-    //   [
-    //     "David",
-    //     "david@example.com",
-    //     "Sweden",
-    //     "ds",
-    //     "David",
-    //     "david@example.com",
-    //     "Sweden",
-    //     "ds",
-    //   ],
-    //   [
-    //     "David",
-    //     "david@example.com",
-    //     "Sweden",
-    //     "ds",
-    //     "David",
-    //     "david@example.com",
-    //     "Sweden",
-    //     "ds",
-    //   ],
-    //   [
-    //     "David",
-    //     "david@example.com",
-    //     "Sweden",
-    //     "ds",
-    //     "David",
-    //     "david@example.com",
-    //     "Sweden",
-    //     "ds",
-    //   ],
-    //   [
-    //     "David",
-    //     "david@example.com",
-    //     "Sweden",
-    //     "ds",
-    //     "David",
-    //     "david@example.com",
-    //     "Sweden",
-    //     "ds",
-    //   ],
-
-    //   // ...
-    // ];
 
     const rows = filteredData.map((item, index) => [
       index + 1,
@@ -326,7 +268,13 @@ const WhatsappManageCampaign = () => {
       item.status,
       item.totalAudience,
     ]);
-    exportToPDF(col, rows, "Campaign Report");
+    if (type === "csv") {
+      exportToExcel(col, rows, "Campaign Report");
+    } else if (type === "pdf") {
+      exportToPDF(col, rows, "Campaign Report");
+    } else {
+      toast.error("Please select a file type.");
+    }
   }
 
   return (
@@ -502,7 +450,7 @@ const WhatsappManageCampaign = () => {
                     id="manageCampaignExportBtn"
                     name="manageCampaignExportBtn"
                     label="Export"
-                    onClick={handleExport}
+                    onClick={handleShowOption}
                     icon={
                       <IosShareOutlinedIcon
                         sx={{ marginBottom: "3px", fontSize: "1.1rem" }}
@@ -510,6 +458,36 @@ const WhatsappManageCampaign = () => {
                     }
                     variant="primary"
                   />
+                  {isOpen ? (
+                    <>
+                      <div className="flex flex-col gap-2 mt-5">
+                        <UniversalButton
+                          id="manageCampaignExportasPDFBtn"
+                          name="manageCampaignExportasPDFBtn"
+                          label="Export as PDF"
+                          onClick={handleExport("pdf")}
+                          icon={
+                            <IosShareOutlinedIcon
+                              sx={{ marginBottom: "3px", fontSize: "1.1rem" }}
+                            />
+                          }
+                          variant="primary"
+                        />
+                        <UniversalButton
+                          id="manageCampaignExportasCSVBtn"
+                          name="manageCampaignExportasCSVBtn"
+                          label="Export as PDF"
+                          onClick={handleExport("csv")}
+                          icon={
+                            <IosShareOutlinedIcon
+                              sx={{ marginBottom: "3px", fontSize: "1.1rem" }}
+                            />
+                          }
+                          variant="primary"
+                        />
+                      </div>
+                    </>
+                  ) : null}
                 </div>
               </div>
               {isFetching ? (
