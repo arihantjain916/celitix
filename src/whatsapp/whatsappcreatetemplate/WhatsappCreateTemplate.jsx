@@ -72,6 +72,7 @@ const WhatsappCreateTemplate = () => {
 
   const [templatePreview, setTemplatePreview] = useState("");
   const [carouselMediaType, setCarouselMediaType] = useState("");
+  const [urlVariables, setUrlVariables] = useState([]);
 
   const handlePreviewUpdate = (updatedPreview) => {
     setTemplatePreview(updatedPreview);
@@ -235,10 +236,10 @@ const WhatsappCreateTemplate = () => {
       toast.error("Template format is required.");
       return;
     }
-    
-    const imageSent = await uploadImageFile(videoUrl)
-    console.log(imageSent.fileUrl);
-    return
+
+    // const imageSent = await uploadImageFile(imageUrl)
+    // console.log(imageSent.fileUrl);
+    // return
 
     const varvalue = variables.map((variable) => variable.value);
 
@@ -251,12 +252,20 @@ const WhatsappCreateTemplate = () => {
       });
     }
     if (url && urlTitle) {
-      btns.push({
-        type: "URL",
-        text: urlTitle,
-        url,
-        example: ["https://www.yoursite.com/dynamic-url-example"],
-      });
+      if (urlVariables.length > 0) {
+        btns.push({
+          type: "URL",
+          text: urlTitle,
+          url,
+          example: [urlVariables[0].value],
+        });
+      } else {
+        btns.push({
+          type: "URL",
+          text: urlTitle,
+          url,
+        });
+      }
     }
     if (quickReplies.length > 0) {
       quickReplies.forEach((element) => {
@@ -312,8 +321,10 @@ const WhatsappCreateTemplate = () => {
         format: selectedTemplateType,
       });
     }
-    
-    
+
+    // console.log(urlVariables[0].value, ": ", url);
+
+    // return;
 
     try {
       setIsLoading(true);
@@ -598,6 +609,7 @@ const WhatsappCreateTemplate = () => {
                         handleQuickReplyChange={handleQuickReplyChange}
                         addQuickReply={addQuickReply}
                         removeQuickReply={removeQuickReply}
+                        setUrlVariables={setUrlVariables}
                       />
                     )}
                   </>
