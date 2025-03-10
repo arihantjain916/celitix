@@ -245,7 +245,7 @@ const WhatsappManageCampaign = () => {
     setSummaryReport(result);
   };
 
-  const handleExport = (type) => {
+  const handleExport = async (type) => {
     const col = [
       "S.No",
       "Created On",
@@ -270,11 +270,14 @@ const WhatsappManageCampaign = () => {
 
     const name = "Campaign Report";
     if (type === "csv") {
-      exportToExcel(col, rows, name);
+      await exportToExcel(col, rows, name);
+      setIsOpen(false);
     } else if (type === "pdf") {
       exportToPDF(col, rows, name);
+      setIsOpen(false);
     } else {
       toast.error("Please select a file type.");
+      setIsOpen(false);
     }
   };
 
@@ -487,7 +490,7 @@ const WhatsappManageCampaign = () => {
                       /> */}
                       <ul className="flex flex-col gap-2">
                         <li
-                          onClick={() => console.log("Export as PDF")}
+                          onClick={() => handleExport("pdf")}
                           className="cursor-pointer select-none"
                         >
                           as PDF
@@ -496,7 +499,7 @@ const WhatsappManageCampaign = () => {
                           <hr />
                         </li>
                         <li
-                          onClick={() => console.log("Export as PDF")}
+                          onClick={() => handleExport("csv")}
                           className="cursor-pointer select-none"
                         >
                           as CSV

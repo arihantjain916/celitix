@@ -15,7 +15,7 @@ export const exportToExcel = async (col, row, name) => {
 };
 
 // pdf export
-export const exportToPDF = async (col, row, name) => {
+export const exportToPDF =  (col, row, name) => {
   if (row.length === 0) return toast.error("No data found");
   const pdf = new jsPDF({ orientation: "portrait", unit: "px", format: "a4" });
 
