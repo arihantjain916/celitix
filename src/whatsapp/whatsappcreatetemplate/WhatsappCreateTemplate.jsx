@@ -322,10 +322,6 @@ const WhatsappCreateTemplate = () => {
       });
     }
 
-    // console.log(urlVariables[0].value, ": ", url);
-
-    // return;
-
     try {
       setIsLoading(true);
       const response = await sendTemplatetoApi(data);
@@ -355,33 +351,6 @@ const WhatsappCreateTemplate = () => {
     const newValue = value.replace(/\s/g, "");
     setTemplateName(newValue);
   };
-
-  //   useEffect(() => {
-  //     console.log("selected WABA", selectedWaba);
-  //   }, [selectedWaba]);
-  //   useEffect(() => {
-  //     console.log("selected WABA Sno", selectedWabaSno);
-  //   }, [selectedWabaSno]);
-
-  // useEffect(() => {
-  //     console.log("selected Category", selectedCategory);
-  // }, [selectedCategory]);
-
-  // useEffect(() => {
-  //     console.log("selected Template Type", selectedTemplateType);
-  // }, [selectedTemplateType]);
-
-  // useEffect(() => {
-  //     console.log("selected carousel media type", carouselMediaType);
-  // }, [carouselMediaType]);
-
-  // useEffect(() => {
-  //     console.log("selected language", selectedLanguage);
-  // }, [selectedLanguage]);
-
-  // useEffect(() => {
-  //     console.log("template name", templateName);
-  // }, [templateName]);
 
   return (
     <div className="w-full">
@@ -651,21 +620,21 @@ const WhatsappCreateTemplate = () => {
                       onDeleteCard={handleDeleteCard}
                     />
                   ) : (
-                    // <TemplatePreview
-                    //   scrollContainerRef={scrollableContainerRef}
-                    //   header={templateHeader}
-                    //   format={templateFormat}
-                    //   footer={templateFooter}
-                    //   imageUrl={imageUrl}
-                    //   videoUrl={videoUrl}
-                    //   documentUrl={documentUrl}
-                    //   locationUrl={locationUrl}
-                    //   phoneTitle={phoneTitle}
-                    //   urlTitle={urlTitle}
-                    //   quickReplies={quickReplies}
-                    // />
+                    <TemplatePreview
+                      scrollContainerRef={scrollableContainerRef}
+                      header={templateHeader}
+                      format={templateFormat}
+                      footer={templateFooter}
+                      imageUrl={imageUrl}
+                      videoUrl={videoUrl}
+                      documentUrl={documentUrl}
+                      locationUrl={locationUrl}
+                      phoneTitle={phoneTitle}
+                      urlTitle={urlTitle}
+                      quickReplies={quickReplies}
+                    />
 
-                    <></>
+                    // <></>
                   )}
                 </div>
               </div>
