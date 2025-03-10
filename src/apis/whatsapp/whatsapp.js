@@ -174,4 +174,18 @@ export const getSummaryReport = async (data) => {
   }
 };
 
+//send template to api
 
+
+
+export const sendTemplatetoApi = async (data) => {
+  try {
+    const response = await fetchWithAuth("/proCpaasRest/whatsapptemplate/savewhatsapp", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+    return response;
+  } catch (error) {
+    console.error("Error fetching summary report:", error);
+  }
+};
