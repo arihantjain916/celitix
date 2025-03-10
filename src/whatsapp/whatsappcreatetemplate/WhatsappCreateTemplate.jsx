@@ -15,7 +15,10 @@ import CarouselTemplatePreview from "../whatsappcreatetemplate/components/Carous
 import CarouselTemplateTypes from "../whatsappcreatetemplate/components/CarouselTemplateTypes.jsx";
 import CarouselInteractiveActions from "../whatsappcreatetemplate/components/CarouselInteractiveActions.jsx";
 import Loader from "../components/Loader.jsx";
-import { getWabaList } from "../../apis/whatsapp/whatsapp.js";
+import {
+  getWabaList,
+  sendTemplatetoApi,
+} from "../../apis/whatsapp/whatsapp.js";
 
 const WhatsappCreateTemplate = () => {
   const navigate = useNavigate();
@@ -64,6 +67,8 @@ const WhatsappCreateTemplate = () => {
       actions: [],
     },
   ]);
+
+  const [loading, setisLoading] = useState(false);
 
   const [templatePreview, setTemplatePreview] = useState("");
   const [carouselMediaType, setCarouselMediaType] = useState("");
@@ -201,7 +206,7 @@ const WhatsappCreateTemplate = () => {
   };
 
   // Submit Function
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!selectedWaba) {
       toast.error("Please select a WABA account.");
       return;
@@ -214,10 +219,10 @@ const WhatsappCreateTemplate = () => {
       toast.error("Please select a template type.");
       return;
     }
-    if (!carouselMediaType) {
-      toast.error("Please select a carousel media type.");
-      return;
-    }
+    // if (!carouselMediaType) {
+    //   toast.error("Please select a carousel media type.");
+    //   return;
+    // }
     if (!selectedLanguage) {
       toast.error("Please select a language.");
       return;
@@ -227,15 +232,78 @@ const WhatsappCreateTemplate = () => {
       return;
     }
 
-    // If all validations pass, proceed
-    console.log("selected WABA", selectedWaba);
-    console.log("selected Category", selectedCategory);
-    console.log("selected Template Type", selectedTemplateType);
-    console.log("selected carousel media type", carouselMediaType);
-    console.log("selected language", selectedLanguage);
+    // console.log("selected WABA", selectedWaba);
+    // console.log("selected Category", selectedCategory);
+    // console.log("selected Template Type", selectedTemplateType);
+    // console.log("selected carousel media type", carouselMediaType);
+    // console.log("selected language", selectedLanguage);
     console.log("template name", templateName);
 
-    toast.success("Template submitted successfully!");
+    const data = {
+      name: templateName,
+      category: selectedCategory,
+      language: selectedLanguage,
+      wabaMobile: selectedWaba,
+      whatsappSrno: selectedWabaSno,
+      components: [
+        {
+          type: "BODY",
+          text: "Hello dear Mr. {{1}},to resolve your issue please connect with us",
+          example: {
+            body_text: [["Saurabh"]],
+          },
+        },
+        {
+          type: "BUTTONS",
+          buttons: [
+            {
+              type: "PHONE_NUMBER",
+              text: "Call Us",
+              phone_number: "917889379345",
+            },
+            {
+              type: "URL",
+              text: "Connect on web",
+              url: "https://yoursite.com/{{1}}",
+              example: ["https://www.yoursite.com/dynamic-url-example"],
+            },
+            {
+              type: "QUICK_REPLY",
+              text: "Renew Membership",
+            },
+            {
+              type: "QUICK_REPLY",
+              text: "Cancel Membership",
+            },
+          ],
+        },
+      ],
+    };
+    try {
+        setisLoading(true);
+        const response = await sendTemplatetoApi(data);
+        console.log(response);
+      
+        if (response.message === "Template Name is duplicate") {
+          toast.error("Template name is already in use. Please choose another.");
+        } else if (response.message === "Template Save Successfully") {
+          toast.success("Template submitted successfully!");
+        } else if (
+          response?.includes("language") &&
+          response?.includes("not available")
+        ) {
+          toast.error(
+            "The selected language is not available for message templates. Please try a different language."
+          );
+        } else {
+          toast.error("An unknown error occurred. Please try again.");
+        }
+      } catch (e) {
+        toast.error(e.message || "Something went wrong.");
+      } finally {
+        setisLoading(false);
+      }
+      
   };
 
   const handleInputChange = (value) => {
@@ -536,19 +604,21 @@ const WhatsappCreateTemplate = () => {
                       onDeleteCard={handleDeleteCard}
                     />
                   ) : (
-                    <TemplatePreview
-                      scrollContainerRef={scrollableContainerRef}
-                      header={templateHeader}
-                      format={templateFormat}
-                      footer={templateFooter}
-                      imageUrl={imageUrl}
-                      videoUrl={videoUrl}
-                      documentUrl={documentUrl}
-                      locationUrl={locationUrl}
-                      phoneTitle={phoneTitle}
-                      urlTitle={urlTitle}
-                      quickReplies={quickReplies}
-                    />
+                    // <TemplatePreview
+                    //   scrollContainerRef={scrollableContainerRef}
+                    //   header={templateHeader}
+                    //   format={templateFormat}
+                    //   footer={templateFooter}
+                    //   imageUrl={imageUrl}
+                    //   videoUrl={videoUrl}
+                    //   documentUrl={documentUrl}
+                    //   locationUrl={locationUrl}
+                    //   phoneTitle={phoneTitle}
+                    //   urlTitle={urlTitle}
+                    //   quickReplies={quickReplies}
+                    // />
+
+                    <></>
                   )}
                 </div>
               </div>
@@ -577,6 +647,11 @@ const WhatsappCreateTemplate = () => {
             )}
           </div>
         </>
+      )}
+      {isLoading && (
+        <div className="flex items-center justify-center w-full h-screen">
+          <h1>Loading...</h1>
+        </div>
       )}
     </div>
   );
