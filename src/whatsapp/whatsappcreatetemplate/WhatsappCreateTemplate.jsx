@@ -202,40 +202,40 @@ const WhatsappCreateTemplate = () => {
 
   // Submit Function
   const handleSubmit = () => {
-    // if (!selectedWaba) {
-    //   toast.error("Please select a WABA account.");
-    //   return;
-    // }
-    // if (!selectedCategory) {
-    //   toast.error("Please select a category.");
-    //   return;
-    // }
-    // if (!selectedTemplateType) {
-    //   toast.error("Please select a template type.");
-    //   return;
-    // }
-    // if (!carouselMediaType) {
-    //   toast.error("Please select a carousel media type.");
-    //   return;
-    // }
-    // if (!selectedLanguage) {
-    //   toast.error("Please select a language.");
-    //   return;
-    // }
-    // if (!templateName.trim()) {
-    //   toast.error("Template name is required.");
-    //   return;
-    // }
+    if (!selectedWaba) {
+      toast.error("Please select a WABA account.");
+      return;
+    }
+    if (!selectedCategory) {
+      toast.error("Please select a category.");
+      return;
+    }
+    if (!selectedTemplateType) {
+      toast.error("Please select a template type.");
+      return;
+    }
+    if (!carouselMediaType) {
+      toast.error("Please select a carousel media type.");
+      return;
+    }
+    if (!selectedLanguage) {
+      toast.error("Please select a language.");
+      return;
+    }
+    if (!templateName.trim()) {
+      toast.error("Template name is required.");
+      return;
+    }
 
-    // // If all validations pass, proceed
-    // console.log("selected WABA", selectedWaba);
-    // console.log("selected Category", selectedCategory);
-    // console.log("selected Template Type", selectedTemplateType);
-    // console.log("selected carousel media type", carouselMediaType);
-    // console.log("selected language", selectedLanguage);
-    // console.log("template name", templateName);
+    // If all validations pass, proceed
+    console.log("selected WABA", selectedWaba);
+    console.log("selected Category", selectedCategory);
+    console.log("selected Template Type", selectedTemplateType);
+    console.log("selected carousel media type", carouselMediaType);
+    console.log("selected language", selectedLanguage);
+    console.log("template name", templateName);
 
-    // toast.success("Template submitted successfully!");
+    toast.success("Template submitted successfully!");
   };
 
   const handleInputChange = (value) => {
