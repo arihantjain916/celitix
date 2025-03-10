@@ -144,7 +144,7 @@ const TemplateTypes = ({
                     return;
                   }
                   if (file.size <= 5 * 1024 * 1024) {
-                    setImageUrl(URL.createObjectURL(file));
+                    setImageUrl(file);
                     setLastUploadedFileName(file.name);
                     toast.success("Image uploaded successfully!");
                   } else {
@@ -233,7 +233,7 @@ const TemplateTypes = ({
                     return;
                   }
                   if (file.size <= 16 * 1024 * 1024) {
-                    setVideoUrl(URL.createObjectURL(file));
+                    setVideoUrl(file);
                     setLastUploadedFileName(file.name);
                     toast.success("Video uploaded successfully!");
                   } else {
