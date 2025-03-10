@@ -18,6 +18,7 @@ import Loader from "../components/Loader.jsx";
 import {
   getWabaList,
   sendTemplatetoApi,
+  uploadImageFile,
 } from "../../apis/whatsapp/whatsapp.js";
 
 const WhatsappCreateTemplate = () => {
@@ -46,7 +47,7 @@ const WhatsappCreateTemplate = () => {
   const [videoUrl, setVideoUrl] = useState("");
   const [documentUrl, setDocumentUrl] = useState("");
   const [locationUrl, setLocationUrl] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [file, setFile] = useState(null);
 
   const [selectedCardIndex, setSelectedCardIndex] = useState(0);
@@ -67,8 +68,7 @@ const WhatsappCreateTemplate = () => {
       actions: [],
     },
   ]);
-
-  const [loading, setisLoading] = useState(false);
+  const [variables, setVariables] = useState([]);
 
   const [templatePreview, setTemplatePreview] = useState("");
   const [carouselMediaType, setCarouselMediaType] = useState("");
@@ -231,13 +231,41 @@ const WhatsappCreateTemplate = () => {
       toast.error("Template name is required.");
       return;
     }
+    if (!templateFormat) {
+      toast.error("Template format is required.");
+      return;
+    }
+    
+    const imageSent = await uploadImageFile(videoUrl)
+    console.log(imageSent.fileUrl);
+    return
 
-    // console.log("selected WABA", selectedWaba);
-    // console.log("selected Category", selectedCategory);
-    // console.log("selected Template Type", selectedTemplateType);
-    // console.log("selected carousel media type", carouselMediaType);
-    // console.log("selected language", selectedLanguage);
-    console.log("template name", templateName);
+    const varvalue = variables.map((variable) => variable.value);
+
+    const btns = [];
+    if (phoneTitle && phoneNumber) {
+      btns.push({
+        type: "PHONE_NUMBER",
+        text: phoneTitle,
+        phone_number: phoneNumber,
+      });
+    }
+    if (url && urlTitle) {
+      btns.push({
+        type: "URL",
+        text: urlTitle,
+        url,
+        example: ["https://www.yoursite.com/dynamic-url-example"],
+      });
+    }
+    if (quickReplies.length > 0) {
+      quickReplies.forEach((element) => {
+        btns.push({
+          type: "QUICK_REPLY",
+          text: element,
+        });
+      });
+    }
 
     const data = {
       name: templateName,
@@ -245,65 +273,71 @@ const WhatsappCreateTemplate = () => {
       language: selectedLanguage,
       wabaMobile: selectedWaba,
       whatsappSrno: selectedWabaSno,
-      components: [
-        {
-          type: "BODY",
-          text: "Hello dear Mr. {{1}},to resolve your issue please connect with us",
-          example: {
-            body_text: [["Saurabh"]],
-          },
-        },
-        {
-          type: "BUTTONS",
-          buttons: [
-            {
-              type: "PHONE_NUMBER",
-              text: "Call Us",
-              phone_number: "917889379345",
-            },
-            {
-              type: "URL",
-              text: "Connect on web",
-              url: "https://yoursite.com/{{1}}",
-              example: ["https://www.yoursite.com/dynamic-url-example"],
-            },
-            {
-              type: "QUICK_REPLY",
-              text: "Renew Membership",
-            },
-            {
-              type: "QUICK_REPLY",
-              text: "Cancel Membership",
-            },
-          ],
-        },
-      ],
+      components: [],
     };
+
+    // insert data in component dynamicall
+    if (varvalue.length > 0) {
+      data.components.push({
+        type: "BODY",
+        text: templateFormat,
+        example: {
+          body_text: [varvalue],
+        },
+      });
+    } else {
+      data.components.push({
+        type: "BODY",
+        text: templateFormat,
+      });
+    }
+
+    if (btns.length > 0) {
+      data.components.push({
+        type: "BUTTONS",
+        buttons: btns,
+      });
+    }
+
+    if (templateFooter) {
+      data.components.push({
+        type: "FOOTER",
+        text: templateFooter,
+      });
+    }
+
+    if (selectedCategory === "UTILITY") {
+      data.components.push({
+        type: "HEADER",
+        format: selectedTemplateType,
+      });
+    }
+    
+    
+
     try {
-        setisLoading(true);
-        const response = await sendTemplatetoApi(data);
-        console.log(response);
-      
-        if (response.message === "Template Name is duplicate") {
-          toast.error("Template name is already in use. Please choose another.");
-        } else if (response.message === "Template Save Successfully") {
-          toast.success("Template submitted successfully!");
-        } else if (
-          response?.includes("language") &&
-          response?.includes("not available")
-        ) {
-          toast.error(
-            "The selected language is not available for message templates. Please try a different language."
-          );
-        } else {
-          toast.error("An unknown error occurred. Please try again.");
-        }
-      } catch (e) {
-        toast.error(e.message || "Something went wrong.");
-      } finally {
-        setisLoading(false);
+      setIsLoading(true);
+      const response = await sendTemplatetoApi(data);
+
+      if (response.message === "Template Name is duplicate") {
+        toast.error("Template name is already in use. Please choose another.");
+      } else if (response.message === "Template Save Successfully") {
+        toast.success("Template submitted successfully!");
+      } else if (
+        response?.includes("language") &&
+        response?.includes("not available")
+      ) {
+        toast.error(
+          "The selected language is not available for message templates. Please try a different language."
+        );
+      } else {
+        toast.error("An unknown error occurred. Please try again.");
       }
-      
+    } catch (e) {
+      toast.error(e.message || "Something went wrong.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleInputChange = (value) => {
@@ -533,6 +567,7 @@ const WhatsappCreateTemplate = () => {
                         file={file}
                         setFile={setFile}
                         onPreviewUpdate={handlePreviewUpdate}
+                        setvariables={setVariables}
                       />
                     )}
 
@@ -647,11 +682,6 @@ const WhatsappCreateTemplate = () => {
             )}
           </div>
         </>
-      )}
-      {isLoading && (
-        <div className="flex items-center justify-center w-full h-screen">
-          <h1>Loading...</h1>
-        </div>
       )}
     </div>
   );
