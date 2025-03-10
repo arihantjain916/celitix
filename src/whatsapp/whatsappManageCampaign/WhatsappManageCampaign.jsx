@@ -28,8 +28,7 @@ import {
 import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import ManageSummaryTable from "./components/ManageSummaryTable.jsx";
-import { exportToPDF } from "../../export/pdf.js";
-import { exportToExcel } from "../../export/excel.js";
+import { exportToExcel,exportToPDF } from "../../utils/utills.js";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
