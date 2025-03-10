@@ -28,7 +28,7 @@ import {
 import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import ManageSummaryTable from "./components/ManageSummaryTable.jsx";
-import { exportToExcel,exportToPDF } from "../../utils/utills.js";
+import { exportToExcel, exportToPDF } from "../../utils/utills.js";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -199,7 +199,7 @@ const WhatsappManageCampaign = () => {
   };
 
   function handleShowOption() {
-    setIsOpen(!isOpen);
+    setIsOpen((prev) => !prev);
   }
 
   const handleSummary = async () => {
@@ -245,7 +245,7 @@ const WhatsappManageCampaign = () => {
     setSummaryReport(result);
   };
 
-  function handleExport(type) {
+  const handleExport = (type) => {
     const col = [
       "S.No",
       "Created On",
@@ -267,14 +267,16 @@ const WhatsappManageCampaign = () => {
       item.status,
       item.totalAudience,
     ]);
+
+    const name = "Campaign Report";
     if (type === "csv") {
-      exportToExcel(col, rows, "Campaign Report");
+      exportToExcel(col, rows, name);
     } else if (type === "pdf") {
-      exportToPDF(col, rows, "Campaign Report");
+      exportToPDF(col, rows, name);
     } else {
       toast.error("Please select a file type.");
     }
-  }
+  };
 
   return (
     <div className="w-full ">
@@ -457,36 +459,51 @@ const WhatsappManageCampaign = () => {
                     }
                     variant="primary"
                   />
-                  {isOpen ? (
-                    <>
-                      <div className="flex flex-col gap-2 mt-5">
-                        <UniversalButton
-                          id="manageCampaignExportasPDFBtn"
-                          name="manageCampaignExportasPDFBtn"
-                          label="Export as PDF"
-                          onClick={handleExport("pdf")}
-                          icon={
-                            <IosShareOutlinedIcon
-                              sx={{ marginBottom: "3px", fontSize: "1.1rem" }}
-                            />
-                          }
-                          variant="primary"
-                        />
-                        <UniversalButton
-                          id="manageCampaignExportasCSVBtn"
-                          name="manageCampaignExportasCSVBtn"
-                          label="Export as PDF"
-                          onClick={handleExport("csv")}
-                          icon={
-                            <IosShareOutlinedIcon
-                              sx={{ marginBottom: "3px", fontSize: "1.1rem" }}
-                            />
-                          }
-                          variant="primary"
-                        />
-                      </div>
-                    </>
-                  ) : null}
+                  {isOpen && (
+                    <div className="absolute z-50 flex flex-col gap-2 p-3 mt-2 bg-white rounded shadow-lg">
+                      {/* <UniversalButton
+                        id="manageCampaignExportasPDFBtn"
+                        name="manageCampaignExportasPDFBtn"
+                        label="as PDF"
+                        onClick={() => console.log("Export as PDF")}
+                        icon={
+                          <IosShareOutlinedIcon
+                            sx={{ marginBottom: "3px", fontSize: "1.1rem" }}
+                          />
+                        }
+                        variant="primary"
+                      />
+                      <UniversalButton
+                        id="manageCampaignExportasCSVBtn"
+                        name="manageCampaignExportasCSVBtn"
+                        label="as CSV"
+                        onClick={() => console.log("Export as CSV")}
+                        icon={
+                          <IosShareOutlinedIcon
+                            sx={{ marginBottom: "3px", fontSize: "1.1rem" }}
+                          />
+                        }
+                        variant="primary"
+                      /> */}
+                      <ul className="flex flex-col gap-2">
+                        <li
+                          onClick={() => console.log("Export as PDF")}
+                          className="cursor-pointer select-none"
+                        >
+                          as PDF
+                        </li>
+                        <li>
+                          <hr />
+                        </li>
+                        <li
+                          onClick={() => console.log("Export as PDF")}
+                          className="cursor-pointer select-none"
+                        >
+                          as CSV
+                        </li>
+                      </ul>
+                    </div>
+                  )}
                 </div>
               </div>
               {isFetching ? (
