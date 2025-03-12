@@ -19,6 +19,7 @@ import FilePresentOutlinedIcon from "@mui/icons-material/FilePresentOutlined";
 import CustomEmojiPicker from "../components/CustomEmojiPicker";
 import { Sidebar } from "primereact/sidebar";
 import LocalPhoneOutlinedIcon from "@mui/icons-material/LocalPhoneOutlined";
+import SupportAgentOutlinedIcon from "@mui/icons-material/SupportAgentOutlined";
 
 export default function WhatsappLiveChat() {
   const [visibleRight, setVisibleRight] = useState(false);
@@ -26,6 +27,7 @@ export default function WhatsappLiveChat() {
     {
       id: 1,
       name: "John Doe",
+      phone: "+919672670732",
       image:
         "https://darrenjameseeley.files.wordpress.com/2014/09/expendables3.jpeg",
       messages: [
@@ -36,6 +38,7 @@ export default function WhatsappLiveChat() {
     {
       id: 2,
       name: "Jane Smith",
+      phone: "+919672670733",
       image:
         "https://darrenjameseeley.files.wordpress.com/2014/09/expendables3.jpeg",
       messages: [
@@ -199,7 +202,7 @@ export default function WhatsappLiveChat() {
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-">
-             2     <div className="relative">
+                  <div className="relative">
                     <img
                       src={chat.image}
                       alt=""
@@ -220,9 +223,9 @@ export default function WhatsappLiveChat() {
 
       {/* Chat Section */}
       {activeChat && (
-        <div className="flex flex-col flex-1 h-screen md:h-full ">
+        <div className="relative flex flex-col flex-1 h-screen md:h-full">
           {/* Header */}
-          <div className="flex items-center justify-between p-4 bg-white shadow-md fixed top-13 md:top-20 w-full md:w-[66.67%] z-0 md:-ml-0 -ml-3">
+          <div className="z-0 flex items-center justify-between w-full bg-white shadow-md h-15">
             <div className="flex items-center space-x-2">
               <IoArrowBack
                 className="text-xl cursor-pointer md:hidden"
@@ -241,6 +244,13 @@ export default function WhatsappLiveChat() {
                 sx={{
                   fontSize: "1.2rem",
                   color: "green",
+                }}
+              />
+            </div>
+            <div>
+              <SupportAgentOutlinedIcon
+                onClick={() => {
+                  console.log("Agent clicked");
                 }}
               />
             </div>
@@ -263,40 +273,42 @@ export default function WhatsappLiveChat() {
           </div>
 
           {/* Input */}
-          <div className="relative flex items-center w-full p-4 bg-white border-t mb-17 md:mb-0">
+          <div className="flex items-center w-full p-4 bg-white border-t mb-17 md:mb-0">
             <div className="mr-2">
               <CustomEmojiPicker position="top" onSelect={insertEmoji} />
             </div>
-            <input
-              type="text"
-              className="flex-1 p-2 border rounded-lg focus:outline-none"
-              placeholder="Type a message..."
-              ref={inputRef}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-            />
-            <button
-              onClick={sendMessage}
-              className="absolute p-2 ml-2 text-white bg-blue-500 rounded-lg right-6"
-            >
-              <FiSend />
-            </button>
-            <div>
-              <SpeedDial
-                model={items}
-                direction="up"
-                style={{ bottom: 21, right: 55 }}
-                buttonStyle={{
-                  width: "2rem",
-                  height: "2rem",
-                }}
+            <div className="relative w-full border rounded-lg">
+              <input
+                type="text"
+                className="flex-1 md:w-[35rem] w-[9rem] p-2 focus:outline-none"
+                placeholder="Type a message..."
+                ref={inputRef}
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && sendMessage()}
               />
-            </div>
-            <div className="absolute flex items-center justify-center gap-1 right-28">
-              <FormatBoldOutlined />
-              <FormatItalicOutlined />
-              <FormatStrikethroughOutlined />
+              <button
+                onClick={sendMessage}
+                className="absolute p-2 ml-2 text-white bg-blue-500 rounded-lg right-2 bottom-1"
+              >
+                <FiSend />
+              </button>
+              <div>
+                <SpeedDial
+                  model={items}
+                  direction="up"
+                  style={{ bottom: 4, right: 40 }}
+                  buttonStyle={{
+                    width: "2rem",
+                    height: "2rem",
+                  }}
+                />
+              </div>
+              <div className="absolute items-center justify-center hidden gap-1 right-25 bottom-2 md:flex">
+                <FormatBoldOutlined />
+                <FormatItalicOutlined />
+                <FormatStrikethroughOutlined />
+              </div>
             </div>
           </div>
           <Sidebar
@@ -308,15 +320,15 @@ export default function WhatsappLiveChat() {
             <div className="flex flex-col justify-center gap-2">
               <div className="flex items-center gap-2">
                 <img
-                  src="https://darrenjameseeley.files.wordpress.com/2014/09/expendables3.jpeg"
+                  src={activeChat.image}
                   alt=""
                   className="w-10 h-10 rounded-full"
                 />
-                <h1>Arihant Jain</h1>
+                <h1>{activeChat.name}</h1>
               </div>
               <div className="flex items-center gap-2">
                 <LocalPhoneOutlinedIcon />
-                <p>+919672670732</p>
+                <p>{activeChat.phone}</p>
               </div>
             </div>
 
