@@ -103,12 +103,17 @@ export default function WhatsappLiveChat() {
   useEffect(() => {
     console.log(search);
   }, [search]);
-
   function deleteImages(index) {
-    setSelectedImage((prevImages) =>
-      prevImages.filter((image, i) => i !== index)
-    );
+    setSelectedImage((prev) => {
+      const newSelectedImage = [...prev];
+      newSelectedImage.splice(index, 1);
+      return newSelectedImage;
+    });
+
+    // To see the updated state, use useEffect
+    console.log("Deleted Index:", index);
   }
+
   const sendMessage = () => {
     if (input.trim() || selectedImage) {
       const updatedChats = chats.map((chat) =>
@@ -129,6 +134,10 @@ export default function WhatsappLiveChat() {
       setSelectedImage("");
     }
   };
+
+  useEffect(() => {
+    console.log(selectedImage);
+  }, [selectedImage]);
 
   const items = [
     {
@@ -155,14 +164,16 @@ export default function WhatsappLiveChat() {
   ];
 
   const handleFileChange = (e) => {
-    const files = e.target.files;
-    if (files.length > 10 || selectedImage.length >= 10) {
-      toast.error("You can only upload 10 files at a time.");
-      return false;
-    }
-    
-    setSelectedImage(Array.from(files));
+    const files = Array.from(e.target.files);
 
+    // Ensure total count doesn't exceed 10
+    if (files.length + selectedImage.length > 10) {
+      toast.error("You can only upload up to 10 files.");
+      return;
+    }
+
+    // Append new files while keeping the previous ones
+    setSelectedImage((prev) => [...prev, ...files]);
   };
 
   return (
@@ -309,18 +320,16 @@ export default function WhatsappLiveChat() {
           {selectedImage.length > 0 && (
             <div className="flex flex-wrap gap-2 mt-2">
               {selectedImage.map((file, index) => (
-                <div className="relative">
+                <div className="relative" key={index}>
                   <button
-                    key={index}
-                    onClick={() => {
-                      console.log("ahyanb");
-
-                      setImagePreviewVisible(true);
-                      console.log(imagePreviewVisible);
-                    }}
+                    onClick={() => setImagePreviewVisible(true)}
                     className="flex items-center gap-1 "
                   >
-                    <img src={URL.createObjectURL(file)} alt="" className="object-cover w-20 h-20" />
+                    <img
+                      src={URL.createObjectURL(file)}
+                      alt=""
+                      className="object-cover w-20 h-20"
+                    />
                   </button>
                   <span
                     className="absolute text-red-500 cursor-pointer top-1 right-1"
