@@ -20,9 +20,23 @@ import CustomEmojiPicker from "../components/CustomEmojiPicker";
 import { Sidebar } from "primereact/sidebar";
 import LocalPhoneOutlinedIcon from "@mui/icons-material/LocalPhoneOutlined";
 import SupportAgentOutlinedIcon from "@mui/icons-material/SupportAgentOutlined";
+import { Dialog } from "primereact/dialog";
+import InputField from "../components/InputField";
+import toast from "react-hot-toast";
+import ImagePreview from "./ImagePreview";
 
 export default function WhatsappLiveChat() {
+  const fileInputRef = useRef(null);
   const [visibleRight, setVisibleRight] = useState(false);
+  const [dialogVisible, setDialogVisible] = useState(false);
+  const [imagePreviewVisible, setImagePreviewVisible] = useState(false);
+
+  const [agentList, setAgentList] = useState([]);
+  const [agentName, setAgentname] = useState("");
+  const [groupList, setGroupList] = useState([]);
+  const [selectedAgentList, setSelectedAgentList] = useState(null);
+  const [selectedGroupList, setSelectedGroupList] = useState(null);
+  const [selectedImage, setSelectedImage] = useState([]);
   const [chats, setChats] = useState([
     {
       id: 1,
@@ -74,6 +88,10 @@ export default function WhatsappLiveChat() {
   };
 
   useEffect(() => {
+    console.log(agentName + selectedAgentList + selectedGroupList);
+  }, [agentName, selectedAgentList, selectedGroupList]);
+
+  useEffect(() => {
     async function fetchWaba() {
       const res = await getWabaList();
       setWaba(res);
@@ -86,15 +104,20 @@ export default function WhatsappLiveChat() {
     console.log(search);
   }, [search]);
 
+  function deleteImages(index) {
+    setSelectedImage((prevImages) =>
+      prevImages.filter((image, i) => i !== index)
+    );
+  }
   const sendMessage = () => {
-    if (input.trim()) {
+    if (input.trim() || selectedImage) {
       const updatedChats = chats.map((chat) =>
         chat.id === activeChat.id
           ? {
               ...chat,
               messages: [
                 ...chat.messages,
-                { text: input, sender: "You" },
+                { text: selectedImage[0], sender: "You" },
                 { text: "Auto-reply: Got it!", sender: activeChat.name },
               ],
             }
@@ -103,6 +126,7 @@ export default function WhatsappLiveChat() {
       setChats(updatedChats);
       setActiveChat(updatedChats.find((chat) => chat.id === activeChat.id));
       setInput("");
+      setSelectedImage("");
     }
   };
 
@@ -111,7 +135,7 @@ export default function WhatsappLiveChat() {
       label: "Attachment",
       icon: <AttachmentOutlinedIcon />,
       command: () => {
-        console.log("Image Btn");
+        fileInputRef.current.click();
       },
     },
     {
@@ -129,6 +153,17 @@ export default function WhatsappLiveChat() {
       },
     },
   ];
+
+  const handleFileChange = (e) => {
+    const files = e.target.files;
+    if (files.length > 10 || selectedImage.length >= 10) {
+      toast.error("You can only upload 10 files at a time.");
+      return false;
+    }
+    
+    setSelectedImage(Array.from(files));
+
+  };
 
   return (
     <div className="flex h-[100%] bg-gray-100 overflow-hidden">
@@ -249,9 +284,8 @@ export default function WhatsappLiveChat() {
             </div>
             <div>
               <SupportAgentOutlinedIcon
-                onClick={() => {
-                  console.log("Agent clicked");
-                }}
+                onClick={() => setDialogVisible(true)}
+                className="mr-2 cursor-pointer"
               />
             </div>
           </div>
@@ -272,6 +306,48 @@ export default function WhatsappLiveChat() {
             ))}
           </div>
 
+          {selectedImage.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-2">
+              {selectedImage.map((file, index) => (
+                <div className="relative">
+                  <button
+                    key={index}
+                    onClick={() => {
+                      console.log("ahyanb");
+
+                      setImagePreviewVisible(true);
+                      console.log(imagePreviewVisible);
+                    }}
+                    className="flex items-center gap-1 "
+                  >
+                    <img src={URL.createObjectURL(file)} alt="" className="object-cover w-20 h-20" />
+                  </button>
+                  <span
+                    className="absolute text-red-500 cursor-pointer top-1 right-1"
+                    onClick={() => deleteImages(index)}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="w-4 h-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      / Add code to remove the image from the selectedImage
+                      array
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+
           {/* Input */}
           <div className="flex items-center w-full p-4 bg-white border-t mb-17 md:mb-0">
             <div className="mr-2">
@@ -280,7 +356,7 @@ export default function WhatsappLiveChat() {
             <div className="relative w-full border rounded-lg">
               <input
                 type="text"
-                className="flex-1 md:w-[35rem] w-[9rem] p-2 focus:outline-none"
+                className="flex-1 md:w-[35rem] w-[14rem] p-2 focus:outline-none"
                 placeholder="Type a message..."
                 ref={inputRef}
                 value={input}
@@ -380,6 +456,85 @@ export default function WhatsappLiveChat() {
             </div>
           </Sidebar>
         </div>
+      )}
+      <Dialog
+        visible={dialogVisible}
+        style={{ width: "50vw" }}
+        draggable={false}
+        onHide={() => {
+          if (!dialogVisible) return;
+          setDialogVisible(false);
+        }}
+      >
+        <div className="space-y-3">
+          <AnimatedDropdown
+            options={[
+              {
+                value: "arIHANT1",
+                label: "Arihant",
+              },
+              {
+                value: "aRIHANT2",
+                label: "Arihant",
+              },
+            ]}
+            id="agentList"
+            name="agentList"
+            label="Agent List"
+            tooltipContent="Select Agent"
+            tooltipPlacement="right"
+            value={selectedAgentList}
+            onChange={(value) => setSelectedAgentList(value)}
+            placeholder="Agent List"
+          />
+
+          <InputField
+            label="Agent Name"
+            tooltipContent="Enter Agent Name"
+            id="agentname"
+            name="agentname"
+            type="tel"
+            value={agentName}
+            onChange={(e) => setAgentname(e.target.value)}
+            placeholder="Enter Agent Name"
+          />
+          <AnimatedDropdown
+            options={[
+              {
+                value: "arIHANT3",
+                label: "Arihant",
+              },
+              {
+                value: "aRIHANT4",
+                label: "Arihant",
+              },
+            ]}
+            id="group"
+            name="group"
+            label="Group"
+            tooltipContent="Select Group"
+            tooltipPlacement="right"
+            value={selectedGroupList}
+            onChange={(value) => setSelectedGroupList(value)}
+            placeholder="Group"
+          />
+        </div>
+      </Dialog>
+      <input
+        type="file"
+        ref={fileInputRef}
+        style={{ display: "none" }}
+        onChange={handleFileChange}
+        accept="image/*"
+        multiple
+      />
+
+      {imagePreviewVisible && (
+        <ImagePreview
+          imagePreviewVisible={imagePreviewVisible}
+          setImagePreviewVisible={setImagePreviewVisible}
+          images={selectedImage}
+        />
       )}
     </div>
   );
