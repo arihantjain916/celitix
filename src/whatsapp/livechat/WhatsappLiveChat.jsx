@@ -10,14 +10,18 @@ import {
   FormatBoldOutlined,
   FormatItalicOutlined,
   FormatStrikethroughOutlined,
+  LocalPhoneOutlined,
   SearchOutlined,
 } from "@mui/icons-material";
 import AttachmentOutlinedIcon from "@mui/icons-material/AttachmentOutlined";
 import { SpeedDial } from "primereact/speeddial";
 import FilePresentOutlinedIcon from "@mui/icons-material/FilePresentOutlined";
 import CustomEmojiPicker from "../components/CustomEmojiPicker";
+import { Sidebar } from "primereact/sidebar";
+import LocalPhoneOutlinedIcon from "@mui/icons-material/LocalPhoneOutlined";
 
 export default function WhatsappLiveChat() {
+  const [visibleRight, setVisibleRight] = useState(false);
   const [chats, setChats] = useState([
     {
       id: 1,
@@ -194,8 +198,8 @@ export default function WhatsappLiveChat() {
               onClick={() => setActiveChat(chat)}
             >
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-5">
-                  <div className="relative">
+                <div className="flex items-center gap-">
+             2     <div className="relative">
                     <img
                       src={chat.image}
                       alt=""
@@ -231,6 +235,9 @@ export default function WhatsappLiveChat() {
               />
               <h3 className="text-lg font-semibold">{activeChat.name}</h3>
               <InfoOutlinedIcon
+                onClick={() => {
+                  setVisibleRight(true);
+                }}
                 sx={{
                   fontSize: "1.2rem",
                   color: "green",
@@ -292,6 +299,74 @@ export default function WhatsappLiveChat() {
               <FormatStrikethroughOutlined />
             </div>
           </div>
+          <Sidebar
+            visible={visibleRight}
+            position="right"
+            onHide={() => setVisibleRight(false)}
+            style={{ height: "630px", position: "absolute", bottom: 0 }}
+          >
+            <div className="flex flex-col justify-center gap-2">
+              <div className="flex items-center gap-2">
+                <img
+                  src="https://darrenjameseeley.files.wordpress.com/2014/09/expendables3.jpeg"
+                  alt=""
+                  className="w-10 h-10 rounded-full"
+                />
+                <h1>Arihant Jain</h1>
+              </div>
+              <div className="flex items-center gap-2">
+                <LocalPhoneOutlinedIcon />
+                <p>+919672670732</p>
+              </div>
+            </div>
+
+            <div className="space-x-2 text-[0.9rem]">
+              <div className="grid grid-cols-2 gap-4 p-2 border-gray-300 border-1">
+                <p>Status</p>
+                <p className="text-right">Requesting</p>
+              </div>
+              <div className="grid grid-cols-2 gap-4 p-2 border-gray-300 border-1">
+                <p>Last Active</p>
+                <p className="text-right">12/03/2025 10:35:35</p>
+              </div>
+              <div className="grid grid-cols-2 gap-4 p-2 border-gray-300 border-1">
+                <p>Template Messages</p>
+                <p className="text-right">2</p>
+              </div>
+              <div className="grid grid-cols-2 gap-4 p-2 border-gray-300 border-1">
+                <p>Session Messages</p>
+                <p className="text-right">2</p>
+              </div>
+              <div className="grid grid-cols-2 gap-4 p-2 border-gray-300 border-1">
+                <p>Unresolved Queries</p>
+                <p className="text-right">0</p>
+              </div>
+              <div className="grid grid-cols-2 gap-4 p-2 border-gray-300 border-1">
+                <p>Source</p>
+                <p className="text-right">IMPORTED</p>
+              </div>
+              <div className="grid grid-cols-2 gap-4 p-2 border-gray-300 border-1">
+                <p>First Message</p>
+                <p className="text-right">-</p>
+              </div>
+              <div className="grid grid-cols-2 gap-4 p-2 border-gray-300 border-1">
+                <p>WA Conversation</p>
+                <p className="text-right">Active</p>
+              </div>
+              <div className="grid grid-cols-2 gap-4 p-2 border-gray-300 border-1">
+                <p>MAU Status</p>
+                <p className="text-right">Active</p>
+              </div>
+              <div className="grid grid-cols-2 gap-4 p-2 border-gray-300 border-1">
+                <p>Incoming</p>
+                <p className="text-right">Allowed</p>
+              </div>
+              <div className="grid grid-cols-2 gap-4 p-2 border-gray-300 border-1">
+                <p>Circle</p>
+                <p className="text-right">Rajasthan</p>
+              </div>
+            </div>
+          </Sidebar>
         </div>
       )}
     </div>
