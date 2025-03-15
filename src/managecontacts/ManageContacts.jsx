@@ -20,7 +20,7 @@ import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import toast from "react-hot-toast";
 import UniversalSkeleton from "../whatsapp/components/UniversalSkeleton";
-import { getContactListByGrpId } from "../apis/contact/contact";
+import { getContactListByGrpId, getGrpList } from "../apis/contact/contact";
 
 const ManageContacts = () => {
   const [selectedMultiGroup, setSelectedMultiGroup] = useState(null);
@@ -45,7 +45,16 @@ const ManageContacts = () => {
   const [manageContactFirst, setMmanageContactFirst] = useState("");
   const [manageContactMobile, setManageContactMobile] = useState("");
   const [allContacts, setAllContacts] = useState([]);
-  // const
+  const [grpList, setGrpList] = useState([]);
+
+  useEffect(() => {
+    async function getGrpListData() {
+      const res = await getGrpList();
+      setGrpList(res);
+    }
+
+    getGrpListData();
+  }, []);
 
   const multiGroup = [
     { value: "Group 1", label: "Group 1" },
@@ -115,8 +124,8 @@ const ManageContacts = () => {
   };
 
   const options = [
-    { value: "active", label: "Active" },
-    { value: "inactive", label: "Inactive" },
+    { value: 1, label: "Active" },
+    { value: 2, label: "Inactive" },
   ];
 
   const handleInputChange = (e) => {
@@ -134,11 +143,11 @@ const ManageContacts = () => {
 
     setIsFetching(true);
     const res = await getContactListByGrpId({
-      groupSrNo: "16",
-      status: "",
+      groupSrNo: selectedMultiGroup,
+      status: selectedStatus,
     });
-    
-    console.log(res)
+
+    console.log(res);
 
     setAllContacts(res);
 
@@ -324,7 +333,10 @@ const ManageContacts = () => {
             className="custom-multiselect"
             placeholder="Select Groups"
             optionLabel="name"
-            options={multiGroup}
+            options={grpList?.map((item) => ({
+              value: item.groupCode,
+              label: item.groupName,
+            }))}
             value={selectedMultiGroup}
             onChange={(e) => setSelectedMultiGroup(e)}
             filter
@@ -392,7 +404,7 @@ const ManageContacts = () => {
       {isFetching ? (
         <UniversalSkeleton height="35rem" width="100%" />
       ) : (
-        <WhatsappManageContactsTable allContacts={allContacts}/>
+        <WhatsappManageContactsTable allContacts={allContacts} />
       )}
 
       <div className="flex card justify-content-center">

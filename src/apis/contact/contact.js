@@ -6,3 +6,8 @@ export const getContactListByGrpId = async (data) => {
     body: JSON.stringify(data),
   });
 };
+export const getGrpList = async () => {
+  return await fetchWithAuth("/proCpaasRest/group/showGroups", {
+    method: "POST"
+  });
+};
