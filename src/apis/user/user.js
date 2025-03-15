@@ -17,7 +17,16 @@ export const getRcsRate = async () => {
 };
 
 export const getWhatsAppRate = async () => {
-  return await fetchWithAuth("/proCpaasRest/accountInfo/getWhatsappRateAllData?countryCode=&countryName=", {
+  return await fetchWithAuth(
+    "/proCpaasRest/accountInfo/getWhatsappRateAllData?countryCode=&countryName=",
+    {
+      method: "POST",
+    }
+  );
+};
+
+export const getaccountInfo = async () => {
+  return await fetchWithAuth("/proCpaasRest/accountInfo/showAccountInfo", {
     method: "POST",
   });
 };
