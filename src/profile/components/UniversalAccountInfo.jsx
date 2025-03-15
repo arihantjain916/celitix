@@ -189,14 +189,29 @@ function AccountInfoModal({ show, handleClose }) {
     },
   ];
 
-  // Handle Search
-  const handleSearch = () => {
-    const filtered = rcsPricingData.filter(
+  // Handle RCS Search
+  const handleRcsSearch = () => {
+    const filtered = rcsrate.filter(
       (item) =>
-        item.country.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.countryCode.includes(searchTerm)
+        item.country_name.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
+        item?.ISO_code?.toString().includes(searchTerm.toString())
     );
     setFilteredData(filtered);
+    console.log(filtered);
+    setSearchTerm("");
+  };
+  
+  // Handle RCS Search
+  const handleWhatsAppSearch = () => {
+    console.log(searchTerm)
+    const filtered = whatsapprate.filter(
+      (item) =>
+        item.country_name.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
+        item?.ISO_code?.toString().includes(searchTerm.toString())
+    );
+    setFilteredData(filtered);
+    console.log(filtered);
+    setSearchTerm("");
   };
 
   const [paginationModel, setPaginationModel] = useState({
@@ -392,7 +407,22 @@ function AccountInfoModal({ show, handleClose }) {
         onHide={() => setShowRcsPricing(false)}
         modal
         draggable={false}
+        disabled
       >
+        <div className="flex items-center mb-4 space-x-3">
+          <input
+            type="text"
+            placeholder="Country Name or Code"
+            className="w-full p-2 border rounded-md"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <UniversalButton
+            label="Search"
+            className="px-4 py-2 text-white bg-blue-600 rounded-md"
+            onClick={handleRcsSearch}
+          />
+        </div>
         <Paper sx={{ height: "auto" }}>
           <DataGrid
             rows={rcsrows}
@@ -444,6 +474,21 @@ function AccountInfoModal({ show, handleClose }) {
         modal
         draggable={false}
       >
+        <div className="flex items-center mb-4 space-x-3">
+          <input
+            type="text"
+            placeholder="Country Name or Code"
+            className="w-full p-2 border rounded-md"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <UniversalButton
+            label="Search"
+            className="px-4 py-2 text-white bg-blue-600 rounded-md"
+            onClick={handleWhatsAppSearch}
+            disabled
+          />
+        </div>
         <Paper sx={{ height: "auto" }}>
           <DataGrid
             rows={whatsApprows}
