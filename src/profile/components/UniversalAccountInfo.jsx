@@ -200,10 +200,10 @@ function AccountInfoModal({ show, handleClose }) {
     console.log(filtered);
     setSearchTerm("");
   };
-  
+
   // Handle RCS Search
   const handleWhatsAppSearch = () => {
-    console.log(searchTerm)
+    console.log(searchTerm);
     const filtered = whatsapprate.filter(
       (item) =>
         item.country_name.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
@@ -356,47 +356,55 @@ function AccountInfoModal({ show, handleClose }) {
             Account Expiry: {accountInfo[0]?.expiryDate}
           </span>
         </div>
-        <Paper sx={{ height: "auto" }}>
-          <DataGrid
-            rows={accountrows}
-            columns={accountcolumns}
-            initialState={{ pagination: { paginationModel } }}
-            pageSizeOptions={[10, 20, 50]}
-            pagination
-            paginationModel={paginationModel}
-            onPaginationModelChange={setPaginationModel}
-            // checkboxSelection
-            rowHeight={45}
-            slots={{ footer: CustomFooter }}
-            // slotProps={{ footer: { totalRecords: rows.length } }}
-            onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
-            disableRowSelectionOnClick
-            // autoPageSize
-            disableColumnResize
-            disableColumnMenu
-            sx={{
-              border: 0,
-              "& .MuiDataGrid-cellCheckbox": {
-                outline: "none !important",
-              },
-              "& .MuiDataGrid-cell": {
-                outline: "none !important",
-              },
-              "& .MuiDataGrid-columnHeaders": {
-                color: "#193cb8",
-                fontSize: "14px",
-                fontWeight: "bold !important",
-              },
-              "& .MuiDataGrid-row--borderBottom": {
-                backgroundColor: "#e6f4ff !important",
-              },
-              "& .MuiDataGrid-columnSeparator": {
-                // display: "none",
-                color: "#ccc",
-              },
-            }}
-          />
-        </Paper>
+
+        {new Date() < new Date(accountInfo[0]?.expiryDate) ? (
+          <Paper sx={{ height: "auto" }}>
+            <DataGrid
+              rows={accountrows}
+              columns={accountcolumns}
+              initialState={{ pagination: { paginationModel } }}
+              pageSizeOptions={[10, 20, 50]}
+              pagination
+              paginationModel={paginationModel}
+              onPaginationModelChange={setPaginationModel}
+              // checkboxSelection
+              rowHeight={45}
+              slots={{ footer: CustomFooter }}
+              // slotProps={{ footer: { totalRecords: rows.length } }}
+              onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
+              disableRowSelectionOnClick
+              // autoPageSize
+              disableColumnResize
+              disableColumnMenu
+              sx={{
+                border: 0,
+                "& .MuiDataGrid-cellCheckbox": {
+                  outline: "none !important",
+                },
+                "& .MuiDataGrid-cell": {
+                  outline: "none !important",
+                },
+                "& .MuiDataGrid-columnHeaders": {
+                  color: "#193cb8",
+                  fontSize: "14px",
+                  fontWeight: "bold !important",
+                },
+                "& .MuiDataGrid-row--borderBottom": {
+                  backgroundColor: "#e6f4ff !important",
+                },
+                "& .MuiDataGrid-columnSeparator": {
+                  // display: "none",
+                  color: "#ccc",
+                },
+              }}
+            />
+          </Paper>
+        ) : (
+          <h1>
+            Your account is expired. Please contact Admin to activate your
+            account.
+          </h1>
+        )}
       </Dialog>
 
       {/* RCS Pricing Modal */}
