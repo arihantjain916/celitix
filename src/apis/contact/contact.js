@@ -25,3 +25,12 @@ export const addGrp = async (data) => {
     body: JSON.stringify(data),
   });
 };
+
+export const deleteGrp = async (grpName, grpSrno) => {
+  return await fetchWithAuth(
+    `/proCpaasRest/group/deleteGroup?groupName=${grpName}&groupSrno=${grpSrno}`,
+    {
+      method: "POST",
+    }
+  );
+};
