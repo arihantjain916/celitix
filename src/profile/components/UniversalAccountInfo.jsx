@@ -7,7 +7,14 @@ import { Box, Button, Paper, Typography } from "@mui/material";
 import { DataGrid, GridFooterContainer } from "@mui/x-data-grid";
 import usePagination from "@mui/material/usePagination";
 import styled from "styled-components";
-import { getRcsRate, getWhatsAppRate } from "../../apis/user/user";
+import {
+  getRcsRate,
+  getWhatsAppRate,
+  getaccountInfo,
+  getSmsRate,
+} from "../../apis/user/user";
+
+import { getCountryList } from "../../apis/common/common";
 
 const CustomPagination = ({
   totalPages,
@@ -78,6 +85,8 @@ function AccountInfoModal({ show, handleClose }) {
   const [selectedRows, setSelectedRows] = useState([]);
   const [rcsrate, setRcsRate] = useState([]);
   const [whatsapprate, setWhatsAppRate] = useState([]);
+  const [accountInfo, setAccountInfo] = useState([]);
+  const [countryList, setCountryList] = useState([]);
 
   useEffect(() => {
     async function getRcsRateData() {
@@ -90,31 +99,49 @@ function AccountInfoModal({ show, handleClose }) {
       setWhatsAppRate(data);
     }
 
+    async function getaccountInfoData() {
+      const data = await getaccountInfo();
+      setAccountInfo(Array(data));
+    }
+
+    async function getCountryListData() {
+      const data = await getCountryList();
+      setCountryList(data);
+    }
+
     getRcsRateData();
     getWhatsAppRateDate();
+    getaccountInfoData();
+    getCountryListData();
   }, []);
 
-  // Account Data
-  const accountData = [
+  const accountrows = [
     {
+      sn: 1,
+      id: 1,
       service: "SMS",
-      credits: 25000,
-      createdOn: "25/04/2023",
-      expiry: "15/02/2024",
-      pricing: "0.20 INR/Credit",
+      created_on: accountInfo[0]?.smsUpdateTime,
+      pricing: `${accountInfo[0]?.smsRate} INR/Credit`,
     },
     {
+      sn: 2,
+      id: 2,
       service: "Two Way SMS",
-      credits: 25000,
-      createdOn: "25/04/2023",
-      expiry: "15/02/2024",
-      pricing: "0.20 INR",
+      created_on: "-",
+      pricing: "-",
     },
     {
+      sn: 3,
+      id: 3,
+      service: "OBD",
+      created_on: accountInfo[0]?.voiceUpdateTime,
+      pricing: `${accountInfo[0]?.voiceRate15Sec} INR/Credit`,
+    },
+    {
+      sn: 4,
+      id: 4,
       service: "RCS",
-      credits: 25000,
-      createdOn: "25/04/2023",
-      expiry: "15/02/2024",
+      created_on: rcsrate[0]?.update_time,
       pricing: (
         <button onClick={() => setShowRcsPricing(true)}>
           <VisibilityIcon className="text-green-600 cursor-pointer" />
@@ -122,24 +149,44 @@ function AccountInfoModal({ show, handleClose }) {
       ),
     },
     {
+      sn: 5,
+      id: 5,
+      service: "Email",
+      created_on: "-",
+      pricing: "-",
+    },
+    {
+      sn: 6,
+      id: 6,
       service: "WhatsApp",
-      credits: 25000,
-      createdOn: "25/04/2023",
-      expiry: "15/02/2024",
+      created_on: whatsapprate[0]?.updateTime,
       pricing: (
         <button onClick={() => setShowWhatsPricing(true)}>
           <VisibilityIcon className="text-green-600 cursor-pointer" />
         </button>
       ),
     },
-  ];
-
-  // RCS Pricing Data
-  const rcsPricingData = [
-    { id: 1, country: "India", countryCode: "+91", rate: "0.30" },
-    { id: 2, country: "USA", countryCode: "+1", rate: "0.50" },
-    { id: 3, country: "UK", countryCode: "+44", rate: "0.45" },
-    { id: 4, country: "Canada", countryCode: "+1", rate: "0.40" },
+    {
+      sn: 7,
+      id: 7,
+      service: "IBD",
+      created_on: "-",
+      pricing: "-",
+    },
+    {
+      sn: 8,
+      id: 8,
+      service: "MissedCall",
+      created_on: "-",
+      pricing: "-",
+    },
+    {
+      sn: 9,
+      id: 9,
+      service: "C2C",
+      created_on: "-",
+      pricing: "-",
+    },
   ];
 
   // Handle Search
@@ -157,19 +204,34 @@ function AccountInfoModal({ show, handleClose }) {
     pageSize: 10,
   });
 
+  const accountcolumns = [
+    { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
+    { field: "service", headerName: "Service", flex: 1, minWidth: 80 },
+
+    { field: "created_on", headerName: "Created On", flex: 1, minWidth: 80 },
+    // { field: "plan_expiry", headerName: "Plan Expiry", flex: 1, minWidth: 80 },
+    {
+      field: "pricing",
+      headerName: "Pricing",
+      flex: 1,
+      minWidth: 80,
+      renderCell: (params) => params.value,
+    },
+  ];
+
   const WhatsAppcolumns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
     { field: "country_name", headerName: "Country", flex: 1, minWidth: 120 },
     { field: "ISO_code", headerName: "Country Code", flex: 1, minWidth: 120 },
     {
       field: "transactional",
-      headerName: "Transactional (INR/Credit)",
+      headerName: "Utility (INR/Credit)",
       flex: 1,
       minWidth: 120,
     },
     {
       field: "promotional",
-      headerName: "Promotional (INR/Credit)",
+      headerName: "Marketing (INR/Credit)",
       flex: 1,
       minWidth: 120,
     },
@@ -183,18 +245,18 @@ function AccountInfoModal({ show, handleClose }) {
   ];
 
   const whatsApprows = Array.isArray(whatsapprate)
-    ? whatsapprate.map((item, index) => ({
+    ? whatsapprate?.map((item, index) => ({
         id: index + 1,
         sn: index + 1,
         country_name: item.country_name ?? "-",
-        ISO_code:  item.ISO_code ?? "-",
+        ISO_code: item.ISO_code ?? "-",
         transactional: item.transactional,
         promotional: item.promotional,
       }))
     : [];
 
   const rcsrows = Array.isArray(rcsrate)
-    ? rcsrate.map((item, index) => ({
+    ? rcsrate?.map((item, index) => ({
         id: index + 1,
         sn: index + 1,
         country_name: item.country_name,
@@ -274,41 +336,52 @@ function AccountInfoModal({ show, handleClose }) {
         modal
         draggable={false}
       >
-        {/* Account Expiry Badge */}
         <div className="flex justify-end mb-3">
           <span className="px-3 py-1 font-medium text-blue-700 bg-blue-100 rounded-md">
-            Account Expiry: 25/02/2024
+            Account Expiry: {accountInfo[0]?.expiryDate}
           </span>
         </div>
-
-        {/* Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full overflow-hidden rounded-lg shadow-lg bg-gray-50">
-            <thead className="text-center text-white bg-blue-500">
-              <tr>
-                <th className="p-3">Service</th>
-                {/* <th className="p-3">Credits</th> */}
-                <th className="p-3">Created On</th>
-                <th className="p-3">Plan Expiry</th>
-                <th className="p-3">Pricing</th>
-              </tr>
-            </thead>
-            <tbody className="text-center divide-y divide-gray-300">
-              {accountData.map((item, index) => (
-                <tr
-                  key={index}
-                  className="transition even:bg-gray-100 hover:bg-blue-50"
-                >
-                  <td className="p-3">{item.service}</td>
-                  {/* <td className="p-3">{item.credits}</td> */}
-                  <td className="p-3">{item.createdOn}</td>
-                  <td className="p-3">{item.expiry}</td>
-                  <td className="p-3">{item.pricing}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <Paper sx={{ height: "auto" }}>
+          <DataGrid
+            rows={accountrows}
+            columns={accountcolumns}
+            initialState={{ pagination: { paginationModel } }}
+            pageSizeOptions={[10, 20, 50]}
+            pagination
+            paginationModel={paginationModel}
+            onPaginationModelChange={setPaginationModel}
+            // checkboxSelection
+            rowHeight={45}
+            slots={{ footer: CustomFooter }}
+            // slotProps={{ footer: { totalRecords: rows.length } }}
+            onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
+            disableRowSelectionOnClick
+            // autoPageSize
+            disableColumnResize
+            disableColumnMenu
+            sx={{
+              border: 0,
+              "& .MuiDataGrid-cellCheckbox": {
+                outline: "none !important",
+              },
+              "& .MuiDataGrid-cell": {
+                outline: "none !important",
+              },
+              "& .MuiDataGrid-columnHeaders": {
+                color: "#193cb8",
+                fontSize: "14px",
+                fontWeight: "bold !important",
+              },
+              "& .MuiDataGrid-row--borderBottom": {
+                backgroundColor: "#e6f4ff !important",
+              },
+              "& .MuiDataGrid-columnSeparator": {
+                // display: "none",
+                color: "#ccc",
+              },
+            }}
+          />
+        </Paper>
       </Dialog>
 
       {/* RCS Pricing Modal */}
