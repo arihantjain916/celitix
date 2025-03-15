@@ -10,18 +10,38 @@ import {
   FormatBoldOutlined,
   FormatItalicOutlined,
   FormatStrikethroughOutlined,
+  LocalPhoneOutlined,
   SearchOutlined,
 } from "@mui/icons-material";
 import AttachmentOutlinedIcon from "@mui/icons-material/AttachmentOutlined";
 import { SpeedDial } from "primereact/speeddial";
 import FilePresentOutlinedIcon from "@mui/icons-material/FilePresentOutlined";
 import CustomEmojiPicker from "../components/CustomEmojiPicker";
+import { Sidebar } from "primereact/sidebar";
+import LocalPhoneOutlinedIcon from "@mui/icons-material/LocalPhoneOutlined";
+import SupportAgentOutlinedIcon from "@mui/icons-material/SupportAgentOutlined";
+import { Dialog } from "primereact/dialog";
+import InputField from "../components/InputField";
+import toast from "react-hot-toast";
+import ImagePreview from "./ImagePreview";
 
 export default function WhatsappLiveChat() {
+  const fileInputRef = useRef(null);
+  const [visibleRight, setVisibleRight] = useState(false);
+  const [dialogVisible, setDialogVisible] = useState(false);
+  const [imagePreviewVisible, setImagePreviewVisible] = useState(false);
+
+  const [agentList, setAgentList] = useState([]);
+  const [agentName, setAgentname] = useState("");
+  const [groupList, setGroupList] = useState([]);
+  const [selectedAgentList, setSelectedAgentList] = useState(null);
+  const [selectedGroupList, setSelectedGroupList] = useState(null);
+  const [selectedImage, setSelectedImage] = useState([]);
   const [chats, setChats] = useState([
     {
       id: 1,
       name: "John Doe",
+      phone: "+919672670732",
       image:
         "https://darrenjameseeley.files.wordpress.com/2014/09/expendables3.jpeg",
       messages: [
@@ -32,6 +52,7 @@ export default function WhatsappLiveChat() {
     {
       id: 2,
       name: "Jane Smith",
+      phone: "+919672670733",
       image:
         "https://darrenjameseeley.files.wordpress.com/2014/09/expendables3.jpeg",
       messages: [
@@ -67,6 +88,10 @@ export default function WhatsappLiveChat() {
   };
 
   useEffect(() => {
+    console.log(agentName + selectedAgentList + selectedGroupList);
+  }, [agentName, selectedAgentList, selectedGroupList]);
+
+  useEffect(() => {
     async function fetchWaba() {
       const res = await getWabaList();
       setWaba(res);
@@ -78,16 +103,26 @@ export default function WhatsappLiveChat() {
   useEffect(() => {
     console.log(search);
   }, [search]);
+  function deleteImages(index) {
+    setSelectedImage((prev) => {
+      const newSelectedImage = [...prev];
+      newSelectedImage.splice(index, 1);
+      return newSelectedImage;
+    });
+
+    // To see the updated state, use useEffect
+    console.log("Deleted Index:", index);
+  }
 
   const sendMessage = () => {
-    if (input.trim()) {
+    if (input.trim() || selectedImage) {
       const updatedChats = chats.map((chat) =>
         chat.id === activeChat.id
           ? {
               ...chat,
               messages: [
                 ...chat.messages,
-                { text: input, sender: "You" },
+                { text: selectedImage[0], sender: "You" },
                 { text: "Auto-reply: Got it!", sender: activeChat.name },
               ],
             }
@@ -96,15 +131,20 @@ export default function WhatsappLiveChat() {
       setChats(updatedChats);
       setActiveChat(updatedChats.find((chat) => chat.id === activeChat.id));
       setInput("");
+      setSelectedImage("");
     }
   };
+
+  useEffect(() => {
+    console.log(selectedImage);
+  }, [selectedImage]);
 
   const items = [
     {
       label: "Attachment",
       icon: <AttachmentOutlinedIcon />,
       command: () => {
-        console.log("Image Btn");
+        fileInputRef.current.click();
       },
     },
     {
@@ -122,6 +162,19 @@ export default function WhatsappLiveChat() {
       },
     },
   ];
+
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+
+    // Ensure total count doesn't exceed 10
+    if (files.length + selectedImage.length > 10) {
+      toast.error("You can only upload up to 10 files.");
+      return;
+    }
+
+    // Append new files while keeping the previous ones
+    setSelectedImage((prev) => [...prev, ...files]);
+  };
 
   return (
     <div className="flex h-[100%] bg-gray-100 overflow-hidden">
@@ -194,7 +247,7 @@ export default function WhatsappLiveChat() {
               onClick={() => setActiveChat(chat)}
             >
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-5">
+                <div className="flex items-center gap-">
                   <div className="relative">
                     <img
                       src={chat.image}
@@ -216,9 +269,9 @@ export default function WhatsappLiveChat() {
 
       {/* Chat Section */}
       {activeChat && (
-        <div className="flex flex-col flex-1 h-screen md:h-full ">
+        <div className="relative flex flex-col flex-1 h-screen md:h-full">
           {/* Header */}
-          <div className="flex items-center justify-between p-4 bg-white shadow-md fixed top-13 md:top-20 w-full md:w-[66.67%] z-0 md:-ml-0 -ml-3">
+          <div className="z-0 flex items-center justify-between w-full bg-white shadow-md h-15">
             <div className="flex items-center space-x-2">
               <IoArrowBack
                 className="text-xl cursor-pointer md:hidden"
@@ -231,10 +284,19 @@ export default function WhatsappLiveChat() {
               />
               <h3 className="text-lg font-semibold">{activeChat.name}</h3>
               <InfoOutlinedIcon
+                onClick={() => {
+                  setVisibleRight(true);
+                }}
                 sx={{
                   fontSize: "1.2rem",
                   color: "green",
                 }}
+              />
+            </div>
+            <div>
+              <SupportAgentOutlinedIcon
+                onClick={() => setDialogVisible(true)}
+                className="mr-2 cursor-pointer"
               />
             </div>
           </div>
@@ -255,44 +317,233 @@ export default function WhatsappLiveChat() {
             ))}
           </div>
 
+          {selectedImage.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-2">
+              {selectedImage.map((file, index) => (
+                <div className="relative" key={index}>
+                  <button
+                    onClick={() => setImagePreviewVisible(true)}
+                    className="flex items-center gap-1 "
+                  >
+                    <img
+                      src={URL.createObjectURL(file)}
+                      alt=""
+                      className="object-cover w-20 h-20"
+                    />
+                  </button>
+                  <span
+                    className="absolute text-red-500 cursor-pointer top-1 right-1"
+                    onClick={() => deleteImages(index)}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="w-4 h-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      / Add code to remove the image from the selectedImage
+                      array
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+
           {/* Input */}
-          <div className="relative flex items-center w-full p-4 bg-white border-t mb-17 md:mb-0">
+          <div className="flex items-center w-full p-4 bg-white border-t mb-17 md:mb-0">
             <div className="mr-2">
               <CustomEmojiPicker position="top" onSelect={insertEmoji} />
             </div>
-            <input
-              type="text"
-              className="flex-1 p-2 border rounded-lg focus:outline-none"
-              placeholder="Type a message..."
-              ref={inputRef}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-            />
-            <button
-              onClick={sendMessage}
-              className="absolute p-2 ml-2 text-white bg-blue-500 rounded-lg right-6"
-            >
-              <FiSend />
-            </button>
-            <div>
-              <SpeedDial
-                model={items}
-                direction="up"
-                style={{ bottom: 21, right: 55 }}
-                buttonStyle={{
-                  width: "2rem",
-                  height: "2rem",
-                }}
+            <div className="relative w-full border rounded-lg">
+              <input
+                type="text"
+                className="flex-1 md:w-[35rem] w-[14rem] p-2 focus:outline-none"
+                placeholder="Type a message..."
+                ref={inputRef}
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && sendMessage()}
               />
-            </div>
-            <div className="absolute flex items-center justify-center gap-1 right-28">
-              <FormatBoldOutlined />
-              <FormatItalicOutlined />
-              <FormatStrikethroughOutlined />
+              <button
+                onClick={sendMessage}
+                className="absolute p-2 ml-2 text-white bg-blue-500 rounded-lg right-2 bottom-1"
+              >
+                <FiSend />
+              </button>
+              <div>
+                <SpeedDial
+                  model={items}
+                  direction="up"
+                  style={{ bottom: 4, right: 40 }}
+                  buttonStyle={{
+                    width: "2rem",
+                    height: "2rem",
+                  }}
+                />
+              </div>
+              <div className="absolute items-center justify-center hidden gap-1 right-25 bottom-2 md:flex">
+                <FormatBoldOutlined />
+                <FormatItalicOutlined />
+                <FormatStrikethroughOutlined />
+              </div>
             </div>
           </div>
+          <Sidebar
+            visible={visibleRight}
+            position="right"
+            onHide={() => setVisibleRight(false)}
+            style={{ height: "630px", position: "absolute", bottom: 0 }}
+          >
+            <div className="flex flex-col justify-center gap-2">
+              <div className="flex items-center gap-2">
+                <img
+                  src={activeChat.image}
+                  alt=""
+                  className="w-10 h-10 rounded-full"
+                />
+                <h1>{activeChat.name}</h1>
+              </div>
+              <div className="flex items-center gap-2">
+                <LocalPhoneOutlinedIcon />
+                <p>{activeChat.phone}</p>
+              </div>
+            </div>
+
+            <div className="space-x-2 text-[0.9rem]">
+              <div className="grid grid-cols-2 gap-4 p-2 border-gray-300 border-1">
+                <p>Status</p>
+                <p className="text-right">Requesting</p>
+              </div>
+              <div className="grid grid-cols-2 gap-4 p-2 border-gray-300 border-1">
+                <p>Last Active</p>
+                <p className="text-right">12/03/2025 10:35:35</p>
+              </div>
+              <div className="grid grid-cols-2 gap-4 p-2 border-gray-300 border-1">
+                <p>Template Messages</p>
+                <p className="text-right">2</p>
+              </div>
+              <div className="grid grid-cols-2 gap-4 p-2 border-gray-300 border-1">
+                <p>Session Messages</p>
+                <p className="text-right">2</p>
+              </div>
+              <div className="grid grid-cols-2 gap-4 p-2 border-gray-300 border-1">
+                <p>Unresolved Queries</p>
+                <p className="text-right">0</p>
+              </div>
+              <div className="grid grid-cols-2 gap-4 p-2 border-gray-300 border-1">
+                <p>Source</p>
+                <p className="text-right">IMPORTED</p>
+              </div>
+              <div className="grid grid-cols-2 gap-4 p-2 border-gray-300 border-1">
+                <p>First Message</p>
+                <p className="text-right">-</p>
+              </div>
+              <div className="grid grid-cols-2 gap-4 p-2 border-gray-300 border-1">
+                <p>WA Conversation</p>
+                <p className="text-right">Active</p>
+              </div>
+              <div className="grid grid-cols-2 gap-4 p-2 border-gray-300 border-1">
+                <p>MAU Status</p>
+                <p className="text-right">Active</p>
+              </div>
+              <div className="grid grid-cols-2 gap-4 p-2 border-gray-300 border-1">
+                <p>Incoming</p>
+                <p className="text-right">Allowed</p>
+              </div>
+              <div className="grid grid-cols-2 gap-4 p-2 border-gray-300 border-1">
+                <p>Circle</p>
+                <p className="text-right">Rajasthan</p>
+              </div>
+            </div>
+          </Sidebar>
         </div>
+      )}
+      <Dialog
+        visible={dialogVisible}
+        style={{ width: "50vw" }}
+        draggable={false}
+        onHide={() => {
+          if (!dialogVisible) return;
+          setDialogVisible(false);
+        }}
+      >
+        <div className="space-y-3">
+          <AnimatedDropdown
+            options={[
+              {
+                value: "arIHANT1",
+                label: "Arihant",
+              },
+              {
+                value: "aRIHANT2",
+                label: "Arihant",
+              },
+            ]}
+            id="agentList"
+            name="agentList"
+            label="Agent List"
+            tooltipContent="Select Agent"
+            tooltipPlacement="right"
+            value={selectedAgentList}
+            onChange={(value) => setSelectedAgentList(value)}
+            placeholder="Agent List"
+          />
+
+          <InputField
+            label="Agent Name"
+            tooltipContent="Enter Agent Name"
+            id="agentname"
+            name="agentname"
+            type="tel"
+            value={agentName}
+            onChange={(e) => setAgentname(e.target.value)}
+            placeholder="Enter Agent Name"
+          />
+          <AnimatedDropdown
+            options={[
+              {
+                value: "arIHANT3",
+                label: "Arihant",
+              },
+              {
+                value: "aRIHANT4",
+                label: "Arihant",
+              },
+            ]}
+            id="group"
+            name="group"
+            label="Group"
+            tooltipContent="Select Group"
+            tooltipPlacement="right"
+            value={selectedGroupList}
+            onChange={(value) => setSelectedGroupList(value)}
+            placeholder="Group"
+          />
+        </div>
+      </Dialog>
+      <input
+        type="file"
+        ref={fileInputRef}
+        style={{ display: "none" }}
+        onChange={handleFileChange}
+        accept="image/*"
+        multiple
+      />
+
+      {imagePreviewVisible && (
+        <ImagePreview
+          imagePreviewVisible={imagePreviewVisible}
+          setImagePreviewVisible={setImagePreviewVisible}
+          images={selectedImage}
+        />
       )}
     </div>
   );
