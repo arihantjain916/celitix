@@ -30,3 +30,21 @@ export const getaccountInfo = async () => {
     method: "POST",
   });
 };
+
+export const getSmsRate = async (sno) => {
+  return await fetchWithAuth(
+    `proCpaasRest/accountInfo/getSmsPricing?srno=${sno}`,
+    {
+      method: "POST",
+    }
+  );
+};
+
+// export const getRcsRate = async (sno) => {
+//   return await fetchWithAuth(
+//     `/proCpaasRest/accountInfo/getAllRCSRateData?countryCode=&countryName=`,
+//     {
+//       method: "POST",
+//     }
+//   );
+// };
