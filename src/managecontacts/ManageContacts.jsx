@@ -22,6 +22,7 @@ import toast from "react-hot-toast";
 import UniversalSkeleton from "../whatsapp/components/UniversalSkeleton";
 import {
   addContact,
+  addGrp,
   getContactListByGrpId,
   getGrpList,
 } from "../apis/contact/contact";
@@ -62,6 +63,7 @@ const ManageContacts = () => {
     allowishes: "",
     gender: "",
   });
+  const [groupName, setGroupName] = useState("");
 
   useEffect(() => {
     async function getGrpListData() {
@@ -71,6 +73,20 @@ const ManageContacts = () => {
 
     getGrpListData();
   }, []);
+
+  const handleAddGroup = async () => {
+    const res = await addGrp({
+      groupName,
+    });
+
+    if (res.flag) {
+      setGroupName("");
+      toast.success(res.message);
+      setaddGroupVisible(false);
+    } else {
+      toast.error(res.message ?? "Something went wrong");
+    }
+  };
 
   const multiGroup = [
     { value: "Group 1", label: "Group 1" },
@@ -106,18 +122,6 @@ const ManageContacts = () => {
     { value: "Yes", label: "Yes" },
     { value: "No", label: "No" },
   ];
-  const handleOptionChange2 = (event) => {
-    setSelectedAddWish(event.target.value);
-    // console.log("Selected Option:", event.target.value);
-  };
-  const gamderadd = [
-    { value: "Male", label: "Male" },
-    { value: "Female", label: "Female" },
-  ];
-  const handleOptionChange3 = (event) => {
-    setSelectedGamderAdd(event.target.value);
-    // console.log("Selected Option:", event.target.value);
-  };
 
   const selectedManageGroups = (option, props) => {
     if (option) {
@@ -164,7 +168,7 @@ const ManageContacts = () => {
       setaddContactVisible(false);
       toast.success(res.message);
     } else {
-      toast.error(res.message);
+      toast.error(res.message ?? "Something went wrong");
     }
   };
 
@@ -480,6 +484,10 @@ const ManageContacts = () => {
                   name="addGroupname"
                   type="text"
                   placeholder="Enter group name..."
+                  value={groupName}
+                  onChange={(e) => {
+                    setGroupName(e.target.value);
+                  }}
                 />
                 <div className="flex justify-center mt-2">
                   <UniversalButton
@@ -487,6 +495,7 @@ const ManageContacts = () => {
                     name="addnewgroup"
                     label="Submit"
                     variant="primary"
+                    onClick={handleAddGroup}
                   />
                 </div>
               </TabPanel>
