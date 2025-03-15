@@ -23,10 +23,12 @@ import UniversalSkeleton from "../whatsapp/components/UniversalSkeleton";
 import {
   addContact,
   addGrp,
+  deleteGrp,
   getContactListByGrpId,
   getGrpList,
 } from "../apis/contact/contact";
 import DropdownWithSearch from "../whatsapp/components/DropdownWithSearch";
+import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 
 const ManageContacts = () => {
   const [selectedMultiGroup, setSelectedMultiGroup] = useState(null);
@@ -64,6 +66,8 @@ const ManageContacts = () => {
     gender: "",
   });
   const [groupName, setGroupName] = useState("");
+  const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
+  const [deleteGrpId, setDeleteGrpId] = useState("");
 
   useEffect(() => {
     async function getGrpListData() {
@@ -348,6 +352,13 @@ const ManageContacts = () => {
     setMmanageContactFirst(e.target.value);
   };
 
+  const handleGrpDelete = async () => {
+    if (!deleteGrpId) return;
+    const res = await deleteGrp(deleteGrpId.groupName, deleteGrpId.groupCode);
+    toast.success(res);
+
+  };
+
   return (
     <div>
       <div className="flex flex-wrap items-end justify-end w-full gap-4 pb-1 align-middle">
@@ -502,7 +513,7 @@ const ManageContacts = () => {
               <TabPanel header="Manage" rightIcon="pi pi-user ml-2">
                 <div className="m-0">
                   <div className="flex card justify-content-center">
-                   <DropdownWithSearch
+                    <DropdownWithSearch
                       value={selectedmanageGroups}
                       onChange={(e) => setSelectedManageGroups(e.value)}
                       options={grpList?.map((item) => ({
@@ -534,15 +545,19 @@ const ManageContacts = () => {
                             {group.groupName}
                           </td>
                           <td className="flex gap-3 px-4 py-1">
-                            <IconButton
+                            {/* <IconButton
                               className="no-xs"
-                              onClick={() => handleView(group)}
+                              // onClick={() => handleView(group)}
                             >
-                              <DeleteIcon
-                                sx={{ fontSize: "1.2rem", color: "green" }}
-                              />
-                            </IconButton>
-                            <IconButton onClick={() => handleDuplicate(group)}>
+                            </IconButton> */}
+                            <DeleteIcon
+                              sx={{ fontSize: "1.2rem", color: "green" }}
+                              onClick={() => {
+                                setDeleteGrpId(group);
+                                setDeleteDialogVisible(true);
+                              }}
+                            />
+                            <IconButton>
                               <EditNoteIcon
                                 sx={{ fontSize: "1.2rem", color: "gray" }}
                               />
@@ -825,6 +840,56 @@ const ManageContacts = () => {
           </div>
         </Dialog>
       </div>
+
+      <Dialog
+        header="Confirm Deletion"
+        visible={deleteDialogVisible}
+        onHide={() => setDeleteDialogVisible(false)}
+        className="w-[30rem]"
+        draggable={false}
+      >
+        <div className="flex items-center justify-center">
+          {/* <ErrorOutlineOutlinedIcon
+                  sx={{
+                    fontSize: 64,
+                  }}
+                /> */}
+          <CancelOutlinedIcon
+            sx={{
+              fontSize: 64,
+              color: "#ff3f3f",
+            }}
+          />
+        </div>
+        <div className="p-4 text-center">
+          <p className="text-[1.1rem] font-semibold text-gray-700">
+            Are you sure you want to delete the group <br />
+            <span className="text-green-500">"{deleteGrpId?.groupName}"</span>
+          </p>
+          <p className="mt-2 text-sm text-gray-500">
+            This action is irreversible.
+          </p>
+        </div>
+
+        <div className="flex justify-center gap-4 mt-2">
+          <UniversalButton
+            label="Cancel"
+            style={{
+              backgroundColor: "#090909",
+            }}
+            onClick={() => setDeleteDialogVisible(false)}
+          />
+          <UniversalButton
+            label="Delete"
+            style={
+              {
+                // backgroundColor: "red",
+              }
+            }
+            onClick={handleGrpDelete}
+          />
+        </div>
+      </Dialog>
     </div>
   );
 };
