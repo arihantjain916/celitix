@@ -26,7 +26,7 @@ import {
   getContactListByGrpId,
   getGrpList,
 } from "../apis/contact/contact";
-import { add, set } from "date-fns";
+import DropdownWithSearch from "../whatsapp/components/DropdownWithSearch";
 
 const ManageContacts = () => {
   const [selectedMultiGroup, setSelectedMultiGroup] = useState(null);
@@ -502,7 +502,7 @@ const ManageContacts = () => {
               <TabPanel header="Manage" rightIcon="pi pi-user ml-2">
                 <div className="m-0">
                   <div className="flex card justify-content-center">
-                    <AnimatedDropdown
+                   <DropdownWithSearch
                       value={selectedmanageGroups}
                       onChange={(e) => setSelectedManageGroups(e.value)}
                       options={grpList?.map((item) => ({
@@ -525,12 +525,14 @@ const ManageContacts = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {groups.map((group) => (
+                      {grpList?.map((group) => (
                         <tr
                           key={group.id}
                           className="h-10 border-b border-gray-300"
                         >
-                          <td className="px-4 py-1 border-r">{group.name}</td>
+                          <td className="px-4 py-1 border-r">
+                            {group.groupName}
+                          </td>
                           <td className="flex gap-3 px-4 py-1">
                             <IconButton
                               className="no-xs"
