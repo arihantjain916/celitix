@@ -20,7 +20,12 @@ import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import toast from "react-hot-toast";
 import UniversalSkeleton from "../whatsapp/components/UniversalSkeleton";
-import { getContactListByGrpId, getGrpList } from "../apis/contact/contact";
+import {
+  addContact,
+  getContactListByGrpId,
+  getGrpList,
+} from "../apis/contact/contact";
+import { add, set } from "date-fns";
 
 const ManageContacts = () => {
   const [selectedMultiGroup, setSelectedMultiGroup] = useState(null);
@@ -46,6 +51,17 @@ const ManageContacts = () => {
   const [manageContactMobile, setManageContactMobile] = useState("");
   const [allContacts, setAllContacts] = useState([]);
   const [grpList, setGrpList] = useState([]);
+  const [addContactDetails, setAddContactDetails] = useState({
+    firstName: "",
+    middleName: "",
+    lastName: "",
+    mobileNo: "",
+    emailId: "",
+    birthDate: "",
+    mariageDate: "",
+    allowishes: "",
+    gender: "",
+  });
 
   useEffect(() => {
     async function getGrpListData() {
@@ -113,6 +129,43 @@ const ManageContacts = () => {
     }
 
     return <span>{props.placeholder}</span>;
+  };
+
+  const handleAllAddContact = async () => {
+    if (!selectedMultiGroupContact) {
+      toast.error("Please select group contact");
+      return;
+    }
+    const emptyState = Object.keys(addContactDetails).find(function (x) {
+      return addContactDetails[x] === "" || addContactDetails[x] === null;
+    });
+
+    if (emptyState) {
+      toast.error(`${emptyState} is required`);
+      return;
+    }
+
+    const data = {
+      groupSrNo: selectedMultiGroupContact,
+      ...addContactDetails,
+      birthDate: new Date(addContactDetails.birthDate).toLocaleDateString(
+        "en-GB"
+      ),
+      mariageDate: new Date(addContactDetails.mariageDate).toLocaleDateString(
+        "en-GB"
+      ),
+      allowishes: addContactDetails.allowishes === "Yes" ? 1 : 0,
+    };
+
+    const res = await addContact(data);
+    if (res.flag) {
+      setAddContactDetails({});
+      setSelectedMultiGroupContact("");
+      setaddContactVisible(false);
+      toast.success(res.message);
+    } else {
+      toast.error(res.message);
+    }
   };
 
   const manageGroupsOption = (option) => {
@@ -440,10 +493,13 @@ const ManageContacts = () => {
               <TabPanel header="Manage" rightIcon="pi pi-user ml-2">
                 <div className="m-0">
                   <div className="flex card justify-content-center">
-                    <Dropdown
+                    <AnimatedDropdown
                       value={selectedmanageGroups}
                       onChange={(e) => setSelectedManageGroups(e.value)}
-                      options={manageGroups}
+                      options={grpList?.map((item) => ({
+                        value: item.groupCode,
+                        label: item.groupName,
+                      }))}
                       optionLabel="name"
                       placeholder="Select Groups"
                       filter
@@ -503,15 +559,17 @@ const ManageContacts = () => {
           }}
         >
           <div className="m-0">
-            <MultiSelect
+            <AnimatedDropdown
               className="custom-multiselect"
               placeholder="Select Groups"
               maxSelectedLabels={0}
               optionLabel="name"
-              options={multiGroupContact}
+              options={grpList?.map((item) => ({
+                value: item.groupCode,
+                label: item.groupName,
+              }))}
               value={selectedMultiGroupContact}
-              onChange={(e) => setSelectedMultiGroupContact(e.value)}
-              filter
+              onChange={(e) => setSelectedMultiGroupContact(e)}
             />
             <RadioGroupField
               name="addImportContact"
@@ -529,55 +587,137 @@ const ManageContacts = () => {
                     id="userfirstname"
                     name="userfirstname"
                     type="text"
+                    value={addContactDetails.firstName}
+                    onChange={(e) =>
+                      setAddContactDetails({
+                        ...addContactDetails,
+                        firstName: e.target.value,
+                      })
+                    }
+                    required={true}
                   />
                   <InputField
                     placeholder="Enter middle name.."
                     id="usermiddlename"
                     name="usermiddlename"
                     type="text"
+                    value={addContactDetails.middleName}
+                    onChange={(e) =>
+                      setAddContactDetails({
+                        ...addContactDetails,
+                        middleName: e.target.value,
+                      })
+                    }
                   />
                   <InputField
                     placeholder="Enter last name.."
                     id="userlastname"
                     name="userlastname"
                     type="text"
+                    value={addContactDetails.lastName}
+                    onChange={(e) =>
+                      setAddContactDetails({
+                        ...addContactDetails,
+                        lastName: e.target.value,
+                      })
+                    }
+                    required={true}
                   />
                   <InputField
                     placeholder="Enter mobile no.."
                     id="mobilenumber"
                     name="mobilenumber"
                     type="number"
+                    value={addContactDetails.mobileNo}
+                    onChange={(e) =>
+                      setAddContactDetails({
+                        ...addContactDetails,
+                        mobileNo: e.target.value,
+                      })
+                    }
+                    required={true}
                   />
                   <InputField
                     placeholder="Enter email id.."
                     id="emailid"
                     name="emailid"
                     type="email"
+                    value={addContactDetails.emailId}
+                    onChange={(e) =>
+                      setAddContactDetails({
+                        ...addContactDetails,
+                        emailId: e.target.value,
+                      })
+                    }
+                    required={true}
                   />
                   <InputField
                     placeholder="Enter unique id.."
                     id="uniqueid"
                     name="uniqueid"
                     type="text"
+                    value={addContactDetails.uniqueId}
+                    onChange={(e) =>
+                      setAddContactDetails({
+                        ...addContactDetails,
+                        uniqueId: e.target.value,
+                      })
+                    }
                   />
-                  <UniversalDatePicker label="Birth Date" />
+                  <UniversalDatePicker
+                    label="Birth Date"
+                    className="mb-0"
+                    value={addContactDetails.birthDate}
+                    onChange={(e) =>
+                      setAddContactDetails({
+                        ...addContactDetails,
+                        birthDate: e,
+                      })
+                    }
+                    required={true}
+                  />
                   <UniversalDatePicker
                     label="Anniversary Date"
                     className="mb-0"
+                    value={addContactDetails.mariageDate}
+                    onChange={(e) =>
+                      setAddContactDetails({
+                        ...addContactDetails,
+                        mariageDate: e,
+                      })
+                    }
+                    required={true}
                   />
                   <RadioGroupField
+                    label={"Allowishes?"}
                     name="addwish"
                     id="addwish"
                     options={addwish}
-                    value={selectedaddwish}
-                    onChange={handleOptionChange2}
+                    value={addContactDetails.allowishes}
+                    onChange={(e) =>
+                      setAddContactDetails({
+                        ...addContactDetails,
+                        allowishes: e.target.value,
+                      })
+                    }
+                    required={true}
                   />
                   <RadioGroupField
+                    label={"Gender?"}
                     name="gamderadd"
                     id="addgamderaddImportContact"
-                    options={gamderadd}
-                    value={selectedgamderadd}
-                    onChange={handleOptionChange3}
+                    options={[
+                      { value: "m", label: "Male" },
+                      { value: "f", label: "Female" },
+                    ]}
+                    value={addContactDetails.gender}
+                    onChange={(e) =>
+                      setAddContactDetails({
+                        ...addContactDetails,
+                        gender: e.target.value,
+                      })
+                    }
+                    required={true}
                   />
                 </div>
                 <div className="flex justify-center mt-2">
@@ -586,7 +726,7 @@ const ManageContacts = () => {
                     name="addnewConcat"
                     label="Submit"
                     variant="primary"
-                    onClick={handleSearch}
+                    onClick={handleAllAddContact}
                   />
                 </div>
               </div>
