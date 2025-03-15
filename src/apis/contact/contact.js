@@ -18,3 +18,10 @@ export const addContact = async (data) => {
     body: JSON.stringify(data),
   });
 };
+
+export const addGrp = async (data) => {
+  return await fetchWithAuth("/proCpaasRest/group/addGroup", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
