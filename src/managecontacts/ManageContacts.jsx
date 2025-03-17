@@ -186,11 +186,15 @@ const ManageContacts = () => {
     } else if (selectedddImportContact === "option2") {
       data = {
         groupNo: selectedMultiGroupContact,
-        ...addContactDetails,
-        mobile: addContact.mariageDate,
-        email: addContact.emailId,
-        birth: addContact.birthDate,
-        marriage: addContact.mariageDate,
+        // ...addContactDetails,
+        firstName: addContactDetails.firstName,
+        middleName: addContactDetails.middleName,
+        lastName: addContactDetails.lastName,
+        gender: addContactDetails.gender,
+        birth: addContactDetails.birthDate,
+        mobile: addContactDetails.mobileNo,
+        marriage: addContactDetails.mariageDate,
+        email: addContactDetails.emailId,
         noOfRow: totalRecords,
         filePath: filePath,
       };
