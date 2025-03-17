@@ -50,3 +50,25 @@ export const updateGroupName = async (grpSrno, grpName) => {
     }
   );
 };
+
+export const uploadContactFile = async (file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  try {
+    const response = await fetchWithAuth(
+      "/proCpaasRest/campaignFile/UploadContactFile",
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    if (response) {
+      console.log("excel file uplaod", response);
+      return response;
+    }
+  } catch (error) {
+    console.error("Error uploading file:", error);
+  }
+};

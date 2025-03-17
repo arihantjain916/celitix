@@ -28,6 +28,7 @@ import {
   getGrpList,
   importContact,
   updateGroupName,
+  uploadContactFile,
 } from "../apis/contact/contact";
 import DropdownWithSearch from "../whatsapp/components/DropdownWithSearch";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
@@ -346,7 +347,7 @@ const ManageContacts = () => {
       }
       setIsUploading(true);
       try {
-        const response = await campaignUploadFile(uploadedFile);
+        const response = await uploadContactFile(uploadedFile);
         console.log(response);
         setIsUploaded(true);
         toast.success("File uploaded successfully.");
