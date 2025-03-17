@@ -30,6 +30,7 @@ const TemplateForm = ({
   fileHeaders,
   selectedTemplateData,
   onUrlIndexChange,
+  setVarLength,
 }) => {
   const [inputValues, setInputValues] = useState({});
   const [selectedVariable, setSelectedVariable] = useState("");
@@ -117,7 +118,6 @@ const TemplateForm = ({
 
   const handleInputChange = (e, variable, type = "body") => {
     const { value } = e.target;
-    console.log("Values", value);
     setInputValues((prev) => ({
       ...prev,
       [`${type}${variable}`]: value,
@@ -126,9 +126,6 @@ const TemplateForm = ({
     onInputChange(value, `${type}${variable}`);
   };
 
-  useEffect(() => {
-    console.log(inputValues);
-  }, [inputValues]);
 
   const handleSelectVariable = (variable, inputKey, type = "body") => {
     setInputValues((prev) => {
@@ -229,10 +226,6 @@ const TemplateForm = ({
     toast.success("Image removed successfully.");
   };
 
-  useEffect(() => {
-    console.log("Received fileHeaders in TemplateForm:", fileHeaders);
-  }, [fileHeaders]);
-
   return (
     <div className="rounded-md shadow-sm">
       <div className="bg-[#128C7E] p-2 rounded-t-md">
@@ -249,6 +242,7 @@ const TemplateForm = ({
         {templateDataNew?.components.map((component, idx) => {
           if (component.type === "BODY") {
             const extractedVariables = extractVariablesFromText(component.text);
+            setVarLength(extractedVariables.length);
             return (
               <div key={component.id || idx} className="space-y-1.5">
                 <div className="flex items-center gap-1">
