@@ -143,26 +143,6 @@ function RadioButtonLaunchCampaign({
     }
   };
 
-  // Parse uploaded file and extract headers and data
-  // const parseFile = (file) => {
-  //   const reader = new FileReader();
-  //   reader.onload = () => {
-  //     const workbook = XLSX.read(reader.result, { type: "binary" });
-  //     const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-  //     const jsonData = XLSX.utils.sheet_to_json(firstSheet);
-  //     // const headers = Object.keys(jsonData[0]);
-  //     const headers = jsonData.length > 0 ? Object.keys(jsonData[0]) : [];
-  //     // const headers = Object.keys(jsonData[0] || {}).map(header => header.trim()); // Trim header names
-  //     console.log("Extracted headers:", headers);
-
-  //     setFileData(jsonData);
-  //     setColumns(headers);
-  //     setFileHeaders(headers);
-  //     setIsUploaded(false); // Reset to "File Selected" if a new file is selected
-  //     setTotalRecords(jsonData.length);
-  //   };
-  //   reader.readAsBinaryString(file);
-  // };
 
   // Handle file removal
   const handleRemoveFile = () => {
@@ -182,7 +162,6 @@ function RadioButtonLaunchCampaign({
 
   const handleMobileColumnChange = (value) => {
     setSelectedMobileColumn(value);
-    console.log(value)
   };
 
   const handleDragOver = (event) => {
@@ -202,7 +181,6 @@ function RadioButtonLaunchCampaign({
 
   useEffect(() => {
     if (fileHeaders.length > 0) {
-      // console.log("Sending Selected Country Code to Parent:", selectedCountryCode);
       onFileUpload(
         xlsxPath,
         fileHeaders,
@@ -229,31 +207,6 @@ function RadioButtonLaunchCampaign({
     addCountryCode,
   ]); // ✅ Now listens for country code updates
 
-  // Excel file upload
-  // const handleFileUpload = async () => {
-  //   if (uploadedFile) {
-  //     if (isUploaded) {
-  //       toast.error("File already uploaded. Please select a different one.");
-  //       return;
-  //     }
-  //     setIsUploading(true);
-  //     try {
-  //       const response = await campaignUploadFile(uploadedFile);
-  //       console.log("File uploaded successfully :", response)
-  //       setIsUploaded(true);
-  //       toast.success("File uploaded successfully.");
-  //       setColumns(response.headers);
-  //       setFileData(response.sampleRecords);
-  //       setFileHeaders(response.headers || [])
-  //     } catch (error) {
-  //       toast.error("File upload failed: " + error.message);
-  //     } finally {
-  //       setIsUploading(false);
-  //     }
-  //   } else {
-  //     toast.error("No file selected for upload.");
-  //   }
-  // };
 
   const handleFileUpload = async () => {
     if (!uploadedFile) {
@@ -273,8 +226,7 @@ function RadioButtonLaunchCampaign({
 
       if (response?.message === "File Upload Successfully") {
         setIsUploaded(true);
-        setXlsxPath(response.filepath); // ✅ Store file path in state
-        console.log("xlsxpath - ", response.filepath);
+        setXlsxPath(response.filepath);
 
         // ✅ Store only sampleRecords instead of full file data
         setFileData(response.sampleRecords || []);
@@ -306,7 +258,6 @@ function RadioButtonLaunchCampaign({
     const fetchWabaShowGroupsList = async () => {
       try {
         const response = await getWabaShowGroupsList();
-        console.log("waba group list", response);
         // if (response) {
         //   setGroups(response);
         if (response && Array.isArray(response)) {
@@ -330,7 +281,6 @@ function RadioButtonLaunchCampaign({
         setIsLoading(true);
 
         const response = await getCountryList();
-        // console.log("Country List:", response);
         if (response) {
           // getCountryList(response);
           setCountryList(response);
@@ -430,7 +380,6 @@ function RadioButtonLaunchCampaign({
               // ✅ Convert array to comma-separated string
               const groupValues =
                 selectedValues.length > 0 ? selectedValues.join(",") : "-1";
-              console.log("Selected Group Codes:", groupValues);
 
               onGroupChange(groupValues);
             }}
