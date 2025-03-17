@@ -23,7 +23,6 @@ function RadioButtonLaunchCampaign({
   onUrlIndexChange,
   groups,
   setGroups,
-  updateHeaders,
 }) {
   const [selectedOption, setSelectedOption] = useState("option2");
   const [selectedGroups, setSelectedGroups] = useState([]);

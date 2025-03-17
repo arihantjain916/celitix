@@ -219,6 +219,10 @@ const WhatsappLaunchCampaign = () => {
     setDialogVisible(true);
   };
 
+  useEffect(() => {
+    console.log("headers: ", fileHeaders);
+  }, [fileHeaders]);
+
   const handleFinalSubmit = async (event) => {
     if (event) event.preventDefault();
 
@@ -476,10 +480,6 @@ const WhatsappLaunchCampaign = () => {
     }
   };
 
-  const updateHeaders = () => {
-    setFileHeaders([]);
-  };
-
   return (
     <div className="max-w-full">
       {isLoading ? (
@@ -548,7 +548,7 @@ const WhatsappLaunchCampaign = () => {
                         setFormData({});
                         setImagePreview(null);
                         setImageFile(null);
-                        setFileHeaders([]);
+                        // setFileHeaders([]);
                       }}
                       placeholder="Select Template"
                     />
@@ -581,7 +581,6 @@ const WhatsappLaunchCampaign = () => {
                     onOptionChange={handleOptionChange}
                     selectedOption={selectedOption}
                     onFileUpload={handleFileHeadersUpdate}
-                    updateHeaders={updateHeaders}
                     onGroupChange={handleGroupChange}
                     setSelectedGroups={setSelectedGroups}
                     onUrlIndexChange={setUrlIndex}
