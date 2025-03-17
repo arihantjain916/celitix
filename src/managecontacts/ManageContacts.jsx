@@ -27,11 +27,13 @@ import {
   getContactListByGrpId,
   getGrpList,
   importContact,
+  updateGroupName,
 } from "../apis/contact/contact";
 import DropdownWithSearch from "../whatsapp/components/DropdownWithSearch";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import CustomNoRowsOverlay from "../whatsapp/components/CustomNoRowsOverlay";
 import { campaignUploadFile } from "../apis/whatsapp/whatsapp";
+import { eslintUseValue } from "@mui/x-data-grid/internals";
 
 const ManageContacts = () => {
   const [selectedMultiGroup, setSelectedMultiGroup] = useState(null);
@@ -43,7 +45,7 @@ const ManageContacts = () => {
   const [addGroupvisible, setaddGroupVisible] = useState(false);
   const [addContactvisible, setaddContactVisible] = useState(false);
   const [selectedddImportContact, setSelectedAddImportContact] =
-    useState("option2");
+    useState("option1");
   const [selectedaddwish, setSelectedAddWish] = useState("No");
   const [selectedgamderadd, setSelectedGamderAdd] = useState("");
   const [isUploading, setIsUploading] = useState(false);
@@ -71,10 +73,12 @@ const ManageContacts = () => {
   const [groupName, setGroupName] = useState("");
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
   const [deleteGrpId, setDeleteGrpId] = useState("");
+  const [updateGrpId, setUpdateGrpId] = useState("");
   const [importContactFormVisible, setImportContactFormVisible] =
     useState(false);
 
   const [filePath, setFilePath] = useState("");
+  const [editGrpVisible, setEditGrpVisible] = useState(false);
 
   useEffect(() => {
     async function getGrpListData() {
@@ -271,6 +275,18 @@ const ManageContacts = () => {
       } else {
         toast.error("Only Excel files (.xls, .xlsx, .xlsm) are supported.");
       }
+    }
+  };
+
+  const handleUpdateGrpName = async () => {
+    const res = await updateGroupName(updateGrpId.groupCode, groupName);
+    if (res?.message.includes("updated")) {
+      toast.success(res?.message);
+      setEditGrpVisible(false);
+      setaddGroupVisible(false);
+      setGroupName("")
+    } else {
+      toast.error(res?.message);
     }
   };
 
@@ -572,21 +588,23 @@ const ManageContacts = () => {
                             {group.groupName}
                           </td>
                           <td className="flex gap-3 px-4 py-1">
-                            {/* <IconButton
-                              className="no-xs"
-                              // onClick={() => handleView(group)}
-                            >
-                            </IconButton> */}
-                            <DeleteIcon
-                              sx={{ fontSize: "1.2rem", color: "green" }}
-                              onClick={() => {
-                                setDeleteGrpId(group);
-                                setDeleteDialogVisible(true);
-                              }}
-                            />
+                            <IconButton className="no-xs">
+                              <DeleteIcon
+                                sx={{ fontSize: "1.2rem", color: "green" }}
+                                onClick={() => {
+                                  setDeleteGrpId(group);
+                                  setDeleteDialogVisible(true);
+                                }}
+                              />
+                            </IconButton>
+
                             <IconButton>
                               <EditNoteIcon
                                 sx={{ fontSize: "1.2rem", color: "gray" }}
+                                onClick={() => {
+                                  setUpdateGrpId(group);
+                                  setEditGrpVisible(true);
+                                }}
                               />
                             </IconButton>
                           </td>
@@ -1114,6 +1132,36 @@ const ManageContacts = () => {
               }
             }
             onClick={handleGrpDelete}
+          />
+        </div>
+      </Dialog>
+
+      <Dialog
+        header="Edit Group Name"
+        visible={editGrpVisible}
+        onHide={() => setEditGrpVisible(false)}
+        className="w-[30rem]"
+        draggable={false}
+      >
+        <div className="flex gap-1.5 flex-col">
+          <InputField
+            label="New Group Name"
+            id="name"
+            name="name"
+            type="text"
+            tooltipContent="Enter Group Name"
+            placeholder="Enter Group Name"
+            value={groupName}
+            onChange={(e) => {
+              setGroupName(e.target.value);
+            }}
+          />
+          <UniversalButton
+            id="addgroupbtn"
+            name="addgroupbtn"
+            label="Update Group Name"
+            className="mt-2"
+            onClick={handleUpdateGrpName}
           />
         </div>
       </Dialog>
