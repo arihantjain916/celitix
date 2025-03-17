@@ -264,37 +264,33 @@ const WhatsappLaunchCampaign = () => {
       return;
     }
 
-    // let finalTotalRecords = 0;
+    let finalTotalRecords = 0;
 
-    // if (selectedOption === "option1") {
-    //   console.log("🚀 Selected Groups:", selectedGroups);
-    //   console.log("📌 Available Groups:", groups);
+    if (selectedOption === "option1") {
+      console.log("🚀 Selected Groups:", selectedGroups);
+      console.log("📌 Available Groups:", groups);
 
-    //   finalTotalRecords = selectedGroups
-    //     .map((groupCode) => {
-    //       const group = groups.find((g) => g.groupCode === groupCode);
-    //       console.log(
-    //         `🔍 Group Found: ${groupCode}, TotalCount: ${group?.totalCount}`
-    //       );
-    //       return group ? parseInt(group.totalCount, 10) : 0;
-    //     })
-    //     .reduce((acc, count) => acc + count, 0);
-    // } else if (selectedOption === "option2") {
-    //   finalTotalRecords = totalRecords || 0;
-    // }
+      finalTotalRecords = selectedGroups
+        .map((groupCode) => {
+          const group = groups.find((g) => g.groupCode === groupCode);
+          console.log(
+            `🔍 Group Found: ${groupCode}, TotalCount: ${group?.totalCount}`
+          );
+          return group ? parseInt(group.totalCount, 10) : 0;
+        })
+        .reduce((acc, count) => acc + count, 0);
+    } else if (selectedOption === "option2") {
+      finalTotalRecords = totalRecords || 0;
+    }
 
-    // setTotalRecords(finalTotalRecords);
+    setTotalRecords(finalTotalRecords);
 
-    // console.log("📝 Final Total Records:", finalTotalRecords);
+    console.log("📝 Final Total Records:", finalTotalRecords);
 
     if (!finalTotalRecords) {
       toast.error("Total records cannot be zero. Please check your selection.");
       return;
     }
-
-    let sum = selectedGroups.reduce(function (x, y) {
-      return x + y;
-    }, 0);
 
     // ✅ Prepare Request Payload
     const requestData = {
@@ -468,25 +464,6 @@ const WhatsappLaunchCampaign = () => {
     }
   };
 
-  useEffect(() => {
-    console.log(
-      "📌 Updated selectedCountryCode in Parent:",
-      selectedCountryCode
-    );
-  }, [selectedCountryCode]);
-
-  useEffect(() => {
-    console.log("selected WABA", selectedWaba);
-  }, [selectedWaba]);
-
-  useEffect(() => {
-    console.log("Campaign name", inputValue);
-  }, [inputValue]);
-
-  useEffect(() => {
-    console.log("selected template - ", selectedTemplate);
-  }, [selectedTemplate]);
-
   return (
     <div className="max-w-full">
       {isLoading ? (
@@ -583,24 +560,16 @@ const WhatsappLaunchCampaign = () => {
                   </div>
                 </div>
                 <div className="w-full lg:flex-1 lg:w-0">
-                  {isFetching ? (
-                    <UniversalSkeleton
-                      className="h-full"
-                      height="44.5rem"
-                      width="100%"
-                    />
-                  ) : (
-                    <RadioButtonLaunchCampaign
-                      onOptionChange={handleOptionChange}
-                      selectedOption={selectedOption}
-                      onFileUpload={handleFileHeadersUpdate}
-                      onGroupChange={handleGroupChange}
-                      setSelectedGroups={setSelectedGroups}
-                      onUrlIndexChange={setUrlIndex}
-                      groups={groups} // ✅ Pass groups here
-                      setGroups={setGroups} // ✅ Allow updating from child component
-                    />
-                  )}
+                  <RadioButtonLaunchCampaign
+                    onOptionChange={handleOptionChange}
+                    selectedOption={selectedOption}
+                    onFileUpload={handleFileHeadersUpdate}
+                    onGroupChange={handleGroupChange}
+                    setSelectedGroups={setSelectedGroups}
+                    onUrlIndexChange={setUrlIndex}
+                    groups={groups} // ✅ Pass groups here
+                    setGroups={setGroups} // ✅ Allow updating from child component
+                  />
                 </div>
               </div>
 
