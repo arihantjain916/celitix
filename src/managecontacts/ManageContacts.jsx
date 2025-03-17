@@ -520,9 +520,9 @@ const ManageContacts = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {grpList?.map((group) => (
+                      {grpList?.map((group,index) => (
                         <tr
-                          key={group.id}
+                          key={index}
                           className="h-10 border-b border-gray-300"
                         >
                           <td className="px-4 py-1 border-r">
