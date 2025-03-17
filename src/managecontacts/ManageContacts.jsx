@@ -26,6 +26,7 @@ import {
   deleteGrp,
   getContactListByGrpId,
   getGrpList,
+  importContact,
 } from "../apis/contact/contact";
 import DropdownWithSearch from "../whatsapp/components/DropdownWithSearch";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
@@ -70,6 +71,10 @@ const ManageContacts = () => {
   const [groupName, setGroupName] = useState("");
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
   const [deleteGrpId, setDeleteGrpId] = useState("");
+  const [importContactFormVisible, setImportContactFormVisible] =
+    useState(false);
+
+  const [filePath, setFilePath] = useState("");
 
   useEffect(() => {
     async function getGrpListData() {
@@ -155,26 +160,52 @@ const ManageContacts = () => {
       return;
     }
 
-    const data = {
-      groupSrNo: selectedMultiGroupContact,
-      ...addContactDetails,
-      birthDate: new Date(addContactDetails.birthDate).toLocaleDateString(
-        "en-GB"
-      ),
-      mariageDate: new Date(addContactDetails.mariageDate).toLocaleDateString(
-        "en-GB"
-      ),
-      allowishes: addContactDetails.allowishes === "Yes" ? 1 : 0,
-    };
+    let data = {};
 
-    const res = await addContact(data);
-    if (res.flag) {
-      setAddContactDetails({});
-      setSelectedMultiGroupContact("");
-      setaddContactVisible(false);
-      toast.success(res.message);
-    } else {
-      toast.error(res.message ?? "Something went wrong");
+    if (selectedddImportContact === "option1") {
+      data = {
+        groupSrNo: selectedMultiGroupContact,
+        ...addContactDetails,
+        birthDate: new Date(addContactDetails.birthDate).toLocaleDateString(
+          "en-GB"
+        ),
+        mariageDate: new Date(addContactDetails.mariageDate).toLocaleDateString(
+          "en-GB"
+        ),
+        allowishes: addContactDetails.allowishes === "Yes" ? 1 : 0,
+      };
+      const res = await addContact(data);
+      if (res.flag) {
+        setAddContactDetails({});
+        setSelectedMultiGroupContact("");
+        setaddContactVisible(false);
+        toast.success(res.message);
+      } else {
+        toast.error(res.message ?? "Something went wrong");
+      }
+    } else if (selectedddImportContact === "option2") {
+      data = {
+        groupNo: selectedMultiGroupContact,
+        ...addContactDetails,
+        mobile: addContact.mariageDate,
+        email: addContact.emailId,
+        birth: addContact.birthDate,
+        marriage: addContact.mariageDate,
+        noOfRow: totalRecords,
+        filePath: filePath,
+      };
+
+      const res = await importContact(data);
+      console.log(res);
+      // if (res.flag) {
+      //   setAddContactDetails({});
+      //   setSelectedMultiGroupContact("");
+      //   setaddContactVisible(false);
+      //   setImportContactFormVisible(false);
+      //   toast.success(res.message);
+      // } else {
+      //   toast.error(res.message ?? "Something went wrong");
+      // }
     }
   };
 
@@ -296,11 +327,15 @@ const ManageContacts = () => {
       setIsUploading(true);
       try {
         const response = await campaignUploadFile(uploadedFile);
+        console.log(response);
         setIsUploaded(true);
         toast.success("File uploaded successfully.");
         setColumns(response.headers);
+        setFilePath(response.filepath);
         setFileData(response.sampleRecords);
         setFileHeaders(response.headers || []);
+        setTotalRecords(response.totalRecords);
+        setImportContactFormVisible(true);
       } catch (error) {
         toast.error("File upload failed: " + error.message);
       } finally {
@@ -310,6 +345,10 @@ const ManageContacts = () => {
       toast.error("No file selected for upload.");
     }
   };
+
+  useEffect(() => {
+    console.log("Uploaded File", uploadedFile);
+  }, [uploadedFile]);
 
   // Validate filename
   const isValidFileName = (fileName) => {
@@ -520,7 +559,7 @@ const ManageContacts = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {grpList?.map((group,index) => (
+                      {grpList?.map((group, index) => (
                         <tr
                           key={index}
                           className="h-10 border-b border-gray-300"
@@ -808,15 +847,215 @@ const ManageContacts = () => {
                         </p>
                       )}
                     </div>
+                    {importContactFormVisible && (
+                      <div>
+                        <div className="grid flex-wrap grid-cols-2 gap-3 lg:flex-nowrap">
+                          {/* <InputField
+                            placeholder="Enter first name.."
+                            id="userfirstname"
+                            name="userfirstname"
+                            type="text"
+                            value={addContactDetails.firstName}
+                            onChange={(e) =>
+                              setAddContactDetails({
+                                ...addContactDetails,
+                                firstName: e.target.value,
+                              })
+                            }
+                            required={true}
+                          /> */}
+                          <DropdownWithSearch
+                            className="custom-multiselect"
+                            placeholder="Select Variable for first name"
+                            optionLabel="name"
+                            options={fileHeaders?.map((item) => ({
+                              value: item,
+                              label: item,
+                            }))}
+                            value={addContactDetails.firstName}
+                            onChange={(e) =>
+                              setAddContactDetails({
+                                ...addContactDetails,
+                                firstName: e,
+                              })
+                            }
+                            filter
+                          />
+                          <DropdownWithSearch
+                            className="custom-multiselect"
+                            placeholder="Select Variable for middle name"
+                            optionLabel="name"
+                            options={fileHeaders?.map((item) => ({
+                              value: item,
+                              label: item,
+                            }))}
+                            value={addContactDetails.middleName}
+                            onChange={(e) =>
+                              setAddContactDetails({
+                                ...addContactDetails,
+                                middleName: e,
+                              })
+                            }
+                            filter
+                          />
+                          <DropdownWithSearch
+                            className="custom-multiselect"
+                            placeholder="Select Variable for last name"
+                            optionLabel="name"
+                            options={fileHeaders?.map((item) => ({
+                              value: item,
+                              label: item,
+                            }))}
+                            value={addContactDetails.lastName}
+                            onChange={(e) =>
+                              setAddContactDetails({
+                                ...addContactDetails,
+                                lastName: e,
+                              })
+                            }
+                            filter
+                          />
+                          <DropdownWithSearch
+                            className="custom-multiselect"
+                            placeholder="Select Variable for Phone No."
+                            optionLabel="name"
+                            options={fileHeaders?.map((item) => ({
+                              value: item,
+                              label: item,
+                            }))}
+                            value={addContactDetails.mobileNo}
+                            onChange={(e) =>
+                              setAddContactDetails({
+                                ...addContactDetails,
+                                mobileNo: e,
+                              })
+                            }
+                            filter
+                          />
+                          <DropdownWithSearch
+                            className="custom-multiselect"
+                            placeholder="Select Variable for email"
+                            optionLabel="name"
+                            options={fileHeaders?.map((item) => ({
+                              value: item,
+                              label: item,
+                            }))}
+                            value={addContactDetails.emailId}
+                            onChange={(e) =>
+                              setAddContactDetails({
+                                ...addContactDetails,
+                                emailId: e,
+                              })
+                            }
+                            filter
+                          />
+                          <DropdownWithSearch
+                            className="custom-multiselect"
+                            placeholder="Select Variable for uniqueId"
+                            optionLabel="name"
+                            options={fileHeaders?.map((item) => ({
+                              value: item,
+                              label: item,
+                            }))}
+                            value={addContactDetails.uniqueId}
+                            onChange={(e) =>
+                              setAddContactDetails({
+                                ...addContactDetails,
+                                uniqueId: e,
+                              })
+                            }
+                            filter
+                          />
+                          <DropdownWithSearch
+                            className="custom-multiselect"
+                            placeholder="Select Variable for BirthDate"
+                            optionLabel="name"
+                            options={fileHeaders?.map((item) => ({
+                              value: item,
+                              label: item,
+                            }))}
+                            value={addContactDetails.birthDate}
+                            onChange={(e) =>
+                              setAddContactDetails({
+                                ...addContactDetails,
+                                birthDate: e,
+                              })
+                            }
+                            filter
+                          />
+                          <DropdownWithSearch
+                            className="custom-multiselect"
+                            placeholder="Select Variable for Anniversary Date"
+                            optionLabel="name"
+                            options={fileHeaders?.map((item) => ({
+                              value: item,
+                              label: item,
+                            }))}
+                            value={addContactDetails.mariageDate}
+                            onChange={(e) =>
+                              setAddContactDetails({
+                                ...addContactDetails,
+                                mariageDate: e,
+                              })
+                            }
+                            filter
+                          />
+                          <DropdownWithSearch
+                            className="custom-multiselect"
+                            placeholder="Select Variable for AllowWishes"
+                            optionLabel="name"
+                            options={fileHeaders?.map((item) => ({
+                              value: item,
+                              label: item,
+                            }))}
+                            value={addContactDetails.allowishes}
+                            onChange={(e) =>
+                              setAddContactDetails({
+                                ...addContactDetails,
+                                allowishes: e,
+                              })
+                            }
+                            filter
+                          />
+                          <DropdownWithSearch
+                            className="custom-multiselect"
+                            placeholder="Select Variable for Gender"
+                            optionLabel="name"
+                            options={fileHeaders?.map((item) => ({
+                              value: item,
+                              label: item,
+                            }))}
+                            value={addContactDetails.gender}
+                            onChange={(e) =>
+                              setAddContactDetails({
+                                ...addContactDetails,
+                                gender: e,
+                              })
+                            }
+                            filter
+                          />
+                        </div>
+                        {/* <div className="flex justify-center mt-2">
+                          <UniversalButton
+                            id="addnewConcat"
+                            name="addnewConcat"
+                            label="Submit"
+                            variant="primary"
+                            onClick={handleAllAddContact}
+                          />
+                        </div> */}
+                      </div>
+                    )}
                   </div>
                 </div>
 
                 <div className="flex justify-center mt-2">
                   <UniversalButton
-                    id="addimportConcat"
-                    name="addimportConcat"
+                    id="addnewConcat"
+                    name="addnewConcat"
                     label="Submit"
                     variant="primary"
+                    onClick={handleAllAddContact}
                   />
                 </div>
               </div>
