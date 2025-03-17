@@ -70,6 +70,7 @@ const WhatsappLaunchCampaign = () => {
   const [dialogVisible, setDialogVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCountryCodeChecked, setIsCountryCodeChecked] = useState(false);
+  const [varLength, setVarLength] = useState(0);
 
   // const handleGroupChange = (value) => {
   //     console.log("isGroup Updated:", value);
@@ -188,7 +189,7 @@ const WhatsappLaunchCampaign = () => {
       }
     }
 
-    if (!formData.body1 || !formData.body2 || !formData.body3) {
+    if (varLength !== Object.keys(formData).length) {
       toast.error("Please enter a all variable values!");
       return;
     }
@@ -581,6 +582,7 @@ const WhatsappLaunchCampaign = () => {
                           fileHeaders={fileHeaders}
                           selectedTemplateData={selectedTemplateData}
                           onUrlIndexChange={setUrlIndex}
+                          setVarLength={setVarLength}
                         />
                       )
                     )}
