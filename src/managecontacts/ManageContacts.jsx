@@ -30,6 +30,7 @@ import {
 import DropdownWithSearch from "../whatsapp/components/DropdownWithSearch";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import CustomNoRowsOverlay from "../whatsapp/components/CustomNoRowsOverlay";
+import { campaignUploadFile } from "../apis/whatsapp/whatsapp";
 
 const ManageContacts = () => {
   const [selectedMultiGroup, setSelectedMultiGroup] = useState(null);
@@ -213,7 +214,6 @@ const ManageContacts = () => {
     setIsFetching(false);
   };
 
-
   // handle File drop
   const handleFileDrop = (event) => {
     event.preventDefault();
@@ -227,7 +227,7 @@ const ManageContacts = () => {
         if (isValidFileName(file.name.split(".")[0])) {
           setUploadedFile(file);
           setIsUploaded(false);
-          parseFile(file);
+          // parseFile(file);
         } else {
           toast.error(
             "File name can only contain alphanumeric characters, underscores, or hyphens."
@@ -250,7 +250,7 @@ const ManageContacts = () => {
         if (isValidFileName(file.name.split(".")[0])) {
           setUploadedFile(file);
           setIsUploaded(false);
-          parseFile(file);
+          // parseFile(file);
         } else {
           toast.error(
             "File name can only contain alphanumeric characters, underscores, or hyphens."
@@ -263,53 +263,52 @@ const ManageContacts = () => {
   };
 
   // Parse uploaded file and extract headers and data
-  const parseFile = (file) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const workbook = XLSX.read(reader.result, { type: "binary" });
-      const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-      const jsonData = XLSX.utils.sheet_to_json(firstSheet);
-      // const headers = Object.keys(jsonData[0]);
-      const headers = jsonData.length > 0 ? Object.keys(jsonData[0]) : [];
-      // const headers = Object.keys(jsonData[0] || {}).map(header => header.trim()); // Trim header names
-      console.log("Extracted headers:", headers);
+  // const parseFile = (file) => {
+  //   const reader = new FileReader();
+  //   reader.onload = () => {
+  //     const workbook = XLSX.read(reader.result, { type: "binary" });
+  //     const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+  //     const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+  //     // const headers = Object.keys(jsonData[0]);
+  //     const headers = jsonData.length > 0 ? Object.keys(jsonData[0]) : [];
+  //     // const headers = Object.keys(jsonData[0] || {}).map(header => header.trim()); // Trim header names
+  //     console.log("Extracted headers:", headers);
 
-      setFileData(jsonData);
-      setColumns(headers);
-      setFileHeaders(headers);
-      // setIsUploaded(false); // Reset to "File Selected" if a new file is selected
-      setTotalRecords(jsonData.length);
-    };
-    reader.readAsBinaryString(file);
-  };
+  //     setFileData(jsonData);
+  //     setColumns(headers);
+  //     setFileHeaders(headers);
+  //     // setIsUploaded(false); // Reset to "File Selected" if a new file is selected
+  //     setTotalRecords(jsonData.length);
+  //   };
+  //   reader.readAsBinaryString(file);
+  // };
   const handleDragOver = (event) => {
     event.preventDefault();
   };
 
   // Excel file upload
   const handleFileUpload = async () => {
-    // if (uploadedFile) {
-    //   if (isUploaded) {
-    //     toast.error("File already uploaded. Please select a different one.");
-    //     return;
-    //   }
-    //   setIsUploading(true);
-    //   try {
-    //     const response = await campaignUploadFile(uploadedFile);
-    //     console.log("File uploaded successfully :", response)
-    //     setIsUploaded(true);
-    //     toast.success("File uploaded successfully.");
-    //     setColumns(response.headers);
-    //     setFileData(response.sampleRecords);
-    //     setFileHeaders(response.headers || [])
-    //   } catch (error) {
-    //     toast.error("File upload failed: " + error.message);
-    //   } finally {
-    //     setIsUploading(false);
-    //   }
-    // } else {
-    //   toast.error("No file selected for upload.");
-    // }
+    if (uploadedFile) {
+      if (isUploaded) {
+        toast.error("File already uploaded. Please select a different one.");
+        return;
+      }
+      setIsUploading(true);
+      try {
+        const response = await campaignUploadFile(uploadedFile);
+        setIsUploaded(true);
+        toast.success("File uploaded successfully.");
+        setColumns(response.headers);
+        setFileData(response.sampleRecords);
+        setFileHeaders(response.headers || []);
+      } catch (error) {
+        toast.error("File upload failed: " + error.message);
+      } finally {
+        setIsUploading(false);
+      }
+    } else {
+      toast.error("No file selected for upload.");
+    }
   };
 
   // Validate filename
