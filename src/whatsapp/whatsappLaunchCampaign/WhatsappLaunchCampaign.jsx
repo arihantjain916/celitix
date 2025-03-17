@@ -72,56 +72,11 @@ const WhatsappLaunchCampaign = () => {
   const [isCountryCodeChecked, setIsCountryCodeChecked] = useState(false);
   const [varLength, setVarLength] = useState(0);
 
-  // const handleGroupChange = (value) => {
-  //     console.log("isGroup Updated:", value);
-  //     setIsGroup(value);
-  // };
-
   const handleUrlIndexChange = (index) => {
-    console.log("Updating URL Index in Parent:", index);
     setUrlIndex(index);
   };
 
-  // useEffect(()=>{
-  //   setFileHeaders([]);
-  // },[fileHeaders])
-
-  // const handleGroupChange = (value) => {
-  //     console.log("isGroup Updated:", value);
-
-  //     if (Array.isArray(value)) {
-  //         setIsGroup(1);
-  //         setSelectedGroups(value);
-  //     } else if (typeof value === "string") {
-  //         if (value === "-1") {
-  //             setIsGroup(1);
-  //             setSelectedGroups([]);
-  //         } else if (value.includes(",")) {
-  //             setIsGroup(1);
-  //             setSelectedGroups(value.split(",").map(Number));
-  //         } else {
-  //             setIsGroup(0);
-  //             setSelectedGroups([]);
-  //         }
-  //     } else if (typeof value === "number") {
-  //         setIsGroup(1);
-  //         setSelectedGroups([value]);
-  //     } else {
-  //         console.error("Unexpected value type in handleGroupChange:", value);
-  //     }
-
-  //     // ✅ If switching to Groups, reset Excel data
-  //     if (isGroup === 1) {
-  //         setXlsxPath("");
-  //         setTotalRecords("");
-  //         setSelectedCountryCode("");
-  //         setSelectedMobileColumn("");
-  //     }
-  // };
-
   const handleGroupChange = (value) => {
-    console.log("isGroup Updated:", value);
-
     let updatedGroups = [];
 
     if (Array.isArray(value)) {
@@ -142,12 +97,9 @@ const WhatsappLaunchCampaign = () => {
 
     setIsGroup(updatedGroups.length > 0 ? 1 : 0);
     setSelectedGroups(updatedGroups);
-
-    console.log("✅ Updated Selected Groups:", updatedGroups);
   };
 
   const handleImageUpload = (imageUrl) => {
-    console.log("Uploaded Image URL:", imageUrl);
     setImageFile(imageUrl);
     setImagePreview(imageUrl);
   };
@@ -173,8 +125,8 @@ const WhatsappLaunchCampaign = () => {
         toast.error("Please upload an Excel file with contact numbers.");
         return;
       }
-
-      if (!selectedMobileColumn) {
+      console.log("ss" + selectedMobileColumn);
+      if (!(selectedMobileColumn + 1)) {
         toast.error(
           "Please select the mobile number column from the uploaded file."
         );
@@ -195,7 +147,7 @@ const WhatsappLaunchCampaign = () => {
     }
 
     if (isCountryCodeChecked) {
-      if (!selectedCountryCode) {
+      if (!selectedCountryCode || selectedCountryCode === "no") {
         toast.error("Please select a country code.");
         return;
       }
@@ -206,15 +158,9 @@ const WhatsappLaunchCampaign = () => {
     let finalTotalRecords = 0;
 
     if (selectedOption === "option1") {
-      console.log("🚀 Selected Groups:", selectedGroups);
-      console.log("📌 Available Groups:", groups);
-
       finalTotalRecords = selectedGroups
         .map((groupCode) => {
           const group = groups.find((g) => g.groupCode === groupCode);
-          console.log(
-            `🔍 Group Found: ${groupCode}, TotalCount: ${group?.totalCount}`
-          );
           return group ? parseInt(group.totalCount, 10) : 0;
         })
         .reduce((acc, count) => acc + count, 0);
@@ -223,14 +169,8 @@ const WhatsappLaunchCampaign = () => {
     }
 
     setTotalRecords(finalTotalRecords);
-
-    console.log("📝 Final Total Records:", finalTotalRecords);
     setDialogVisible(true);
   };
-
-  useEffect(() => {
-    console.log("headers: ", fileHeaders);
-  }, [fileHeaders]);
 
   const handleFinalSubmit = async (event) => {
     if (event) event.preventDefault();
@@ -247,9 +187,6 @@ const WhatsappLaunchCampaign = () => {
       ?.filter((component) => component.type === "BODY")
       ?.flatMap((component) => extractVariablesFromText(component.text));
 
-    console.log("Extracted BODY Variables:", bodyVariables);
-    console.log("Current formData:", formData);
-
     const contentValues = bodyVariables
       ?.map((variable) => {
         const key = `body${variable}`;
@@ -257,8 +194,6 @@ const WhatsappLaunchCampaign = () => {
         return value.replace(/{{(.*?)}}/g, "#$1#");
       })
       ?.join(",");
-
-    console.log("Final ContentMessage:", contentValues);
 
     // ✅ If using Groups, clear file-related data
     if (isGroup === 1) {
@@ -274,12 +209,6 @@ const WhatsappLaunchCampaign = () => {
         ? selectedGroups.join(",")
         : "-1";
 
-    // ✅ Debugging: Check selected option
-    console.log("Selected Option:", selectedOption);
-    console.log("Selected Groups:", selectedGroups);
-    console.log("Groups Data:", groups);
-    console.log("Uploaded File Total Records:", totalRecords);
-
     // ✅ Ensure groups data is available before using it
     if (selectedOption === "option1" && (!groups || groups.length === 0)) {
       console.error("Groups data is not available.");
@@ -292,15 +221,9 @@ const WhatsappLaunchCampaign = () => {
     let finalTotalRecords = 0;
 
     if (selectedOption === "option1") {
-      console.log("🚀 Selected Groups:", selectedGroups);
-      console.log("📌 Available Groups:", groups);
-
       finalTotalRecords = selectedGroups
         .map((groupCode) => {
           const group = groups.find((g) => g.groupCode === groupCode);
-          console.log(
-            `🔍 Group Found: ${groupCode}, TotalCount: ${group?.totalCount}`
-          );
           return group ? parseInt(group.totalCount, 10) : 0;
         })
         .reduce((acc, count) => acc + count, 0);
@@ -309,8 +232,6 @@ const WhatsappLaunchCampaign = () => {
     }
 
     setTotalRecords(finalTotalRecords);
-
-    console.log("📝 Final Total Records:", finalTotalRecords);
 
     if (!finalTotalRecords) {
       toast.error("Total records cannot be zero. Please check your selection.");
@@ -344,11 +265,10 @@ const WhatsappLaunchCampaign = () => {
       groupValues,
     };
 
-    console.log("Final Data Submission:", requestData);
-
     // ✅ Send API request
     try {
       const response = await sendWhatsappCampaign(requestData);
+      console.log(requestData)
       if (response?.status === true) {
         toast.success("Campaign launched successfully!");
         setDialogVisible(false);
@@ -485,9 +405,7 @@ const WhatsappLaunchCampaign = () => {
     setTotalRecords(totalRecords);
     setXlsxPath(filePath);
     setSelectedMobileColumn(selectedMobileColumn);
-    if (countryCode) {
-      setSelectedCountryCode(countryCode);
-    }
+    setSelectedCountryCode(countryCode);
     setIsCountryCodeChecked(addCountryCode);
   };
 
@@ -598,6 +516,7 @@ const WhatsappLaunchCampaign = () => {
                     onUrlIndexChange={setUrlIndex}
                     groups={groups}
                     setGroups={setGroups}
+                    // setIsCountryCodeChecked={setIsCountryCodeChecked}
                   />
                 </div>
               </div>

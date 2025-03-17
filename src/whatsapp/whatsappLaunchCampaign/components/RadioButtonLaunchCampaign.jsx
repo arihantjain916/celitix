@@ -23,6 +23,7 @@ function RadioButtonLaunchCampaign({
   onUrlIndexChange,
   groups,
   setGroups,
+  // setIsCountryCodeChecked
 }) {
   const [selectedOption, setSelectedOption] = useState("option2");
   const [selectedGroups, setSelectedGroups] = useState([]);
@@ -163,6 +164,42 @@ function RadioButtonLaunchCampaign({
   //   reader.readAsBinaryString(file);
   // };
 
+  // Handle file removal
+  const handleRemoveFile = () => {
+    setUploadedFile(null);
+    setIsUploaded(false);
+    setAddCountryCode(false);
+    setFileHeaders([]);
+    setSelectedCountryCode("");
+    setSelectedMobileColumn("");
+    setFileData([]);
+    setTotalRecords("");
+    setXlsxPath("");
+    document.getElementById("fileInput").value = "";
+    // updateHeaders();
+    toast.success("File removed successfully.");
+  };
+
+  const handleMobileColumnChange = (value) => {
+    setSelectedMobileColumn(value);
+    console.log(value)
+  };
+
+  const handleDragOver = (event) => {
+    event.preventDefault();
+  };
+
+  // Handle change in 'Add Country Code' checkbox
+  const handleAddCountryCodeChange = (e) => {
+    const isChecked = e.target.checked;
+    setAddCountryCode(isChecked);
+
+    if (!isChecked) {
+      setSelectedCountryCode("");
+      setSelectedCountryName("");
+    }
+  };
+
   useEffect(() => {
     if (fileHeaders.length > 0) {
       // console.log("Sending Selected Country Code to Parent:", selectedCountryCode);
@@ -191,41 +228,6 @@ function RadioButtonLaunchCampaign({
     xlsxPath,
     addCountryCode,
   ]); // ✅ Now listens for country code updates
-
-  // Handle file removal
-  const handleRemoveFile = () => {
-    setUploadedFile(null);
-    setIsUploaded(false);
-    setAddCountryCode(false);
-    setFileHeaders([]);
-    setSelectedCountryCode("");
-    setSelectedMobileColumn("");
-    setFileData([]);
-    setTotalRecords("");
-    setXlsxPath("");
-    document.getElementById("fileInput").value = "";
-    // updateHeaders();
-    toast.success("File removed successfully.");
-  };
-
-  const handleMobileColumnChange = (value) => {
-    setSelectedMobileColumn(value);
-  };
-
-  const handleDragOver = (event) => {
-    event.preventDefault();
-  };
-
-  // Handle change in 'Add Country Code' checkbox
-  const handleAddCountryCodeChange = (e) => {
-    const isChecked = e.target.checked;
-    setAddCountryCode(isChecked);
-
-    if (!isChecked) {
-      setSelectedCountryCode("");
-      setSelectedCountryName("");
-    }
-  };
 
   // Excel file upload
   // const handleFileUpload = async () => {
@@ -298,19 +300,6 @@ function RadioButtonLaunchCampaign({
       setIsUploading(false);
     }
   };
-
-  // useEffect(() => {
-  //   function runn() {
-  //     onFileUpload(
-  //       (response.filepath ?? ""),
-  //       (fileHeaders ?? []),
-  //       (totalRecords ?? []),
-  //       (selectedCountryCode ?? ""),
-  //       (selectedMobileColumn ?? "")
-  //     );
-  //   }
-  //   runn();
-  // }, [fileHeaders]);
 
   // Get Waba Group List
   useEffect(() => {
