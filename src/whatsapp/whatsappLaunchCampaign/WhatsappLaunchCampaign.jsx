@@ -79,6 +79,10 @@ const WhatsappLaunchCampaign = () => {
     console.log("Updating URL Index in Parent:", index);
     setUrlIndex(index);
   };
+  
+  // useEffect(()=>{
+  //   setFileHeaders([]);
+  // },[fileHeaders])
 
   // const handleGroupChange = (value) => {
   //     console.log("isGroup Updated:", value);
@@ -463,6 +467,10 @@ const WhatsappLaunchCampaign = () => {
       setSelectedCountryCode(countryCode);
     }
   };
+  
+  const updateHeaders = () => {
+    setFileHeaders([])
+  }
 
   return (
     <div className="max-w-full">
@@ -532,6 +540,7 @@ const WhatsappLaunchCampaign = () => {
                         setFormData({});
                         setImagePreview(null);
                         setImageFile(null);
+                        setFileHeaders([]);
                       }}
                       placeholder="Select Template"
                     />
@@ -564,6 +573,7 @@ const WhatsappLaunchCampaign = () => {
                     onOptionChange={handleOptionChange}
                     selectedOption={selectedOption}
                     onFileUpload={handleFileHeadersUpdate}
+                    updateHeaders={updateHeaders}
                     onGroupChange={handleGroupChange}
                     setSelectedGroups={setSelectedGroups}
                     onUrlIndexChange={setUrlIndex}
