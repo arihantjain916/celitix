@@ -41,3 +41,12 @@ export const deleteGrp = async (grpName, grpSrno) => {
     }
   );
 };
+
+export const updateGroupName = async (grpSrno, grpName) => {
+  return await fetchWithAuth(
+    `/proCpaasRest/group/updateGroup?groupSrno=${grpSrno}&groupName=${grpName}`,
+    {
+      method: "POST",
+    }
+  );
+};
