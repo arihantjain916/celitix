@@ -498,12 +498,12 @@ const ManageContacts = () => {
                 <div className="m-0">
                   <div className="flex card justify-content-center">
                     <DropdownWithSearch
-                      value={selectedmanageGroups}
-                      onChange={(e) => setSelectedManageGroups(e.value)}
                       options={grpList?.map((item) => ({
                         value: item.groupCode,
                         label: item.groupName,
                       }))}
+                      value={selectedmanageGroups}
+                      onChange={(e) => setSelectedManageGroups(e)}
                       optionLabel="name"
                       placeholder="Select Groups"
                       filter
