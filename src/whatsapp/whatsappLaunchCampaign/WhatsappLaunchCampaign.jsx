@@ -147,32 +147,40 @@ const WhatsappLaunchCampaign = () => {
   };
 
   const handleSubmitCampaign = async () => {
-    // if (!selectedWaba) {
-    //     toast.error("Please select a WhatsApp Business Account (WABA).");
-    //     return;
-    // }
+    if (!selectedWaba) {
+      toast.error("Please select a WhatsApp Business Account (WABA).");
+      return;
+    }
 
-    // if (!inputValue) {
-    //     toast.error("Please enter a campaign name!");
-    //     return;
-    // }
+    if (!inputValue) {
+      toast.error("Please enter a campaign name!");
+      return;
+    }
 
-    // if (!selectedTemplate) {
-    //     toast.error("Please select a WhatsApp template.");
-    //     return;
-    // }
+    if (!selectedTemplate) {
+      toast.error("Please select a WhatsApp template.");
+      return;
+    }
 
-    // if (!xlsxPath) {
-    //     toast.error("Please upload an Excel file with contact numbers.");
-    //     return;
-    // }
+    if (isGroup === "-1") {
+      if (!xlsxPath) {
+        toast.error("Please upload an Excel file with contact numbers.");
+        return;
+      }
+      if (!selectedMobileColumn) {
+        toast.error(
+          "Please select the mobile number column from the uploaded file."
+        );
+        return;
+      }
+    }
 
-    // if (!selectedMobileColumn) {
-    //   toast.error(
-    //     "Please select the mobile number column from the uploaded file."
-    //   );
-    //   return;
-    // }
+    if (isGroup == 0) {
+      if (selectedGroups.length == 0) {
+        toast.error("Please select atleast one group.");
+        return;
+      }
+    }
 
     // ✅ If all validations pass, open the review dialog
 
