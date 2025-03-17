@@ -72,3 +72,10 @@ export const uploadContactFile = async (file) => {
     console.error("Error uploading file:", error);
   }
 };
+
+export const updateContactsDetails = async (data) => {
+  return await fetchWithAuth("/proCpaasRest/contact/updateAddressBookData", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
