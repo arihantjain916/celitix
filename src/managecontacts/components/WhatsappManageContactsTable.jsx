@@ -80,11 +80,10 @@ const CustomPagination = ({
 const WhatsappManageContactsTable = ({
   id,
   name,
-  handleView,
-  handleDuplicate,
-  handleDelete,
   setSelectedRows,
   allContacts,
+  setUpdateContactVisible,
+  setUpdateContactDetails,
 }) => {
   const [selectedRows, setLocalSelectedRows] = React.useState([]);
 
@@ -125,7 +124,12 @@ const WhatsappManageContactsTable = ({
       minWidth: 150,
       renderCell: (params) => (
         <>
-          <IconButton className="no-xs" onClick={() => handleView(params.row)}>
+          <IconButton
+            className="no-xs"
+            onClick={() => {
+              console.log(params.row);
+            }}
+          >
             <DeleteIcon
               sx={{
                 fontSize: "1.2rem",
@@ -133,7 +137,12 @@ const WhatsappManageContactsTable = ({
               }}
             />
           </IconButton>
-          <IconButton onClick={() => handleDuplicate(params.row)}>
+          <IconButton
+            onClick={() => {
+              setUpdateContactVisible(true);
+              setUpdateContactDetails(params.row);
+            }}
+          >
             <EditNoteIcon
               sx={{
                 fontSize: "1.2rem",
@@ -146,20 +155,6 @@ const WhatsappManageContactsTable = ({
     },
   ];
 
-  // use this when you want to create rows dynamically
-  //   const rows = Array.from({ length: 500 }, (_, i) => ({
-  //     id: i + 1,
-  //     sn: i + 1,
-  //     firstName: "Demo",
-  //     lastName: "prodemo",
-  //     mobileno: "9876543210",
-  //     uniqueid: "yes",
-  //     emailstatus: "no",
-  //     group: "10000",
-  //     status: "Pending",
-  //     action: "True",
-  //   }));
-
   const rows = allContacts.map((contact, index) => ({
     id: index + 1,
     sn: index + 1,
@@ -171,6 +166,8 @@ const WhatsappManageContactsTable = ({
     group: contact.groupName ?? "-",
     status: contact.status == 1 ? "Active" : "Inactive",
     action: "True",
+    srno: contact.addSrno,
+    gender: contact.gender,
   }));
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
@@ -249,7 +246,9 @@ const WhatsappManageContactsTable = ({
         rowHeight={45}
         slots={{ footer: CustomFooter }}
         slotProps={{ footer: { totalRecords: rows.length } }}
-        onRowSelectionModelChange={(ids) => handleRowSelection(ids)}
+        onRowSelectionModelChange={(ids) => {
+          console.log(ids);
+        }}
         disableRowSelectionOnClick
         // autoPageSize
         disableColumnResize
