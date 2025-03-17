@@ -69,6 +69,7 @@ const WhatsappLaunchCampaign = () => {
 
   const [dialogVisible, setDialogVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isCountryCodeChecked, setIsCountryCodeChecked] = useState(false);
 
   // const handleGroupChange = (value) => {
   //     console.log("isGroup Updated:", value);
@@ -190,6 +191,13 @@ const WhatsappLaunchCampaign = () => {
     if (!formData.body1 || !formData.body2 || !formData.body3) {
       toast.error("Please enter a all variable values!");
       return;
+    }
+
+    if (isCountryCodeChecked) {
+      if (!selectedCountryCode) {
+        toast.error("Please select a country code.");
+        return;
+      }
     }
 
     // ✅ If all validations pass, open the review dialog
@@ -469,7 +477,8 @@ const WhatsappLaunchCampaign = () => {
     headers,
     totalRecords,
     countryCode,
-    selectedMobileColumn
+    selectedMobileColumn,
+    addCountryCode
   ) => {
     setFileHeaders(headers);
     setTotalRecords(totalRecords);
@@ -478,6 +487,7 @@ const WhatsappLaunchCampaign = () => {
     if (countryCode) {
       setSelectedCountryCode(countryCode);
     }
+    setIsCountryCodeChecked(addCountryCode);
   };
 
   return (
