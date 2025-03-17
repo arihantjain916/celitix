@@ -162,7 +162,12 @@ const WhatsappLaunchCampaign = () => {
       return;
     }
 
-    if (isGroup === "-1") {
+    if (isGroup === 0) {
+      if (selectedGroups.length == 0) {
+        toast.error("Please select atleast one group.");
+        return;
+      }
+    } else {
       if (!xlsxPath) {
         toast.error("Please upload an Excel file with contact numbers.");
         return;
@@ -171,13 +176,6 @@ const WhatsappLaunchCampaign = () => {
         toast.error(
           "Please select the mobile number column from the uploaded file."
         );
-        return;
-      }
-    }
-
-    if (isGroup == 0) {
-      if (selectedGroups.length == 0) {
-        toast.error("Please select atleast one group.");
         return;
       }
     }
