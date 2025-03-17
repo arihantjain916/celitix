@@ -79,7 +79,7 @@ const WhatsappLaunchCampaign = () => {
     console.log("Updating URL Index in Parent:", index);
     setUrlIndex(index);
   };
-  
+
   // useEffect(()=>{
   //   setFileHeaders([]);
   // },[fileHeaders])
@@ -166,22 +166,27 @@ const WhatsappLaunchCampaign = () => {
       return;
     }
 
-    if (isGroup == 0) {
-      if (selectedGroups.length == 0) {
-        toast.error("Please select atleast one group.");
-        return;
-      }
-    } else {
-      if (!xlsxPath) {
-        toast.error("Please upload an Excel file with contact numbers.");
-        return;
-      }
-      if (!selectedMobileColumn) {
-        toast.error(
-          "Please select the mobile number column from the uploaded file."
-        );
-        return;
-      }
+    // if (isGroup === 0) {
+    //   if (!selectedGroups.length) {
+    //     toast.error("Please select at least one group.");
+    //     return;
+    //   }
+    // } else {
+    //   if (!xlsxPath) {
+    //     toast.error("Please upload an Excel file with contact numbers.");
+    //     return;
+    //   }
+    //   if (!selectedMobileColumn) {
+    //     toast.error(
+    //       "Please select the mobile number column from the uploaded file."
+    //     );
+    //     return;
+    //   }
+    // }
+
+    if (!formData.body1 || !formData.body2 || !formData.body3) {
+      toast.error("Please enter a all variable values!");
+      return
     }
 
     // ✅ If all validations pass, open the review dialog
@@ -467,10 +472,10 @@ const WhatsappLaunchCampaign = () => {
       setSelectedCountryCode(countryCode);
     }
   };
-  
+
   const updateHeaders = () => {
-    setFileHeaders([])
-  }
+    setFileHeaders([]);
+  };
 
   return (
     <div className="max-w-full">
