@@ -23,7 +23,7 @@ function RadioButtonLaunchCampaign({
   onUrlIndexChange,
   groups,
   setGroups,
-  updateHeaders
+  updateHeaders,
 }) {
   const [selectedOption, setSelectedOption] = useState("option2");
   const [selectedGroups, setSelectedGroups] = useState([]);
@@ -66,13 +66,10 @@ function RadioButtonLaunchCampaign({
       setSelectedMobileColumn("");
       setSelectedGroups([]);
       if (onUrlIndexChange) onUrlIndexChange(null); // ✅ Reset URL index
-    } else {
-      setSelectedGroups([]);
-      onGroupChange(0);
-      if (onUrlIndexChange) onUrlIndexChange(null); // ✅ Reset URL index
     }
 
     if (value === "option2") {
+      setUploadedFile(null);
       setSelectedGroups([]);
       setFileData([]);
       setTotalRecords("");
@@ -177,8 +174,16 @@ function RadioButtonLaunchCampaign({
         selectedCountryCode,
         selectedMobileColumn
       );
+    } else {
+      onFileUpload(
+        xlsxPath,
+        fileHeaders,
+        totalRecords,
+        selectedCountryCode,
+        selectedMobileColumn
+      );
     }
-  }, [fileHeaders, selectedCountryCode, selectedMobileColumn]); // ✅ Now listens for country code updates
+  }, [fileHeaders, selectedCountryCode, selectedMobileColumn,xlsxPath]); // ✅ Now listens for country code updates
 
   // Handle file removal
   const handleRemoveFile = () => {
@@ -192,8 +197,7 @@ function RadioButtonLaunchCampaign({
     setTotalRecords("");
     setXlsxPath("");
     document.getElementById("fileInput").value = "";
-    console.log(fileHeaders);
-    updateHeaders();
+    // updateHeaders();
     toast.success("File removed successfully.");
   };
 
@@ -287,6 +291,19 @@ function RadioButtonLaunchCampaign({
       setIsUploading(false);
     }
   };
+
+  // useEffect(() => {
+  //   function runn() {
+  //     onFileUpload(
+  //       (response.filepath ?? ""),
+  //       (fileHeaders ?? []),
+  //       (totalRecords ?? []),
+  //       (selectedCountryCode ?? ""),
+  //       (selectedMobileColumn ?? "")
+  //     );
+  //   }
+  //   runn();
+  // }, [fileHeaders]);
 
   // Get Waba Group List
   useEffect(() => {

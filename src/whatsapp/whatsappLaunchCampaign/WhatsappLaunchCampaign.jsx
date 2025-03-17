@@ -58,7 +58,7 @@ const WhatsappLaunchCampaign = () => {
   const [totalRecords, setTotalRecords] = useState("");
   const [selectedCountryCode, setSelectedCountryCode] = useState("");
   const [selectedMobileColumn, setSelectedMobileColumn] = useState("");
-  const [isGroup, setIsGroup] = useState();
+  const [isGroup, setIsGroup] = useState(-1);
   const [urlIndex, setUrlIndex] = useState(null);
 
   const [selectedGroups, setSelectedGroups] = useState([]);
@@ -166,27 +166,30 @@ const WhatsappLaunchCampaign = () => {
       return;
     }
 
-    // if (isGroup === 0) {
-    //   if (!selectedGroups.length) {
-    //     toast.error("Please select at least one group.");
-    //     return;
-    //   }
-    // } else {
-    //   if (!xlsxPath) {
-    //     toast.error("Please upload an Excel file with contact numbers.");
-    //     return;
-    //   }
-    //   if (!selectedMobileColumn) {
-    //     toast.error(
-    //       "Please select the mobile number column from the uploaded file."
-    //     );
-    //     return;
-    //   }
-    // }
+    if (selectedOption === "option2") {
+      if (!xlsxPath) {
+        toast.error("Please upload an Excel file with contact numbers.");
+        return;
+      }
+
+      if (!selectedMobileColumn) {
+        toast.error(
+          "Please select the mobile number column from the uploaded file."
+        );
+        return;
+      }
+    }
+
+    if (selectedOption === "option1") {
+      if (!selectedGroups.length) {
+        toast.error("Please select at least one group.");
+        return;
+      }
+    }
 
     if (!formData.body1 || !formData.body2 || !formData.body3) {
       toast.error("Please enter a all variable values!");
-      return
+      return;
     }
 
     // ✅ If all validations pass, open the review dialog
