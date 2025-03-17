@@ -19,6 +19,13 @@ export const addContact = async (data) => {
   });
 };
 
+export const importContact = async (data) => {
+  return await fetchWithAuth("/proCpaasRest/contact/importContact", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+
 export const addGrp = async (data) => {
   return await fetchWithAuth("/proCpaasRest/group/addGroup", {
     method: "POST",
