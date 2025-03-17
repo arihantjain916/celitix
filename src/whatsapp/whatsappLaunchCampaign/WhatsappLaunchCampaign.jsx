@@ -58,7 +58,7 @@ const WhatsappLaunchCampaign = () => {
   const [totalRecords, setTotalRecords] = useState("");
   const [selectedCountryCode, setSelectedCountryCode] = useState("");
   const [selectedMobileColumn, setSelectedMobileColumn] = useState("");
-  const [isGroup, setIsGroup] = useState(0);
+  const [isGroup, setIsGroup] = useState();
   const [urlIndex, setUrlIndex] = useState(null);
 
   const [selectedGroups, setSelectedGroups] = useState([]);
@@ -162,7 +162,7 @@ const WhatsappLaunchCampaign = () => {
       return;
     }
 
-    if (isGroup === 0) {
+    if (isGroup == 0) {
       if (selectedGroups.length == 0) {
         toast.error("Please select atleast one group.");
         return;
@@ -567,8 +567,8 @@ const WhatsappLaunchCampaign = () => {
                     onGroupChange={handleGroupChange}
                     setSelectedGroups={setSelectedGroups}
                     onUrlIndexChange={setUrlIndex}
-                    groups={groups} // ✅ Pass groups here
-                    setGroups={setGroups} // ✅ Allow updating from child component
+                    groups={groups}
+                    setGroups={setGroups}
                   />
                 </div>
               </div>
