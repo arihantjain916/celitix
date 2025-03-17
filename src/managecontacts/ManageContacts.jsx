@@ -27,6 +27,7 @@ import {
   getContactListByGrpId,
   getGrpList,
   importContact,
+  updateContactsDetails,
   updateGroupName,
   uploadContactFile,
 } from "../apis/contact/contact";
@@ -80,6 +81,9 @@ const ManageContacts = () => {
 
   const [filePath, setFilePath] = useState("");
   const [editGrpVisible, setEditGrpVisible] = useState(false);
+  const [updateContactDetails, setUpdateContactDetails] = useState("");
+  const [updatedContactDetails, setUpdatedContactDetails] = useState({});
+  const [updateContactVisible, setUpdateContactVisible] = useState(false);
 
   useEffect(() => {
     async function getGrpListData() {
@@ -285,7 +289,7 @@ const ManageContacts = () => {
       toast.success(res?.message);
       setEditGrpVisible(false);
       setaddGroupVisible(false);
-      setGroupName("")
+      setGroupName("");
     } else {
       toast.error(res?.message);
     }
@@ -337,6 +341,37 @@ const ManageContacts = () => {
   const handleDragOver = (event) => {
     event.preventDefault();
   };
+
+  const updateContactData = async () => {
+    const grpDetails = grpList.find(
+      (grp) => grp.groupName === updateContactDetails.group
+    );
+    if (!grpDetails) {
+      toast.error("Group not found");
+    }
+
+    const data = {
+      groupSrNo: grpDetails.groupCode,
+      ...updatedContactDetails,
+    };
+
+    // console.log(data);
+    // console.log("Contact Updated Successfully");
+    const res = await updateContactsDetails(data);
+    console.log(res);
+  };
+
+  useEffect(() => {
+    console.log("updateContactDetails", updateContactDetails);
+    setUpdatedContactDetails({
+      srNo: updateContactDetails.srno,
+      firstName: updateContactDetails.firstName,
+      lastName: updateContactDetails.lastName,
+      mobileNo: updateContactDetails.mobileno,
+      activeStatus: updateContactDetails.status === "Active" ? 1 : 0,
+      uniqueId: updateContactDetails.uniqueid,
+    });
+  }, [updateContactDetails]);
 
   // Excel file upload
   const handleFileUpload = async () => {
@@ -514,7 +549,12 @@ const ManageContacts = () => {
       {isFetching ? (
         <UniversalSkeleton height="35rem" width="100%" />
       ) : allContacts?.length > 0 ? (
-        <WhatsappManageContactsTable allContacts={allContacts} />
+        <WhatsappManageContactsTable
+          allContacts={allContacts}
+          updateContactData={updateContactData}
+          setUpdateContactDetails={setUpdateContactDetails}
+          setUpdateContactVisible={setUpdateContactVisible}
+        />
       ) : (
         <CustomNoRowsOverlay />
       )}
@@ -1164,6 +1204,182 @@ const ManageContacts = () => {
             className="mt-2"
             onClick={handleUpdateGrpName}
           />
+        </div>
+      </Dialog>
+
+      <Dialog
+        header="Edit Contact Details"
+        visible={updateContactVisible}
+        onHide={() => setUpdateContactVisible(false)}
+        className="w-[40rem]"
+        draggable={false}
+      >
+        <div>
+          <div className="grid flex-wrap grid-cols-2 gap-3 lg:flex-nowrap">
+            <InputField
+              placeholder="Enter first name.."
+              id="userfirstname"
+              name="userfirstname"
+              type="text"
+              value={updatedContactDetails.firstName}
+              onChange={(e) =>
+                setUpdatedContactDetails({
+                  ...updatedContactDetails,
+                  firstName: e.target.value,
+                })
+              }
+              required={true}
+            />
+            {/* <InputField
+              placeholder="Enter middle name.."
+              id="usermiddlename"
+              name="usermiddlename"
+              type="text"
+              value={addContactDetails.middleName}
+              onChange={(e) =>
+                setAddContactDetails({
+                  ...addContactDetails,
+                  middleName: e.target.value,
+                })
+              }
+            /> */}
+            <InputField
+              placeholder="Enter last name.."
+              id="userlastname"
+              name="userlastname"
+              type="text"
+              value={updatedContactDetails.lastName}
+              onChange={(e) =>
+                setUpdatedContactDetails({
+                  ...updatedContactDetails,
+                  lastName: e.target.value,
+                })
+              }
+              required={true}
+            />
+            <InputField
+              placeholder="Enter mobile no.."
+              id="mobilenumber"
+              name="mobilenumber"
+              type="number"
+              value={updatedContactDetails.mobileNo}
+              onChange={(e) =>
+                setUpdatedContactDetails({
+                  ...updatedContactDetails,
+                  mobileNo: e.target.value,
+                })
+              }
+              required={true}
+            />
+            {/* <InputField
+              placeholder="Enter email id.."
+              id="emailid"
+              name="emailid"
+              type="email"
+              value={addContactDetails.emailId}
+              onChange={(e) =>
+                setAddContactDetails({
+                  ...addContactDetails,
+                  emailId: e.target.value,
+                })
+              }
+              required={true}
+            /> */}
+            <InputField
+              placeholder="Enter unique id.."
+              id="uniqueid"
+              name="uniqueid"
+              type="text"
+              value={updatedContactDetails.uniqueId}
+              onChange={(e) =>
+                setUpdatedContactDetails({
+                  ...updatedContactDetails,
+                  uniqueId: e.target.value,
+                })
+              }
+            />
+            {/* <UniversalDatePicker
+              label="Birth Date"
+              className="mb-0"
+              value={addContactDetails.birthDate}
+              onChange={(e) =>
+                setAddContactDetails({
+                  ...addContactDetails,
+                  birthDate: e,
+                })
+              }
+              required={true}
+            /> */}
+            {/* <UniversalDatePicker
+              label="Anniversary Date"
+              className="mb-0"
+              value={addContactDetails.mariageDate}
+              onChange={(e) =>
+                setAddContactDetails({
+                  ...addContactDetails,
+                  mariageDate: e,
+                })
+              }
+              required={true}
+            /> */}
+            {/* <RadioGroupField
+              label={"Allowishes?"}
+              name="addwish"
+              id="addwish"
+              options={addwish}
+              value={addContactDetails.allowishes}
+              onChange={(e) =>
+                setAddContactDetails({
+                  ...addContactDetails,
+                  allowishes: e.target.value,
+                })
+              }
+              required={true}
+            /> */}
+            {/* <RadioGroupField
+              label={"Gender?"}
+              name="gamderadd"
+              id="addgamderaddImportContact"
+              options={[
+                { value: "m", label: "Male" },
+                { value: "f", label: "Female" },
+              ]}
+              value={addContactDetails.gender}
+              onChange={(e) =>
+                setAddContactDetails({
+                  ...addContactDetails,
+                  gender: e.target.value,
+                })
+              }
+              required={true}
+            /> */}
+            <RadioGroupField
+              label={"Active Status"}
+              name="activeStatus"
+              id="activeStatus"
+              options={[
+                { value: 0, label: "Active" },
+                { value: 1, label: "Inactive" },
+              ]}
+              value={updatedContactDetails.activeStatus}
+              onChange={(e) =>
+                setUpdatedContactDetails({
+                  ...updatedContactDetails,
+                  activeStatus: Number(e.target.value),
+                })
+              }
+              required={true}
+            />
+          </div>
+          <div className="flex justify-center mt-2">
+            <UniversalButton
+              id="updateContactDetails"
+              name="updateContactDetails"
+              label="Update"
+              variant="primary"
+              onClick={updateContactData}
+            />
+          </div>
         </div>
       </Dialog>
     </div>
