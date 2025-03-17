@@ -29,6 +29,7 @@ import {
 } from "../apis/contact/contact";
 import DropdownWithSearch from "../whatsapp/components/DropdownWithSearch";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
+import CustomNoRowsOverlay from "../whatsapp/components/CustomNoRowsOverlay";
 
 const ManageContacts = () => {
   const [selectedMultiGroup, setSelectedMultiGroup] = useState(null);
@@ -194,41 +195,24 @@ const ManageContacts = () => {
   };
 
   const handleSearchGroup = async () => {
-    console.log("Search Filters:");
-    console.log({
-      user: selectedMultiGroup,
-      fastName: manageContactFirst,
-      mobileNumber: manageContactMobile,
-      status: selectedStatus,
-    });
+    if (!selectedMultiGroup) {
+      toast.error("Please select group");
+      return;
+    }
 
     setIsFetching(true);
     const res = await getContactListByGrpId({
       groupSrNo: selectedMultiGroup,
       status: selectedStatus,
     });
-
-    console.log(res);
-
+    if (!res.flag) {
+      setAllContacts([]);
+    }
     setAllContacts(res);
 
     setIsFetching(false);
-
-    // setFilteredData([]);
   };
 
-  const groups = [
-    { id: 1, name: "Group 1" },
-    { id: 2, name: "Group 2" },
-    { id: 3, name: "Group 3" },
-    { id: 4, name: "Group 4" },
-    { id: 5, name: "Group 5" },
-    { id: 6, name: "Group 6" },
-    { id: 7, name: "Group 7" },
-    { id: 8, name: "Group 8" },
-    { id: 9, name: "Group 9" },
-    { id: 10, name: "Group 10" },
-  ];
 
   // handle File drop
   const handleFileDrop = (event) => {
@@ -356,7 +340,6 @@ const ManageContacts = () => {
     if (!deleteGrpId) return;
     const res = await deleteGrp(deleteGrpId.groupName, deleteGrpId.groupCode);
     toast.success(res);
-
   };
 
   return (
@@ -471,8 +454,10 @@ const ManageContacts = () => {
 
       {isFetching ? (
         <UniversalSkeleton height="35rem" width="100%" />
-      ) : (
+      ) : allContacts?.length > 0 ? (
         <WhatsappManageContactsTable allContacts={allContacts} />
+      ) : (
+        <CustomNoRowsOverlay />
       )}
 
       <div className="flex card justify-content-center">
