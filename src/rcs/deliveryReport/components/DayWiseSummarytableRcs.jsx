@@ -142,7 +142,7 @@ const DayWiseSummarytableRcs = ({ id, name, isMonthWise, data = [] }) => {
       ? data.map((item, i) => ({
           id: i + 1,
           sn: i + 1,
-          queDate: item.queDate,
+          queDate: item.queuedate,
           chargedUnit: item.chargedUnits,
           count: item.smscount,
           pending: item.pending,
