@@ -11,6 +11,10 @@ import {
   updateTemplateStatusbySrno,
 } from "../../apis/rcs/rcs";
 import UniversalSkeleton from "../../whatsapp/components/UniversalSkeleton";
+import { Dialog } from "primereact/dialog";
+import { BsTelephoneFill } from "react-icons/bs";
+import { FaExternalLinkAlt } from "react-icons/fa";
+import { FaReply } from "react-icons/fa6";
 
 const ManageTemplateRcs = () => {
   const [isFetching, setIsFetching] = useState(false);
@@ -19,7 +23,7 @@ const ManageTemplateRcs = () => {
   });
   const [summaryTableData, setSummaryTableData] = useState([]);
   const [summaryFilterData, setSummaryFilterData] = useState([]);
-  const [summaryTableUpdateData, setSummaryTableUpdateData] = useState(false);
+  const [templateDialogVisible, setTemplateDialogVisible] = useState(false);
 
   const navigate = useNavigate();
 
@@ -196,12 +200,62 @@ const ManageTemplateRcs = () => {
               name="manageTemplatetable"
               updateTemplateStatus={updateTemplateStatus}
               data={summaryFilterData}
-              setSummaryTableUpdateData={setSummaryTableUpdateData}
+              setTemplateDialogVisible={setTemplateDialogVisible}
             />
           </div>
         )}
       </div>
-      {/* )} */}
+      <Dialog
+        header="Template View"
+        visible={templateDialogVisible}
+        style={{ width: "27rem" }}
+        onHide={() => {
+          setTemplateDialogVisible(false);
+        }}
+        draggable={false}
+      >
+        <div className="modal-content rounded-xl">
+          <div className="p-2 border-2 border-gray-200 modal-body rounded-xl">
+            <div className="imgbox">
+              {/* <img
+                src={whatsappImg}
+                alt=""
+                className="w-full rounded-lg h-45"
+              /> */}
+            </div>
+            <div className="flex flex-col gap-2 py-2 overflow-scroll text-sm contentbox max-h-80">
+              <p>
+                As vibrant hues fill the canvas of life, may this festival of
+                colors bring immense joy, success and prosperity to your
+                corporate endeavors🎇💻
+              </p>
+              <p>
+                Wishing our esteemed patrons and partners a Holi filled with the
+                splendor of laughter, the warmth of togetherness and the
+                brightness of positivity.📞📞
+              </p>
+              <p>Here's to a colorful journey ahead!🎉🎊</p>
+              <p>Happy Holi!🎇✨</p>
+              <p>Best Regards,🎊🎉</p>
+              <p>Team Celitix</p>
+            </div>
+            <div className="flex flex-col gap-2">
+              <button className="flex items-center justify-center px-4 py-2 text-sm text-white bg-blue-500 rounded-md ">
+                <BsTelephoneFill className="mr-2" />
+                Contact us
+              </button>
+              <button className="flex items-center justify-center px-4 py-2 text-sm text-white bg-green-500 rounded-md ">
+                <FaExternalLinkAlt className="mr-2" />
+                Visit us
+              </button>
+              <button className="flex items-center justify-center w-full px-4 py-2 text-sm text-gray-800 bg-gray-200 rounded-md">
+                <FaReply className="mr-2" />
+                View more
+              </button>
+            </div>
+          </div>
+        </div>
+      </Dialog>
     </div>
   );
 };

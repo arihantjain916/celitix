@@ -128,8 +128,7 @@ const ManageTemplatetableRcs = ({
   id,
   name,
   data = [],
-  updateTemplateStatus,
-  setSummaryTableUpdateData,
+  setTemplateDialogVisible,
 }) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
@@ -138,10 +137,6 @@ const ManageTemplatetableRcs = ({
     page: 0,
     pageSize: 10,
   });
-
-  const handleView = () => {
-    setDialogVisible(true);
-  };
 
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
@@ -212,7 +207,7 @@ const ManageTemplatetableRcs = ({
           <CustomTooltip title="View Template" placement="top" arrow>
             <IconButton
               className="no-xs"
-              onClick={() => handleView(params.row)}
+              onClick={() => setTemplateDialogVisible(true)}
             >
               <VisibilityIcon
                 sx={{
@@ -347,7 +342,7 @@ const ManageTemplatetableRcs = ({
         />
       </Paper>
 
-      <Dialog
+      {/* <Dialog
         header="Template View"
         visible={dialogVisible}
         style={{ width: "27rem" }}
@@ -397,7 +392,7 @@ const ManageTemplatetableRcs = ({
             </div>
           </div>
         </div>
-      </Dialog>
+      </Dialog> */}
     </>
   );
 };
