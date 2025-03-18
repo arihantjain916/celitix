@@ -19,6 +19,7 @@ import DayWiseSummarytableRcs from "./components/DayWiseSummarytableRcs";
 import { fetchCampaignReport, fetchSummaryReport } from "../../apis/rcs/rcs";
 import UniversalSkeleton from "../../whatsapp/components/UniversalSkeleton";
 import { Checkbox } from "primereact/checkbox";
+import toast from "react-hot-toast";
 
 const DeliveryreportRcs = () => {
   const [value, setValue] = useState(0);
@@ -69,8 +70,8 @@ const DeliveryreportRcs = () => {
       const res = await fetchCampaignReport(data);
       setCampaignTableData(res);
     } catch (e) {
-      const res = await fetchCampaignReport(data);
-      setCampaignTableData(res);
+      toast.error("Something went wrong.");
+      console.log(e);
     } finally {
       setIsFetching(false);
     }
@@ -78,11 +79,14 @@ const DeliveryreportRcs = () => {
 
   //fetchSummaryData
   const handleSummarySearch = async () => {
+    if (!summaryData.fromDate || !summaryData.toDate) {
+      toast.error("Please select from and to date.");
+    }
     const data = {
-      // fromDate: formatDate(summaryData.fromDate),
-      // toDate: formatDate(summaryData.toDate),
-      fromDate: "2022-10-01",
-      toDate: "2025-02-26",
+      fromDate: formatDate(summaryData.fromDate),
+      toDate: formatDate(summaryData.toDate),
+      // fromDate: "2022-10-01",
+      // toDate: "2025-02-26",
       summaryType: "rcs,date,user",
       isMonthWise: Number(summaryData.isMonthWise),
     };
@@ -93,6 +97,7 @@ const DeliveryreportRcs = () => {
       setSummaryTableData(res);
     } catch (e) {
       console.log(e);
+      toast.error("Something went wrong.");
     } finally {
       setIsFetching(false);
     }
