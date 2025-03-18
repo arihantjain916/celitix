@@ -16,6 +16,7 @@ import AnimatedDropdown from "../../whatsapp/components/AnimatedDropdown";
 import UniversalButton from "../../whatsapp/components/UniversalButton";
 import CampaignsLogsTable from "./components/CampaignsLogsTableRcs";
 import DayWiseSummarytableRcs from "./components/DayWiseSummarytableRcs";
+import { fetchCampaignReport } from "../../apis/rcs/rcs";
 
 const DeliveryreportRcs = () => {
   const [value, setValue] = useState(0);
@@ -33,7 +34,7 @@ const DeliveryreportRcs = () => {
     setValue(newValue);
   };
 
-  const handleCampaignSearch = () => {
+  const handleCampaignSearch = async () => {
     const data = {
       startDate: new Date(campaignData.startDate).toLocaleDateString("en-GB"),
       endDate: new Date(campaignData.startDate).toLocaleDateString("en-GB"),
@@ -42,7 +43,8 @@ const DeliveryreportRcs = () => {
       status: campaignData.status,
     };
 
-    console.log(data);
+    const res = await fetchCampaignReport(data);
+    console.log(res);
   };
   return (
     <div>
@@ -107,6 +109,8 @@ const DeliveryreportRcs = () => {
                         startDate: e,
                       });
                     }}
+                    minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                    maxDate={new Date()}
                   />
                 </div>
                 <div className="w-full sm:w-56">
