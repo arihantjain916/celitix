@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ManageBotTableRcs from "./components/ManageBotTableRcs";
 import UniversalButton from "../../whatsapp/components/UniversalButton";
-import { fetchAgentBySrNo, fetchAllAgents } from "../../apis/rcs/rcs";
+import { fetchAllAgents } from "../../apis/rcs/rcs";
 import DropdownWithSearch from "../../whatsapp/components/DropdownWithSearch";
 import UniversalSkeleton from "../../whatsapp/components/UniversalSkeleton";
 import toast from "react-hot-toast";

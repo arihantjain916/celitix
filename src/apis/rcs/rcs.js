@@ -14,7 +14,7 @@ export const fetchSummaryReport = async (data) => {
   });
 };
 
-export const fetchAllAgents = async (agent_id) => {
+export const fetchAllAgents = async (agent_id="") => {
   return await fetchWithAuth(
     `proCpaasRest/rcs/bot/getListOfAgents?agentId=${agent_id}`,
     {
