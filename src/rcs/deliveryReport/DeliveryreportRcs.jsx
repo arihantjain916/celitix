@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Loader from "../../whatsapp/components/Loader";
 import Box from "@mui/material/Box";
 import Tabs from "@mui/material/Tabs";
@@ -17,6 +17,7 @@ import UniversalButton from "../../whatsapp/components/UniversalButton";
 import CampaignsLogsTable from "./components/CampaignsLogsTableRcs";
 import DayWiseSummarytableRcs from "./components/DayWiseSummarytableRcs";
 import { fetchCampaignReport } from "../../apis/rcs/rcs";
+import UniversalSkeleton from "../../whatsapp/components/UniversalSkeleton";
 
 const DeliveryreportRcs = () => {
   const [value, setValue] = useState(0);
@@ -24,7 +25,7 @@ const DeliveryreportRcs = () => {
 
   //campaignState
   const [campaignData, setCampaignData] = useState({
-    startDate: new Date(),
+    startDate: new Date().toLocaleDateString("en-GB"),
     templateType: "",
     campaignName: "",
     status: "",
@@ -41,11 +42,19 @@ const DeliveryreportRcs = () => {
       endDate: new Date(campaignData.startDate).toLocaleDateString("en-GB"),
       templateType: campaignData.templateType,
       campaignName: campaignData.campaignName,
-      status: campaignData.status,
+      status: campaignData.status ?? "",
     };
 
-    const res = await fetchCampaignReport(data);
-    setCampaignTableData(res);
+    try {
+      setIsFetching(true);
+      const res = await fetchCampaignReport(data);
+      setCampaignTableData(res);
+    } catch (e) {
+      const res = await fetchCampaignReport(data);
+      setCampaignTableData(res);
+    } finally {
+      setIsFetching(false);
+    }
   };
   return (
     <div>
