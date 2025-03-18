@@ -13,3 +13,9 @@ export const fetchSummaryReport = async (data) => {
     body: JSON.stringify(data),
   });
 };
+
+export const fetchAllAgents = async () => {
+  return await fetchWithAuth("proCpaasRest/rcs/bot/getListOfAgents", {
+    method: "POST",
+  });
+};
