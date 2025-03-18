@@ -29,6 +29,7 @@ const DeliveryreportRcs = () => {
     campaignName: "",
     status: "",
   });
+  const [campaignTableData, setCampaignTableData] = useState([]);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -44,7 +45,7 @@ const DeliveryreportRcs = () => {
     };
 
     const res = await fetchCampaignReport(data);
-    console.log(res);
+    setCampaignTableData(res);
   };
   return (
     <div>
@@ -189,7 +190,7 @@ const DeliveryreportRcs = () => {
                 <CampaignsLogsTable
                   id="whatsappManageCampaignTable"
                   name="whatsappManageCampaignTable"
-                  // data={filteredData}
+                  data={campaignTableData}
                 />
               </div>
             )}
