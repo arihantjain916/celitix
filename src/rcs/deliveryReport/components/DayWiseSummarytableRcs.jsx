@@ -75,14 +75,7 @@ const CustomPagination = ({
   );
 };
 
-const DayWiseSummarytableRcs = ({
-  id,
-  name,
-  handleView,
-  handleDuplicate,
-  handleDelete,
-  data = [],
-}) => {
+const DayWiseSummarytableRcs = ({ id, name, isMonthWise, data = [] }) => {
   const [selectedRows, setSelectedRows] = React.useState([]);
 
   // const paginationModel = { page: 0, pageSize: 10 };
@@ -93,7 +86,9 @@ const DayWiseSummarytableRcs = ({
 
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
-    { field: "queDate", headerName: "Que Date", flex: 1, minWidth: 120 },
+    isMonthWise
+      ? { field: "month", headerName: "Month", flex: 1, minWidth: 120 }
+      : { field: "queDate", headerName: "Que Date", flex: 1, minWidth: 120 },
     {
       field: "chargedUnit",
       headerName: "Charged Unit",
@@ -122,23 +117,48 @@ const DayWiseSummarytableRcs = ({
     // { field: 'sentDate', headerName: 'Sent Date', flex: 1, minWidth: 120 },
   ];
 
-  const rows = Array.isArray(data)
-    ? data.map((item, i) => ({
-        id: i + 1,
-        sn: i + 1,
-        queDate: item.queuedate,
-        chargedUnit: item.chargedUnits,
-        count: item.smscount,
-        pending: item.pending,
-        failed: item.failed,
-        blocked: item.blocked,
-        sent: item.sent,
-        delivered: item.delivered,
-        notDelivered: item.not_delivered,
-        drnotAvailable: item.dr_not_available,
-        others: item.others,
-      }))
-    : [];
+  let rows = [];
+
+  if (isMonthWise) {
+    Array.isArray(data)
+      ? data.map((item, i) => ({
+          id: i + 1,
+          sn: i + 1,
+          month: item.month,
+          chargedUnit: item.chargedUnits,
+          count: item.smscount,
+          pending: item.pending,
+          failed: item.failed,
+          blocked: item.blocked,
+          sent: item.sent,
+          delivered: item.delivered,
+          notDelivered: item.not_delivered,
+          drnotAvailable: item.dr_not_available,
+          others: item.others,
+        }))
+      : [];
+  } else {
+    rows = Array.isArray(data)
+      ? data.map((item, i) => ({
+          id: i + 1,
+          sn: i + 1,
+          queDate: item.queDate,
+          chargedUnit: item.chargedUnits,
+          count: item.smscount,
+          pending: item.pending,
+          failed: item.failed,
+          blocked: item.blocked,
+          sent: item.sent,
+          delivered: item.delivered,
+          notDelivered: item.not_delivered,
+          drnotAvailable: item.dr_not_available,
+          others: item.others,
+        }))
+      : [];
+  }
+
+  // isMonthWise
+  //   ? { field: "month", headerName: "Month", flex: 1, minWidth: 120 }
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
 
