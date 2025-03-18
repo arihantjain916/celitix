@@ -7,6 +7,7 @@ import ManageTemplatetableRcs from "./components/ManageTemplatetableRcs";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import {
+  deleteTemplate,
   fetchAllTemplates,
   fetchTemplateDetails,
   updateTemplateStatusbySrno,
@@ -14,7 +15,7 @@ import {
 import UniversalSkeleton from "../../whatsapp/components/UniversalSkeleton";
 import { Dialog } from "primereact/dialog";
 import { BsTelephoneFill } from "react-icons/bs";
-import { FaExternalLinkAlt } from "react-icons/fa";
+import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import { FaLocationCrosshairs, FaReply } from "react-icons/fa6";
 import { TbLocationShare } from "react-icons/tb";
 
@@ -25,9 +26,14 @@ const ManageTemplateRcs = () => {
   });
   const [summaryTableData, setSummaryTableData] = useState([]);
   const [summaryFilterData, setSummaryFilterData] = useState([]);
-  const [templateDialogVisible, setTemplateDialogVisible] = useState(false);
   const [templateid, setTemplateid] = useState("");
+
+  //template Details
+  const [templateDialogVisible, setTemplateDialogVisible] = useState(false);
   const [templateDetails, setTemplateDetails] = useState();
+
+  //template delete
+  const [templateDeleteVisible, setTemplateDeleteVisible] = useState(false);
 
   const navigate = useNavigate();
 
@@ -154,6 +160,18 @@ const ManageTemplateRcs = () => {
     }
   };
 
+  const handleTemplateDelete = async () => {
+    try {
+      console.log(templateid);
+      // const res = await deleteTemplate(templateid);
+      toast.success("Template Deleted Successfully");
+      setTemplateDeleteVisible(false)
+    } catch (e) {
+      console.log(e);
+      toast.error("Something went wrong.");
+    }
+  };
+
   return (
     <div className="w-full">
       <div>
@@ -261,10 +279,13 @@ const ManageTemplateRcs = () => {
               data={summaryFilterData}
               setTemplateDialogVisible={setTemplateDialogVisible}
               setTemplateid={setTemplateid}
+              setTemplateDeleteVisible={setTemplateDeleteVisible}
             />
           </div>
         )}
       </div>
+
+      {/* template details dialog */}
       <Dialog
         header={templateDetails?.templateName}
         visible={templateDialogVisible}
@@ -299,10 +320,49 @@ const ManageTemplateRcs = () => {
                 </button>
               </div>
             ))}
-            <div className="flex flex-col gap-2">
-             
-            </div>
           </div>
+        </div>
+      </Dialog>
+
+      {/* template delete dialog */}
+      <Dialog
+        header={templateDetails?.templateName}
+        visible={templateDeleteVisible}
+        style={{ width: "27rem" }}
+        onHide={() => {
+          setTemplateDeleteVisible(false);
+        }}
+        draggable={false}
+      >
+        <div className="flex items-center justify-center">
+          <CancelOutlinedIcon
+            sx={{
+              fontSize: 64,
+              color: "#ff3f3f",
+            }}
+          />
+        </div>
+        <div className="p-4 text-center">
+          <p className="text-[1.1rem] font-semibold text-gray-700">
+            Are you sure you want to delete the template <br />
+            <span className="text-green-500">
+              "{templateDetails?.templateName}"
+            </span>
+          </p>
+          <p className="mt-2 text-sm text-gray-500">
+            This action is irreversible.
+          </p>
+        </div>
+
+        <div className="flex justify-center gap-4 mt-2">
+          <UniversalButton
+            label="Cancel"
+            style={{
+              backgroundColor: "#090909",
+            }}
+            onClick={() => setTemplateDeleteVisible(false)}
+          />
+          <UniversalButton label="Delete" onClick={handleTemplateDelete} />
         </div>
       </Dialog>
     </div>

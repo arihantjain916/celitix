@@ -69,3 +69,12 @@ export const fetchTemplateDetails = async (srno) => {
     }
   );
 };
+
+export const deleteTemplate = async (srno) => {
+  return await fetchWithAuth(
+    `/proCpaasRest/rcsTemplate/deleteTemplate?srno=${srno}`,
+    {
+      method: "POST",
+    }
+  );
+};

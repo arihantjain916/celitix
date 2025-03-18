@@ -75,7 +75,8 @@ const ManageTemplatetableRcs = ({
   name,
   data = [],
   setTemplateDialogVisible,
-  setTemplateid
+  setTemplateid,
+  setTemplateDeleteVisible,
 }) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
@@ -169,7 +170,10 @@ const ManageTemplatetableRcs = ({
           <CustomTooltip title="Delete Template" placement="top" arrow>
             <IconButton
               className="no-xs"
-              onClick={() => handleDelete(params.row)}
+              onClick={() => {
+                setTemplateDeleteVisible(true);
+                setTemplateid(params.row.srno);
+              }}
             >
               <MdOutlineDeleteForever
                 className="text-red-500 cursor-pointer hover:text-red-600"
