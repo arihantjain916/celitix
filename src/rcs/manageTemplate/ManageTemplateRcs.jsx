@@ -1,60 +1,84 @@
-import React, { useState } from 'react'
-import AnimatedDropdown from '../../whatsapp/components/AnimatedDropdown'
-import UniversalButton from '../../whatsapp/components/UniversalButton';
-import InputField from '../../whatsapp/components/InputField';
+import React, { useState } from "react";
+import AnimatedDropdown from "../../whatsapp/components/AnimatedDropdown";
+import UniversalButton from "../../whatsapp/components/UniversalButton";
+import InputField from "../../whatsapp/components/InputField";
 import { IoSearch } from "react-icons/io5";
-import ManageTemplatetableRcs from './components/ManageTemplatetableRcs';
-import { useNavigate } from 'react-router-dom';
+import ManageTemplatetableRcs from "./components/ManageTemplatetableRcs";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import { fetchAllTemplates } from "../../apis/rcs/rcs";
+import UniversalSkeleton from "../../whatsapp/components/UniversalSkeleton";
 
 const ManageTemplateRcs = () => {
-  const [selectedOption, setSelectedOption] = useState(null);
-  const [templateStatus, setTamplateStatus] = useState(null);
   const [isFetching, setIsFetching] = useState(false);
-  const [filteredData, setFilteredData] = useState([]);
-  const templatetypeOptions = [
-    { label: 'Option 1', value: 'option1' },
-    { label: 'Option 2', value: 'option2' },
-  ]
-  const statusOptions=[
-    { label: 'Active', value: 'active' },
-    { label: 'Inactive', value: 'inactive' },
-  ]
+  const [templateData, setTemplateData] = useState({
+    templateName: "",
+  });
+  const [summaryTableData, setSummaryTableData] = useState([]);
+  const [summaryFilterData, setSummaryFilterData] = useState([]);
 
   const navigate = useNavigate();
 
   const handleaddTemplate = () => {
     navigate("/rcsaddtemplatercs");
   };
-  
+
+  const handleSearch = async () => {
+    const data = {
+      ...templateData,
+      templateType: templateData.templateType ?? "",
+      templateStatus: templateData.templateStatus ?? "",
+    };
+
+    // const entries = Object.keys(data).filter((key) => data[key] !== "");
+    // console.log(entries);
+    try {
+      setIsFetching(true);
+      const res = await fetchAllTemplates();
+      setSummaryFilterData(res.data);
+      setSummaryTableData(res.data);
+    } catch (e) {
+      console.log(e);
+      toast.error("Something went wrong.");
+    } finally {
+      setIsFetching(false);
+    }
+  };
+
   return (
-    <div className='w-full'>
+    <div className="w-full">
       {/* {isLoading ? (
       <>
         <Loader />
       </>
     ) : ( */}
       <div>
-      <div className="flex flex-wrap gap-4 items-end justify-end align-middle pb-1 w-full">
-        {/* Name Input Field */}
+        <div className="flex flex-wrap items-end justify-end w-full gap-4 pb-1 align-middle">
+          {/* Name Input Field */}
 
-        <div className="w-max-content">
-          <UniversalButton
-          id="addtemplatebtn"
-          name="addtemplatebtn"
-          label="Add Template"
-            onClick={handleaddTemplate}
-          />
+          <div className="w-max-content">
+            <UniversalButton
+              id="addtemplatebtn"
+              name="addtemplatebtn"
+              label="Add Template"
+              onClick={handleaddTemplate}
+            />
+          </div>
         </div>
-       
-      </div>
-        <div className="flex flex-wrap gap-2 items-end mb-2 w-full">
+        <div className="flex flex-wrap items-end w-full gap-2 mb-2">
           <div className="w-full sm:w-56">
             <InputField
               label="Template Name"
-              id='templateName'
-              name='templateName'
-              placeholder="Enter Template Name
-"
+              id="templateName"
+              name="templateName"
+              placeholder="Enter Template Name"
+              value={templateData.templateName}
+              onChange={(e) => {
+                setTemplateData((prevData) => ({
+                  ...prevData,
+                  templateName: e.target.value,
+                }));
+              }}
             />
           </div>
           <div className="w-full sm:w-56">
@@ -62,10 +86,26 @@ const ManageTemplateRcs = () => {
               label="Template Type"
               id="templatetype"
               name="templatetype"
-              options={templatetypeOptions}
-              value={selectedOption}
-              onChange={(newValue) => setSelectedOption(newValue)}
-              placeholder='Select Template Type'
+              options={[
+                { label: "Text", value: "text" },
+                { label: "Image", value: "image" },
+                {
+                  label: "Rich Card Stand Alone",
+                  value: "richcardstandalone",
+                },
+                {
+                  label: "Rich Card Carausel",
+                  value: "richcardcarousel",
+                },
+              ]}
+              value={templateData.templateType}
+              onChange={(newValue) => {
+                setTemplateData((prevData) => ({
+                  ...prevData,
+                  templateType: newValue,
+                }));
+              }}
+              placeholder="Select Template Type"
             />
           </div>
           <div className="w-full sm:w-56">
@@ -73,23 +113,34 @@ const ManageTemplateRcs = () => {
               label="Status"
               id="status"
               name="status"
-              options={statusOptions}
-              value={templateStatus}
-              onChange={(newValue) => setTamplateStatus(newValue)}
-              placeholder='Select Template Type'
+              options={[
+                { label: "Pending", value: "Pending" },
+                { label: "Approved", value: "Approved" },
+                { label: "Operator processing", value: "Operator processing" },
+                { label: "Submitted", value: "Submitted" },
+              ]}
+              value={templateData.templateStatus}
+              onChange={(newValue) => {
+                setTemplateData((prevData) => ({
+                  ...prevData,
+                  templateStatus: newValue,
+                }));
+              }}
+              placeholder="Select Template Type"
             />
           </div>
 
           {/* Search Button */}
           <div className="w-max-content">
-                    <UniversalButton
-                      label="Search"
-                      id="manageSearch"
-                      name="manageSearch"
-                      variant="primary"
-                      icon={<IoSearch />}
-                    />
-                  </div>
+            <UniversalButton
+              label="Search"
+              id="manageSearch"
+              name="manageSearch"
+              variant="primary"
+              icon={<IoSearch />}
+              onClick={handleSearch}
+            />
+          </div>
         </div>
 
         {/* ✅ Show Loader or Table */}
@@ -100,17 +151,17 @@ const ManageTemplateRcs = () => {
         ) : (
           <div className="w-full">
             <ManageTemplatetableRcs
-            id="manageTemplatetable"
-            name="manageTemplatetable"
-            isFetching={isFetching}
-            data={filteredData}
+              id="manageTemplatetable"
+              name="manageTemplatetable"
+              // isFetching={isFetching}
+              data={summaryFilterData}
             />
           </div>
         )}
       </div>
       {/* )} */}
     </div>
-  )
-}
+  );
+};
 
 export default ManageTemplateRcs;

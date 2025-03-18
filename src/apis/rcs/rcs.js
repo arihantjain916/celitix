@@ -44,3 +44,9 @@ export const fetchAllAgents = async () => {
     method: "POST",
   });
 };
+
+export const fetchAllTemplates = async () => {
+  return await fetchWithAuth("/proCpaasRest/rcsTemplate/showTemplates", {
+    method: "POST",
+  });
+};
