@@ -6,3 +6,10 @@ export const fetchCampaignReport = async (data) => {
     body: JSON.stringify(data),
   });
 };
+
+export const fetchSummaryReport = async (data) => {
+  return await fetchWithAuth("/proCpaasRest/rcs/getSummaryReport", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
