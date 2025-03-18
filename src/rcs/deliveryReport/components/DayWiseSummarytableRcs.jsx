@@ -120,7 +120,7 @@ const DayWiseSummarytableRcs = ({ id, name, isMonthWise, data = [] }) => {
   let rows = [];
 
   if (isMonthWise) {
-    Array.isArray(data)
+    rows = Array.isArray(data)
       ? data.map((item, i) => ({
           id: i + 1,
           sn: i + 1,

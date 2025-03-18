@@ -18,6 +18,7 @@ import CampaignsLogsTable from "./components/CampaignsLogsTableRcs";
 import DayWiseSummarytableRcs from "./components/DayWiseSummarytableRcs";
 import { fetchCampaignReport, fetchSummaryReport } from "../../apis/rcs/rcs";
 import UniversalSkeleton from "../../whatsapp/components/UniversalSkeleton";
+import { Checkbox } from "primereact/checkbox";
 
 const DeliveryreportRcs = () => {
   const [value, setValue] = useState(0);
@@ -96,6 +97,10 @@ const DeliveryreportRcs = () => {
       setIsFetching(false);
     }
   };
+
+  useEffect(() => {
+    handleSummarySearch();
+  }, [summaryData.isMonthWise]);
 
   return (
     <div>
@@ -279,13 +284,31 @@ const DeliveryreportRcs = () => {
                   maxDate={new Date()}
                 />
               </div>
+              <div className="flex items-center justify-center gap-2">
+                <Checkbox
+                  id="isMonthWise"
+                  name="isMonthWise"
+                  label="Month Wise"
+                  checked={summaryData.isMonthWise}
+                  onChange={(e) => {
+                    setSummaryData({
+                      ...summaryData,
+                      isMonthWise: e.target.checked,
+                    });
+                  }}
+                  className="m-2"
+                />
+                <label htmlFor="isMonthWise" className="text-md">
+                  Month Wise
+                </label>
+              </div>
               <div className="w-full sm:w-56">
                 <UniversalButton
                   label="Show"
                   id="show"
                   name="show"
                   variant="primary"
-                  isLoading={isFetching}
+                  disabled={isFetching}
                   onClick={handleSummarySearch}
                 />
               </div>
@@ -296,13 +319,14 @@ const DeliveryreportRcs = () => {
               </div>
             ) : (
               <div className="w-full">
-                <DayWiseSummarytableRcs data={summaryTableData} />
+                <DayWiseSummarytableRcs
+                  data={summaryTableData}
+                  isMonthWise={summaryData.isMonthWise}
+                />
               </div>
             )}
           </CustomTabPanel>
         </Box>
-
-        {/* )} */}
       </div>
     </div>
   );
