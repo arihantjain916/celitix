@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AnimatedDropdown from "../../whatsapp/components/AnimatedDropdown";
 import UniversalButton from "../../whatsapp/components/UniversalButton";
 import InputField from "../../whatsapp/components/InputField";
@@ -23,15 +23,13 @@ const ManageTemplateRcs = () => {
     navigate("/rcsaddtemplatercs");
   };
 
-  const handleSearch = async () => {
-    const data = {
-      ...templateData,
-      templateType: templateData.templateType ?? "",
-      templateStatus: templateData.templateStatus ?? "",
-    };
+  const handleFetchTempData = async () => {
+    // const data = {
+    //   ...templateData,
+    //   templateType: templateData.templateType ?? "",
+    //   templateStatus: templateData.templateStatus ?? "",
+    // };
 
-    // const entries = Object.keys(data).filter((key) => data[key] !== "");
-    // console.log(entries);
     try {
       setIsFetching(true);
       const res = await fetchAllTemplates();
@@ -43,6 +41,25 @@ const ManageTemplateRcs = () => {
     } finally {
       setIsFetching(false);
     }
+  };
+
+  useEffect(() => {
+    handleFetchTempData();
+  }, []);
+
+  const handleSearch = () => {
+    const data = {
+      ...templateData,
+      templateType: templateData.templateType ?? "",
+      status: templateData.status ?? "",
+    };
+    const notNull = Object.keys(data).filter((key) => data[key] != "");
+
+    const filterData = summaryTableData.filter((item) => {
+      return notNull.every((key) => item[key] === data[key]);
+    });
+
+    setSummaryFilterData(filterData);
   };
 
   return (
@@ -119,11 +136,11 @@ const ManageTemplateRcs = () => {
                 { label: "Operator processing", value: "Operator processing" },
                 { label: "Submitted", value: "Submitted" },
               ]}
-              value={templateData.templateStatus}
+              value={templateData.status}
               onChange={(newValue) => {
                 setTemplateData((prevData) => ({
                   ...prevData,
-                  templateStatus: newValue,
+                  status: newValue,
                 }));
               }}
               placeholder="Select Template Type"
