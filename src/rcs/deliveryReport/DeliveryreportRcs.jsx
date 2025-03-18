@@ -58,9 +58,11 @@ const DeliveryreportRcs = () => {
   //fetchCampaignData
   const handleCampaignSearch = async () => {
     const data = {
-      startDate: new Date(campaignData.startDate).toLocaleDateString("en-GB"),
-      endDate: new Date(campaignData.startDate).toLocaleDateString("en-GB"),
-      templateType: campaignData.templateType,
+      // startDate: new Date(campaignData.startDate).toLocaleDateString("en-GB"),
+      // endDate: new Date(campaignData.startDate).toLocaleDateString("en-GB"),
+      startDate: "01/10/2024",
+      endDate: "01/10/2024",
+      templateType: campaignData.templateType ?? "",
       campaignName: campaignData.campaignName,
       status: campaignData.status ?? "",
     };
@@ -83,10 +85,10 @@ const DeliveryreportRcs = () => {
       toast.error("Please select from and to date.");
     }
     const data = {
-      fromDate: formatDate(summaryData.fromDate),
-      toDate: formatDate(summaryData.toDate),
-      // fromDate: "2022-10-01",
-      // toDate: "2025-02-26",
+      // fromDate: formatDate(summaryData.fromDate),
+      //toDate: formatDate(summaryData.toDate),
+      fromDate: "2022-10-01",
+      toDate: "2025-02-26",
       summaryType: "rcs,date,user",
       isMonthWise: Number(summaryData.isMonthWise),
     };
@@ -195,8 +197,16 @@ const DeliveryreportRcs = () => {
                     id="templateType"
                     name="templateType"
                     options={[
-                      { label: "text", value: "text" },
-                      { label: "image", value: "image" },
+                      { label: "Text", value: "text" },
+                      { label: "Image", value: "image" },
+                      {
+                        label: "Rich Card Stand Alone",
+                        value: "richcardstandalone",
+                      },
+                      {
+                        label: "Rich Card Carausel",
+                        value: "richcardcarousel",
+                      },
                     ]}
                     value={campaignData.templateType}
                     placeholder="Select Template Type"
@@ -214,8 +224,10 @@ const DeliveryreportRcs = () => {
                     id="status"
                     name="status"
                     options={[
-                      { label: "Cancelled", value: "Cancelled" },
+                      { label: "Pending", value: "Pending" },
                       { label: "Completed", value: "Completed" },
+                      { label: "Cancelled", value: "Cancelled" },
+                      { label: "Scheduled", value: "Scheduled" },
                     ]}
                     value={campaignData.status}
                     placeholder="Select Status"
