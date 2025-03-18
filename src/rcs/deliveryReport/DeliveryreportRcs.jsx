@@ -16,7 +16,7 @@ import AnimatedDropdown from "../../whatsapp/components/AnimatedDropdown";
 import UniversalButton from "../../whatsapp/components/UniversalButton";
 import CampaignsLogsTable from "./components/CampaignsLogsTableRcs";
 import DayWiseSummarytableRcs from "./components/DayWiseSummarytableRcs";
-import { fetchCampaignReport } from "../../apis/rcs/rcs";
+import { fetchCampaignReport, fetchSummaryReport } from "../../apis/rcs/rcs";
 import UniversalSkeleton from "../../whatsapp/components/UniversalSkeleton";
 
 const DeliveryreportRcs = () => {
@@ -32,10 +32,28 @@ const DeliveryreportRcs = () => {
   });
   const [campaignTableData, setCampaignTableData] = useState([]);
 
+  //summaryState
+  const [summaryData, setSummaryData] = useState({
+    fromDate: new Date().toLocaleDateString("en-GB"),
+    toDate: new Date().toLocaleDateString("en-GB"),
+    isMonthWise: false,
+  });
+  const [summaryTableData, setSummaryTableData] = useState([]);
+
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
+  //formatDate
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  };
+
+  //fetchCampaignData
   const handleCampaignSearch = async () => {
     const data = {
       startDate: new Date(campaignData.startDate).toLocaleDateString("en-GB"),
@@ -56,6 +74,29 @@ const DeliveryreportRcs = () => {
       setIsFetching(false);
     }
   };
+
+  //fetchSummaryData
+  const handleSummarySearch = async () => {
+    const data = {
+      // fromDate: formatDate(summaryData.fromDate),
+      // toDate: formatDate(summaryData.toDate),
+      fromDate: "2022-10-01",
+      toDate: "2025-02-26",
+      summaryType: "rcs,date,user",
+      isMonthWise: Number(summaryData.isMonthWise),
+    };
+
+    try {
+      setIsFetching(true);
+      const res = await fetchSummaryReport(data);
+      setSummaryTableData(res);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setIsFetching(false);
+    }
+  };
+
   return (
     <div>
       <div className="w-full">
@@ -211,6 +252,15 @@ const DeliveryreportRcs = () => {
                   label="From Date"
                   id="fromDate"
                   name="fromDate"
+                  value={setSummaryData.fromDate}
+                  onChange={(e) => {
+                    setSummaryData({
+                      ...summaryData,
+                      fromDate: e,
+                    });
+                  }}
+                  minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                  maxDate={new Date()}
                 />
               </div>
               <div className="w-full sm:w-56">
@@ -218,6 +268,15 @@ const DeliveryreportRcs = () => {
                   label="To Date"
                   id="toDate"
                   name="toDate"
+                  value={setSummaryData.toDate}
+                  onChange={(e) => {
+                    setSummaryData({
+                      ...summaryData,
+                      toDate: e,
+                    });
+                  }}
+                  minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                  maxDate={new Date()}
                 />
               </div>
               <div className="w-full sm:w-56">
@@ -227,6 +286,7 @@ const DeliveryreportRcs = () => {
                   name="show"
                   variant="primary"
                   isLoading={isFetching}
+                  onClick={handleSummarySearch}
                 />
               </div>
             </div>
@@ -236,7 +296,7 @@ const DeliveryreportRcs = () => {
               </div>
             ) : (
               <div className="w-full">
-                <DayWiseSummarytableRcs />
+                <DayWiseSummarytableRcs data={summaryTableData} />
               </div>
             )}
           </CustomTabPanel>
