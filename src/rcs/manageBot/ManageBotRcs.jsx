@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ManageBotTableRcs from "./components/ManageBotTableRcs";
 import UniversalButton from "../../whatsapp/components/UniversalButton";
-import { fetchAllAgents } from "../../apis/rcs/rcs";
+import { fetchAllBotsList } from "../../apis/rcs/rcs";
 import DropdownWithSearch from "../../whatsapp/components/DropdownWithSearch";
 import UniversalSkeleton from "../../whatsapp/components/UniversalSkeleton";
 import toast from "react-hot-toast";
@@ -18,7 +18,7 @@ const ManageBotRcs = () => {
     async function fetchAllBotsData() {
       try {
         setIsFetching(true);
-        const res = await fetchAllAgents();
+        const res = await fetchAllBotsList();
         setAllBots(res);
       } catch (e) {
         toast.error("Something went wrong.");
@@ -38,7 +38,7 @@ const ManageBotRcs = () => {
     }
     try {
       setIsFetching(true);
-      const res = await fetchAllAgents(selectedBotId);
+      const res = await fetchAllBotsList(selectedBotId);
       setselectedBotData(res);
     } catch (e) {
       console.log(e);
