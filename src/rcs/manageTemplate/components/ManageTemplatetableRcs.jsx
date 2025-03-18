@@ -8,12 +8,6 @@ import IconButton from "@mui/material/IconButton";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import { MdOutlineDeleteForever } from "react-icons/md";
-import { Dialog } from "primereact/dialog";
-import { BsTelephoneFill } from "react-icons/bs";
-import { FaExternalLinkAlt } from "react-icons/fa";
-import { MdClose } from "react-icons/md";
-import { FaReply } from "react-icons/fa6";
-import whatsappImg from "../../../assets/images/rcs.png";
 import { Switch } from "@mui/material";
 
 const PaginationList = styled("ul")({
@@ -76,63 +70,15 @@ const CustomPagination = ({
   );
 };
 
-const ContentCell = ({ value }) => {
-  const [anchorEl, setAnchorEl] = useState(null); // ✅ Start as null
-  const [open, setOpen] = useState(false); // ✅ Start as false
-
-  const handlePopoverOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-    setOpen(true);
-  };
-
-  const handlePopoverClose = () => {
-    setAnchorEl(null); // ✅ Close popover immediately
-    setOpen(false);
-  };
-
-  // const open = Boolean(anchorEl);
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(value);
-  };
-
-  return (
-    <div
-      style={{
-        whiteSpace: "nowrap",
-        overflow: "hidden",
-        textOverflow: "ellipsis",
-        maxWidth: "200px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-      }}
-      onMouseEnter={handlePopoverOpen}
-      onMouseLeave={handlePopoverClose}
-    >
-      <span style={{ flexGrow: 1, fontSize: "14px", fontWeight: "500" }}>
-        {value}
-      </span>
-
-      {/* <IconButton
-                size="small"
-                onClick={copyToClipboard}
-                sx={{ color: "#007BFF", "&:hover": { color: "#0056b3" } }}
-            >
-                <ContentCopyIcon fontSize="small" />
-            </IconButton> */}
-    </div>
-  );
-};
 const ManageTemplatetableRcs = ({
   id,
   name,
   data = [],
   setTemplateDialogVisible,
+  setTemplateid
 }) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
-  const [dialogVisible, setDialogVisible] = useState(false);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 10,
@@ -162,16 +108,6 @@ const ManageTemplatetableRcs = ({
       minWidth: 120,
       renderCell: (params) => (
         <>
-          {/* <button
-            onClick={() => updateTemplateStatus(params.row)}
-            className={`border rounded-xl p-1 cursor-pointer ${
-              params.row.active === 1
-                ? "bg-green-500 text-white"
-                : "bg-red-500 text-white"
-            }`}
-          >
-            {params.row.active === 1 ? "Active" : "Inactive"}
-          </button> */}
           <CustomTooltip
             arrow
             placement="top"
@@ -207,7 +143,10 @@ const ManageTemplatetableRcs = ({
           <CustomTooltip title="View Template" placement="top" arrow>
             <IconButton
               className="no-xs"
-              onClick={() => setTemplateDialogVisible(true)}
+              onClick={() => {
+                setTemplateDialogVisible(true);
+                setTemplateid(params.row.srno);
+              }}
             >
               <VisibilityIcon
                 sx={{

@@ -8,13 +8,15 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import {
   fetchAllTemplates,
+  fetchTemplateDetails,
   updateTemplateStatusbySrno,
 } from "../../apis/rcs/rcs";
 import UniversalSkeleton from "../../whatsapp/components/UniversalSkeleton";
 import { Dialog } from "primereact/dialog";
 import { BsTelephoneFill } from "react-icons/bs";
 import { FaExternalLinkAlt } from "react-icons/fa";
-import { FaReply } from "react-icons/fa6";
+import { FaLocationCrosshairs, FaReply } from "react-icons/fa6";
+import { TbLocationShare } from "react-icons/tb";
 
 const ManageTemplateRcs = () => {
   const [isFetching, setIsFetching] = useState(false);
@@ -24,6 +26,8 @@ const ManageTemplateRcs = () => {
   const [summaryTableData, setSummaryTableData] = useState([]);
   const [summaryFilterData, setSummaryFilterData] = useState([]);
   const [templateDialogVisible, setTemplateDialogVisible] = useState(false);
+  const [templateid, setTemplateid] = useState("");
+  const [templateDetails, setTemplateDetails] = useState();
 
   const navigate = useNavigate();
 
@@ -88,12 +92,67 @@ const ManageTemplateRcs = () => {
   };
 
   useEffect(() => {
-    console.log(summaryFilterData);
-  }, [summaryFilterData]);
-
-  useEffect(() => {
     handleFetchTempData();
   }, []);
+
+  useEffect(() => {
+    const fetchTemplateDataDetails = async () => {
+      if (!templateid) {
+        toast.error("Please select template");
+        return;
+      }
+      try {
+        const res = await fetchTemplateDetails(templateid);
+        const tempName = summaryFilterData.find(
+          (item) => item.srno == templateid
+        );
+
+        setTemplateDetails({
+          ...res[0],
+          templateName: tempName.templateName,
+        });
+      } catch (err) {
+        console.log(err);
+        toast.error("Something went wrong");
+      }
+    };
+
+    fetchTemplateDataDetails();
+  }, [templateid]);
+
+  const getTemplateTypeCss = (type) => {
+    switch (type) {
+      case "reply button":
+        return "bg-pink-500";
+      case "url action":
+        return "bg-blue-500";
+      case "dialer":
+        return "bg-green-500";
+      case "view location":
+        return "bg-yellow-500";
+      case "share location":
+        return "bg-red-500";
+      default:
+        return "";
+    }
+  };
+
+  const getTemplateTypeLogo = (type) => {
+    switch (type) {
+      case "reply button":
+        return <FaReply />;
+      case "url action":
+        return <ExternalLinkIcon />;
+      case "dialer":
+        return <BsTelephoneFill />;
+      case "view location":
+        return <FaLocationCrosshairs />;
+      case "share location":
+        return <TbLocationShare />;
+      default:
+        return "";
+    }
+  };
 
   return (
     <div className="w-full">
@@ -201,12 +260,13 @@ const ManageTemplateRcs = () => {
               updateTemplateStatus={updateTemplateStatus}
               data={summaryFilterData}
               setTemplateDialogVisible={setTemplateDialogVisible}
+              setTemplateid={setTemplateid}
             />
           </div>
         )}
       </div>
       <Dialog
-        header="Template View"
+        header={templateDetails?.templateName}
         visible={templateDialogVisible}
         style={{ width: "27rem" }}
         onHide={() => {
@@ -224,34 +284,23 @@ const ManageTemplateRcs = () => {
               /> */}
             </div>
             <div className="flex flex-col gap-2 py-2 overflow-scroll text-sm contentbox max-h-80">
-              <p>
-                As vibrant hues fill the canvas of life, may this festival of
-                colors bring immense joy, success and prosperity to your
-                corporate endeavors🎇💻
-              </p>
-              <p>
-                Wishing our esteemed patrons and partners a Holi filled with the
-                splendor of laughter, the warmth of togetherness and the
-                brightness of positivity.📞📞
-              </p>
-              <p>Here's to a colorful journey ahead!🎉🎊</p>
-              <p>Happy Holi!🎇✨</p>
-              <p>Best Regards,🎊🎉</p>
-              <p>Team Celitix</p>
+              <h1>{templateDetails?.contentTitle}</h1>
+              <pre>{templateDetails?.content}</pre>
             </div>
+            {templateDetails?.suggestions.map((suggestion, index) => (
+              <div className="flex flex-col gap-2">
+                <button
+                  className={`flex items-center justify-center px-4 py-2 text-sm text-white rounded-md  ${getTemplateTypeCss(
+                    suggestion.type
+                  )}`}
+                >
+                  {getTemplateTypeLogo(suggestion.type)}
+                  <p className="ml-2"> {suggestion.suggestionTitle}</p>
+                </button>
+              </div>
+            ))}
             <div className="flex flex-col gap-2">
-              <button className="flex items-center justify-center px-4 py-2 text-sm text-white bg-blue-500 rounded-md ">
-                <BsTelephoneFill className="mr-2" />
-                Contact us
-              </button>
-              <button className="flex items-center justify-center px-4 py-2 text-sm text-white bg-green-500 rounded-md ">
-                <FaExternalLinkAlt className="mr-2" />
-                Visit us
-              </button>
-              <button className="flex items-center justify-center w-full px-4 py-2 text-sm text-gray-800 bg-gray-200 rounded-md">
-                <FaReply className="mr-2" />
-                View more
-              </button>
+             
             </div>
           </div>
         </div>
