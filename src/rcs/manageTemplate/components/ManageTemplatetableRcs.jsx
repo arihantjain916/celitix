@@ -14,6 +14,7 @@ import { FaExternalLinkAlt } from "react-icons/fa";
 import { MdClose } from "react-icons/md";
 import { FaReply } from "react-icons/fa6";
 import whatsappImg from "../../../assets/images/rcs.png";
+import { Switch } from "@mui/material";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -123,7 +124,13 @@ const ContentCell = ({ value }) => {
     </div>
   );
 };
-const ManageTemplatetableRcs = ({ id, name, data = [] }) => {
+const ManageTemplatetableRcs = ({
+  id,
+  name,
+  data = [],
+  updateTemplateStatus,
+  setSummaryTableUpdateData,
+}) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
   const [dialogVisible, setDialogVisible] = useState(false);
@@ -153,6 +160,48 @@ const ManageTemplatetableRcs = ({ id, name, data = [] }) => {
     },
     { field: "insertTime", headerName: "Insert Time", flex: 1, minWidth: 120 },
     { field: "status", headerName: "Status", flex: 1, minWidth: 120 },
+    {
+      field: "active",
+      headerName: "Active",
+      flex: 1,
+      minWidth: 120,
+      renderCell: (params) => (
+        <>
+          {/* <button
+            onClick={() => updateTemplateStatus(params.row)}
+            className={`border rounded-xl p-1 cursor-pointer ${
+              params.row.active === 1
+                ? "bg-green-500 text-white"
+                : "bg-red-500 text-white"
+            }`}
+          >
+            {params.row.active === 1 ? "Active" : "Inactive"}
+          </button> */}
+          <CustomTooltip
+            arrow
+            placement="top"
+            title={params.row.active === 1 ? "Active" : "Inactive"}
+          >
+            <Switch
+              checked={params.row.active === 1}
+              onChange={() => {
+                updateTemplateStatus(params.row);
+                setSummaryTableUpdateData((prev) => !prev);
+              }}
+              sx={{
+                "& .MuiSwitch-switchBase.Mui-checked": {
+                  color: "#34C759",
+                },
+                "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
+                  {
+                    backgroundColor: "#34C759",
+                  },
+              }}
+            />
+          </CustomTooltip>
+        </>
+      ),
+    },
     {
       field: "action",
       headerName: "Action",

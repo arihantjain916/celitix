@@ -6,7 +6,10 @@ import { IoSearch } from "react-icons/io5";
 import ManageTemplatetableRcs from "./components/ManageTemplatetableRcs";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { fetchAllTemplates } from "../../apis/rcs/rcs";
+import {
+  fetchAllTemplates,
+  updateTemplateStatusbySrno,
+} from "../../apis/rcs/rcs";
 import UniversalSkeleton from "../../whatsapp/components/UniversalSkeleton";
 
 const ManageTemplateRcs = () => {
@@ -16,6 +19,7 @@ const ManageTemplateRcs = () => {
   });
   const [summaryTableData, setSummaryTableData] = useState([]);
   const [summaryFilterData, setSummaryFilterData] = useState([]);
+  const [summaryTableUpdateData, setSummaryTableUpdateData] = useState(false);
 
   const navigate = useNavigate();
 
@@ -24,12 +28,6 @@ const ManageTemplateRcs = () => {
   };
 
   const handleFetchTempData = async () => {
-    // const data = {
-    //   ...templateData,
-    //   templateType: templateData.templateType ?? "",
-    //   templateStatus: templateData.templateStatus ?? "",
-    // };
-
     try {
       setIsFetching(true);
       const res = await fetchAllTemplates();
@@ -43,10 +41,6 @@ const ManageTemplateRcs = () => {
     }
   };
 
-  useEffect(() => {
-    handleFetchTempData();
-  }, []);
-
   const handleSearch = () => {
     const data = {
       ...templateData,
@@ -56,19 +50,49 @@ const ManageTemplateRcs = () => {
     const notNull = Object.keys(data).filter((key) => data[key] != "");
 
     const filterData = summaryTableData.filter((item) => {
-      return notNull.every((key) => item[key] === data[key]);
+      return notNull.every((key) => String(item[key]).includes(data[key]));
     });
 
     setSummaryFilterData(filterData);
   };
 
+  const updateTemplateStatus = async (data) => {
+    //reverse problem in status
+    const updateData = {
+      sr_no: data.srno,
+      status: String(Number(data.active)),
+    };
+
+    try {
+      const res = await updateTemplateStatusbySrno(updateData);
+      if (res.includes(true)) {
+        toast.success("Status Updated Successfully");
+        setSummaryFilterData((prev) =>
+          prev.map((item) =>
+            item.srno == data.srno
+              ? { ...item, active: Number(!item.active) }
+              : item
+          )
+        );
+      } else {
+        toast.error("Something went wrong.");
+      }
+    } catch (e) {
+      console.log(e);
+      toast.error("Something went wrong.");
+    }
+  };
+
+  useEffect(() => {
+    console.log(summaryFilterData);
+  }, [summaryFilterData]);
+
+  useEffect(() => {
+    handleFetchTempData();
+  }, []);
+
   return (
     <div className="w-full">
-      {/* {isLoading ? (
-      <>
-        <Loader />
-      </>
-    ) : ( */}
       <div>
         <div className="flex flex-wrap items-end justify-end w-full gap-4 pb-1 align-middle">
           {/* Name Input Field */}
@@ -170,8 +194,9 @@ const ManageTemplateRcs = () => {
             <ManageTemplatetableRcs
               id="manageTemplatetable"
               name="manageTemplatetable"
-              // isFetching={isFetching}
+              updateTemplateStatus={updateTemplateStatus}
               data={summaryFilterData}
+              setSummaryTableUpdateData={setSummaryTableUpdateData}
             />
           </div>
         )}

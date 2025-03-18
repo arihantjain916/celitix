@@ -50,3 +50,13 @@ export const fetchAllTemplates = async () => {
     method: "POST",
   });
 };
+
+export const updateTemplateStatusbySrno = async (data) => {
+  return await fetchWithAuth(
+    "/proCpaasRest/rcsTemplate/updateStatusByTemplateSrNo",
+    {
+      method: "POST",
+      body: JSON.stringify(data),
+    }
+  );
+};
