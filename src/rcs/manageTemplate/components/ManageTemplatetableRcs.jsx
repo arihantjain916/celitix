@@ -77,6 +77,7 @@ const ManageTemplatetableRcs = ({
   setTemplateDialogVisible,
   setTemplateid,
   setTemplateDeleteVisible,
+  updateTemplateStatus
 }) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
@@ -118,7 +119,6 @@ const ManageTemplatetableRcs = ({
               checked={params.row.active === 1}
               onChange={() => {
                 updateTemplateStatus(params.row);
-                setSummaryTableUpdateData((prev) => !prev);
               }}
               sx={{
                 "& .MuiSwitch-switchBase.Mui-checked": {
