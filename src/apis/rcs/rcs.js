@@ -60,3 +60,12 @@ export const updateTemplateStatusbySrno = async (data) => {
     }
   );
 };
+
+export const fetchTemplateDetails = async (srno) => {
+  return await fetchWithAuth(
+    `/proCpaasRest/rcsTemplate/showTemplateDetailsBySrNo?srno=${srno}`,
+    {
+      method: "POST",
+    }
+  );
+};
