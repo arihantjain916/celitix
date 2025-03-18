@@ -14,8 +14,20 @@ export const fetchSummaryReport = async (data) => {
   });
 };
 
-export const fetchAllAgents = async () => {
-  return await fetchWithAuth("proCpaasRest/rcs/bot/getListOfAgents", {
-    method: "POST",
-  });
+export const fetchAllAgents = async (agent_id) => {
+  return await fetchWithAuth(
+    `proCpaasRest/rcs/bot/getListOfAgents?agentId=${agent_id}`,
+    {
+      method: "POST",
+    }
+  );
 };
+
+// export const fetchAgentBySrNo = async (srno) => {
+//   return await fetchWithAuth(
+//     `proCpaasRest/rcs/bot/getBotDetailsBySrNo?botSrNo=${srno}`,
+//     {
+//       method: "POST",
+//     }
+//   );
+// };

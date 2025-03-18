@@ -1,29 +1,52 @@
 import React, { useEffect, useState } from "react";
 import ManageBotTableRcs from "./components/ManageBotTableRcs";
-import AnimatedDropdown from "../../whatsapp/components/AnimatedDropdown";
 import UniversalButton from "../../whatsapp/components/UniversalButton";
-import { IoSearch } from "react-icons/io5";
-import { fetchAllAgents } from "../../apis/rcs/rcs";
+import { fetchAgentBySrNo, fetchAllAgents } from "../../apis/rcs/rcs";
+import DropdownWithSearch from "../../whatsapp/components/DropdownWithSearch";
+import UniversalSkeleton from "../../whatsapp/components/UniversalSkeleton";
+import toast from "react-hot-toast";
 
 const ManageBotRcs = () => {
-  const [selectedOption, setSelectedOption] = useState(null);
   const [isFetching, setIsFetching] = useState(false);
-  const botOptions = [
-    { label: "Option 1", value: "option1" },
-    { label: "Option 2", value: "option2" },
-  ];
 
   //allBotState
   const [allBots, setAllBots] = useState([]);
+  const [selectedBotId, setselectedBotId] = useState(null);
+  const [selectedBotData, setselectedBotData] = useState([]);
 
   useEffect(() => {
     async function fetchAllBotsData() {
-      const res = fetchAllAgents();
-      setAllBots(res);
+      try {
+        setIsFetching(true);
+        const res = await fetchAllAgents();
+        setAllBots(res);
+      } catch (e) {
+        toast.error("Something went wrong.");
+        console.log(e);
+      } finally {
+        setIsFetching(false);
+      }
     }
 
     fetchAllBotsData();
   }, []);
+
+  const handleBotSearch = async () => {
+    if (selectedBotId === "no-selection") {
+      toast.error("Please select bot name.");
+      return;
+    }
+    try {
+      setIsFetching(true);
+      const res = await fetchAllAgents(selectedBotId);
+      setselectedBotData(res);
+    } catch (e) {
+      console.log(e);
+      toast.error("Something went wrong.");
+    } finally {
+      setIsFetching(false);
+    }
+  };
 
   return (
     <div className="w-full">
@@ -35,20 +58,30 @@ const ManageBotRcs = () => {
       <div>
         <div className="flex flex-wrap items-end w-full gap-2 mb-2">
           <div className="w-full sm:w-56">
-            <AnimatedDropdown
+            <DropdownWithSearch
               label="Bot Name"
               id="botName"
               name="botName"
-              options={botOptions}
-              value={selectedOption}
-              onChange={(newValue) => setSelectedOption(newValue)}
+              options={allBots.map((bot) => ({
+                label: bot.agent_name,
+                value: bot.agent_id,
+              }))}
+              value={selectedBotId}
+              onChange={(e) => {
+                setselectedBotId(e);
+              }}
               placeholder="select bot name"
+              filter
             />
           </div>
 
           {/* Search Button */}
           <div className="w-max-content">
-            <UniversalButton label="Show" disabled={isFetching} />
+            <UniversalButton
+              label="Show"
+              disabled={isFetching}
+              onClick={handleBotSearch}
+            />
           </div>
         </div>
 
@@ -62,7 +95,7 @@ const ManageBotRcs = () => {
             <ManageBotTableRcs
               id="suggestionreport"
               name="suggestionreport"
-              data={allBots}
+              data={selectedBotData}
             />
           </div>
         )}
