@@ -85,12 +85,11 @@ const ManageContacts = () => {
   const [updatedContactDetails, setUpdatedContactDetails] = useState({});
   const [updateContactVisible, setUpdateContactVisible] = useState(false);
 
+  async function getGrpListData() {
+    const res = await getGrpList();
+    setGrpList(res);
+  }
   useEffect(() => {
-    async function getGrpListData() {
-      const res = await getGrpList();
-      setGrpList(res);
-    }
-
     getGrpListData();
   }, []);
 
@@ -290,6 +289,7 @@ const ManageContacts = () => {
       setEditGrpVisible(false);
       setaddGroupVisible(false);
       setGroupName("");
+      await getGrpListData();
     } else {
       toast.error(res?.message);
     }
@@ -402,10 +402,6 @@ const ManageContacts = () => {
     }
   };
 
-  useEffect(() => {
-    console.log("Uploaded File", uploadedFile);
-  }, [uploadedFile]);
-
   // Validate filename
   const isValidFileName = (fileName) => {
     const regex = /^[a-zA-Z0-9_-]+$/;
@@ -433,7 +429,10 @@ const ManageContacts = () => {
   const handleGrpDelete = async () => {
     if (!deleteGrpId) return;
     const res = await deleteGrp(deleteGrpId.groupName, deleteGrpId.groupCode);
-    toast.success(res);
+    toast.success(res.message);
+    setDeleteDialogVisible(false);
+    setaddGroupVisible(false);
+    await getGrpListData();
   };
 
   return (
@@ -548,15 +547,13 @@ const ManageContacts = () => {
 
       {isFetching ? (
         <UniversalSkeleton height="35rem" width="100%" />
-      ) : allContacts?.length > 0 ? (
+      ) : (
         <WhatsappManageContactsTable
           allContacts={allContacts}
           updateContactData={updateContactData}
           setUpdateContactDetails={setUpdateContactDetails}
           setUpdateContactVisible={setUpdateContactVisible}
         />
-      ) : (
-        <CustomNoRowsOverlay />
       )}
 
       <div className="flex card justify-content-center">
