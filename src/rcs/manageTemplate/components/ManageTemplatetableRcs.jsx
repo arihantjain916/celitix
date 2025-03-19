@@ -77,7 +77,8 @@ const ManageTemplatetableRcs = ({
   setTemplateDialogVisible,
   setTemplateid,
   setTemplateDeleteVisible,
-  updateTemplateStatus
+  updateTemplateStatus,
+  fetchTemplateDataDetails
 }) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
@@ -146,7 +147,7 @@ const ManageTemplatetableRcs = ({
               className="no-xs"
               onClick={() => {
                 setTemplateDialogVisible(true);
-                setTemplateid(params.row.srno);
+                fetchTemplateDataDetails(params.row.srno);
               }}
             >
               <VisibilityIcon
@@ -188,7 +189,7 @@ const ManageTemplatetableRcs = ({
 
   const rows = Array.isArray(data)
     ? data.map((item, i) => ({
-        id: i + 1,
+        id: item.srno,
         sn: i + 1,
         ...item,
       }))
@@ -264,7 +265,9 @@ const ManageTemplatetableRcs = ({
             footer: CustomFooter,
             noRowsOverlay: CustomNoRowsOverlay,
           }}
-          onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
+          onRowSelectionModelChange={(ids) => {
+            console.log(ids)
+          }}
           checkboxSelection
           disableRowSelectionOnClick
           disableColumnResize

@@ -101,31 +101,50 @@ const ManageTemplateRcs = () => {
     handleFetchTempData();
   }, []);
 
-  useEffect(() => {
-    const fetchTemplateDataDetails = async () => {
-      // if (!templateid) {
-      //   toast.error("Please select template");
-      //   return;
-      // }
-      try {
-        const res = await fetchTemplateDetails(templateid);
-        const tempName = summaryFilterData.find(
-          (item) => item.srno == templateid
-        );
+  // useEffect(() => {
+  //   const fetchTemplateDataDetails = async () => {
+  //     console.log("TempId", typeof templateid);
+  //     // if (!templateid) {
+  //     //   toast.error("Please select template");
+  //     //   return;
+  //     // }
+  //     try {
+  //       const res = await fetchTemplateDetails(templateid);
+  //       const tempName = summaryFilterData.find(
+  //         (item) => item.srno == templateid
+  //       );
 
-        setTemplateDetails({
-          ...res[0],
-          templateName: tempName.templateName,
-        });
-      } catch (err) {
-        console.log(err);
-        toast.error("Something went wrong");
-      }
-    };
+  //       setTemplateDetails({
+  //         ...res[0],
+  //         templateName: tempName.templateName,
+  //       });
+  //     } catch (err) {
+  //       console.log(err);
+  //       toast.error("Something went wrong");
+  //     }
+  //   };
 
-    fetchTemplateDataDetails();
-  }, [templateid]);
+  //   fetchTemplateDataDetails();
+  // }, [templateid]);
 
+  const fetchTemplateDataDetails = async (data) => {
+    if (!data) {
+      toast.error("Please select template");
+      return;
+    }
+    try {
+      const res = await fetchTemplateDetails(data);
+      const tempName = summaryFilterData.find((item) => item.srno == data);
+
+      setTemplateDetails({
+        ...res[0],
+        templateName: tempName.templateName,
+      });
+    } catch (err) {
+      console.log(err);
+      toast.error("Something went wrong");
+    }
+  };
   const getTemplateTypeCss = (type) => {
     switch (type) {
       case "reply button":
@@ -280,6 +299,7 @@ const ManageTemplateRcs = () => {
               setTemplateDialogVisible={setTemplateDialogVisible}
               setTemplateid={setTemplateid}
               setTemplateDeleteVisible={setTemplateDeleteVisible}
+              fetchTemplateDataDetails={fetchTemplateDataDetails}
             />
           </div>
         )}
@@ -292,6 +312,7 @@ const ManageTemplateRcs = () => {
         style={{ width: "27rem" }}
         onHide={() => {
           setTemplateDialogVisible(false);
+          setTemplateDetails("");
         }}
         draggable={false}
       >
@@ -308,8 +329,8 @@ const ManageTemplateRcs = () => {
               <h1>{templateDetails?.contentTitle}</h1>
               <pre>{templateDetails?.content}</pre>
             </div>
-            {templateDetails?.suggestions.map((suggestion, index) => (
-              <div className="flex flex-col gap-2">
+            {templateDetails?.suggestions?.map((suggestion, index) => (
+              <div key={index} className="flex flex-col gap-2">
                 <button
                   className={`flex items-center justify-center px-4 py-2 text-sm  rounded-md  ${getTemplateTypeCss(
                     suggestion.type
