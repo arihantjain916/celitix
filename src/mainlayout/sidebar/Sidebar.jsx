@@ -12,6 +12,7 @@ import { IoSettingsOutline } from "react-icons/io5";
 import { IoWalletOutline } from "react-icons/io5";
 import Tooltip from '@mui/material/Tooltip';
 import Divider from '@mui/material/Divider';
+import { IoPersonOutline } from "react-icons/io5";
 import toast from 'react-hot-toast';
 import clsx from 'clsx';
 
@@ -117,6 +118,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile, }) => {
                 { to: '/rcslivechats', label: 'Live Chats' },
                 { to: '/rcssuggestionreport', label: 'Suggestion Report' },
                 { to: '/rcsdeliveryreport', label: 'Delivery Report' },
+                { to: '/rcsmanagebot', label: 'Manage Bot' },
             ],
         },
         {
@@ -212,6 +214,27 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile, }) => {
                 { to: '/clicktosettings', label: 'Settings' },
             ],
         },
+        {
+            name: 'admin',
+            icon: <IoPersonOutline  />,
+            label: 'Admin',
+            type: "dropdown",
+            links: [
+                { to: '/manageuser', label: 'Manage User' },
+                { to: '/managedlttemplate', label: 'Manage DLT Template' },
+                { to: '/managevoiceclips', label: 'Manage Voice Clips' },
+                { to: '/manageplan', label: 'Manage Plan' },
+                { to: '/accountmanager', label: 'Account Manager' },
+                { to: '/graphmain', label: 'Graph Main' },
+                { to: '/graphuserwise', label: 'Graph User Wise' },
+                { to: '/manageSMPP', label: 'Manage SMPP' },
+                { to: '/managerouting', label: 'Manage Routing' },
+                { to: '/SMPPerrorcode', label: 'SMPP Error Code' },
+                { to: '/manageprefix', label: 'Manage Prefix' },
+                { to: '/blacklist', label: 'Blacklist' },
+                { to: '/managenotifications', label: 'ManageNotifications' },
+            ],
+        },
         // {
         //     name: 'settings',
         //     icon: <IoSettingsOutline />,
@@ -289,7 +312,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile, }) => {
                                         isCollapsed && 'justify-center'
                                     )}
                                 >
-                                    <div className="flex items-center gap-4 h-6">
+                                    <div className="flex items-center h-6 gap-4">
                                         <span className="flex-shrink-0 text-black">{item.icon}</span>
                                         <span className={clsx(isCollapsed && 'hidden', 'text-black font-[600]')}>
                                             {item.label}
