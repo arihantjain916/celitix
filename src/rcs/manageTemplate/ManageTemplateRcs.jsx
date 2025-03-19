@@ -18,6 +18,7 @@ import { BsTelephoneFill } from "react-icons/bs";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import { FaLocationCrosshairs, FaReply } from "react-icons/fa6";
 import { TbLocationShare } from "react-icons/tb";
+import { FaExternalLinkAlt } from "react-icons/fa";
 
 const ManageTemplateRcs = () => {
   const [isFetching, setIsFetching] = useState(false);
@@ -149,7 +150,7 @@ const ManageTemplateRcs = () => {
     switch (type) {
       case "reply button":
         return "bg-gray-200 text-gray-800";
-      case "url action":
+      case "website":
         return "bg-green-500 text-white";
       case "dialer":
         return "bg-blue-500 text-white";
@@ -166,8 +167,8 @@ const ManageTemplateRcs = () => {
     switch (type) {
       case "reply button":
         return <FaReply />;
-      case "url action":
-        return <ExternalLinkIcon />;
+      case "website":
+        return <FaExternalLinkAlt />;
       case "dialer":
         return <BsTelephoneFill />;
       case "view location":
@@ -335,6 +336,7 @@ const ManageTemplateRcs = () => {
                   className={`flex items-center justify-center px-4 py-2 text-sm  rounded-md  ${getTemplateTypeCss(
                     suggestion.type
                   )}`}
+                  title={suggestion.suggestionValue}
                 >
                   {getTemplateTypeLogo(suggestion.type)}
                   <p className="ml-2"> {suggestion.suggestionTitle}</p>
