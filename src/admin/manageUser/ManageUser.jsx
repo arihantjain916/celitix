@@ -19,7 +19,7 @@ const ManageUser = () => {
     userId: "",
     mobileNo: "",
     companyName: "",
-    status: "",
+    status: "1",
   });
 
   const handleAdduser = () => {
@@ -73,8 +73,13 @@ const ManageUser = () => {
             id="manageuserid"
             name="manageuserid"
             placeholder="Enter User ID"
-            // value={manageId}
-            // onChange={(e) => setManageID(e.target.value)}
+            value={dataToFilter.userId}
+            onChange={(e) => {
+              setDataToFilter({
+                ...dataToFilter,
+                userId: e.target.value,
+              });
+            }}
           />
         </div>
 
@@ -86,8 +91,13 @@ const ManageUser = () => {
             name="managemobile"
             placeholder="Enter Mobile Number"
             type="number"
-            // value={manageMobile}
-            // onChange={(e) => setManageMobile(e.target.value)}
+            value={dataToFilter.mobileNo}
+            onChange={(e) => {
+              setDataToFilter({
+                ...dataToFilter,
+                mobileNo: e.target.value,
+              });
+            }}
           />
         </div>
         <div className="w-full sm:w-48">
@@ -97,8 +107,13 @@ const ManageUser = () => {
             id="managecompanyname"
             name="managecompanyname"
             type="text"
-            // value={managecompanyname}
-            // onChange={(e) => setManageCompanyName(e.target.value)}
+            value={dataToFilter.companyName}
+            onChange={(e) => {
+              setDataToFilter({
+                ...dataToFilter,
+                companyName: e.target.value,
+              });
+            }}
           />
         </div>
 
@@ -109,11 +124,16 @@ const ManageUser = () => {
             id="managestatus"
             name="managestatus"
             options={[
-              { value: 1, label: "Active" },
-              { value: 0, label: "Inactive" },
+              { value: "1", label: "Active" },
+              { value: "0", label: "Inactive" },
             ]}
-            // value={selectedOption}
-            onChange={() => {}}
+            value={dataToFilter.status}
+            onChange={(e) => {
+              setDataToFilter({
+                ...dataToFilter,
+                status: e,
+              });
+            }}
           />
         </div>
 
@@ -124,8 +144,8 @@ const ManageUser = () => {
             name="managesearchbtn"
             label={isFetching ? "Searching..." : "Search"}
             icon={<IoSearch />}
-            // onClick={handleSearch}
-            // disabled={isFetching}
+            onClick={fetchAllUsersDetails}
+            disabled={isFetching}
           />
         </div>
       </div>

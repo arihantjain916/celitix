@@ -473,12 +473,6 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
     { value: "Reseller", label: "Reseller" },
   ];
 
-  useEffect(() => {
-    console.log("User Type Changed:", userType);
-    setIsReadOnly(userType !== "Reseller");
-    setAccountUrl("");
-  }, [userType]);
-
   const handleChangeEnablePostpaid = (event) => {
     setEnablePostpaid(event.target.value);
   };
