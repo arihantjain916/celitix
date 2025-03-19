@@ -268,14 +268,11 @@ const WhatsappLaunchCampaign = () => {
     // ✅ Send API request
     try {
       const response = await sendWhatsappCampaign(requestData);
-      console.log(requestData)
+      console.log(requestData);
       if (response?.status === true) {
         toast.success("Campaign launched successfully!");
         setDialogVisible(false);
-
-        // setTimeout(() => {
-        //     window.location.reload();
-        // }, 1000); // Reload after 2 seconds to allow toast message visibility
+        window.location.reload();
       } else {
         toast.error(response?.message || "Campaign launch failed.");
       }
