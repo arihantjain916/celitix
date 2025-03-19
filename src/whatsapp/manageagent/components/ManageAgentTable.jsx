@@ -46,6 +46,7 @@ import {
   getTemplateList,
   saveCheckedAssignTemplate,
   getAssignedTemplatesByAgentId,
+  updateAgentDetails,
 } from "../../../apis/Agent/Agent.js";
 import CustomTooltip from "../../components/CustomTooltip";
 import toast from "react-hot-toast";
@@ -61,13 +62,15 @@ import { MdOutlineDeleteForever } from "react-icons/md";
 
 const ToggleSwitch = ({ checked, onChange }) => (
   <button
-    className={`w-11 h-6 flex items-center  rounded-full p-1 transition duration-300 ${checked ? "bg-blue-400" : "bg-gray-300"
-      }`}
+    className={`w-11 h-6 flex items-center  rounded-full p-1 transition duration-300 ${
+      checked ? "bg-blue-400" : "bg-gray-300"
+    }`}
     onClick={() => onChange(!checked)}
   >
     <div
-      className={`w-4 h-4 bg-white rounded-full shadow-md transform transition duration-300 ${checked ? "translate-x-5" : ""
-        }`}
+      className={`w-4 h-4 bg-white rounded-full shadow-md transform transition duration-300 ${
+        checked ? "translate-x-5" : ""
+      }`}
     />
   </button>
 );
@@ -162,7 +165,7 @@ const CustomPagination = ({
   );
 };
 
-const ManageAgentTable = ({ id, name, visible }) => {
+const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -180,9 +183,20 @@ const ManageAgentTable = ({ id, name, visible }) => {
   const [manageagentedit, setManageAgentEdit] = useState(false);
 
   // Agent
-  const [editagentname, setEditAgentName] = useState("");
-  const [editagentmobile, setEditAgentMobile] = useState("");
-  const [editagentemail, setEditAgentEmail] = useState("");
+  const [updateAgentData, setUpdateAgentData] = useState({
+    sr_no: "",
+    user_sr_no: "",
+    email: "",
+    password: "",
+    name: "",
+    mobileNumber: "",
+    status: "",
+    allowAllChats: 1,
+    department: null,
+    departmentId: "",
+    departmentName: "",
+    agentCode: "",
+  });
   const [selectedAgentId, setSelectedAgentId] = useState(null);
   const [selectedAgentName, setSelectedAgentName] = useState("");
 
@@ -201,7 +215,10 @@ const ManageAgentTable = ({ id, name, visible }) => {
   const [selectedWaba, setSelectedWaba] = useState(null);
   const [selectedOption, setSelectedOption] = useState("option2");
   const [isSaving, setIsSaving] = useState(false);
-  const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 });
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: 10,
+  });
 
   const departmentedit = [
     { label: "Department 1", value: "dept1" },
@@ -221,7 +238,7 @@ const ManageAgentTable = ({ id, name, visible }) => {
       try {
         // setIsLoading(true);
         const response = await getAgentList();
-        console.log("get agent list", response)
+        console.log("get agent list", response);
         if (response?.data) {
           setAgentList(response.data);
         } else {
@@ -334,11 +351,8 @@ const ManageAgentTable = ({ id, name, visible }) => {
     const agent = agentList.find((agent) => agent.sr_no === srNo);
     const agentName = agent ? agent.name : "Unknown Agent"; // Default to prevent undefined
 
-    const newStatus = currentStatus === 1 ? true : false;
-    console.log(`New status value to be sent for agent ${srNo}:`, newStatus);
-
     try {
-      const response = await updateAgentStatus(srNo, newStatus);
+      const response = await updateAgentStatus(srNo, currentStatus);
       console.log("API response for the agent status:", response);
 
       if (response?.statusCode === 200) {
@@ -564,10 +578,7 @@ const ManageAgentTable = ({ id, name, visible }) => {
           })
         );
 
-        console.log(
-          "Final assigned templates for UI:",
-          formattedAssignments
-        );
+        console.log("Final assigned templates for UI:", formattedAssignments);
         setWabaTemplates(formattedAssignments);
       } else {
         console.log(
@@ -584,9 +595,9 @@ const ManageAgentTable = ({ id, name, visible }) => {
     }
   };
 
-  const handleEdit = () => {
+  const handleEdit = (data) => {
     setManageAgentEdit(true);
-    console.log("Edit");
+    setSelectedAgentId(data);
   };
 
   const columns = [
@@ -613,9 +624,9 @@ const ManageAgentTable = ({ id, name, visible }) => {
                 color: "#34C759",
               },
               "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
-              {
-                backgroundColor: "#34C759",
-              },
+                {
+                  backgroundColor: "#34C759",
+                },
             }}
           />
         </CustomTooltip>
@@ -707,9 +718,33 @@ const ManageAgentTable = ({ id, name, visible }) => {
     mobile: agent.mobileNo,
     department_name: agent.department_name,
     status: agent.status,
+    user_sr_no: agent.userSrNo,
   }));
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
+
+  const handleAgentUpdate = async () => {
+    const departName = deptList.find(
+      (item) => item.departmentId == updateAgentData.departmentId
+    );
+
+    // console.log(departName);
+    const data = {
+      ...updateAgentData,
+      sr_no: selectedAgentId.id,
+      user_sr_no: selectedAgentId.user_sr_no,
+      departmentName: departName.departmentName,
+    };
+    console.log(data);
+
+    try {
+      const res = await updateAgentDetails(data);
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+      toast.error("Error updating agent details.");
+    }
+  };
 
   const CustomFooter = () => {
     return (
@@ -947,7 +982,7 @@ const ManageAgentTable = ({ id, name, visible }) => {
             <div className="space-y-2">
               {/* If working hours are not assigned, show a message + Assign Now button */}
               {workingHours === null ? (
-                <div className="flex flex-col items-center justify-center text-gray-500 text-lg space-y-5 mt-5">
+                <div className="flex flex-col items-center justify-center mt-5 space-y-5 text-lg text-gray-500">
                   <p>{selectedAgentName} has not assigned working hours</p>
                   <button
                     className="bg-blue-400 text-white px-3 py-2 rounded-md hover:bg-blue-500 cursor-pointer text-[1rem]"
@@ -970,16 +1005,16 @@ const ManageAgentTable = ({ id, name, visible }) => {
                 Object.keys(workingHours).map((day) => (
                   <div
                     key={day}
-                    className="flex items-center flex-wrap justify-between bg-white shadow-md gap-2 p-2 rounded-lg"
+                    className="flex flex-wrap items-center justify-between gap-2 p-2 bg-white rounded-lg shadow-md"
                   >
                     {/* Toggle Open/Closed */}
                     <div className="flex items-center space-x-2">
                       <Switch
                         sx={{
                           "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
-                          {
-                            backgroundColor: "#34C759",
-                          },
+                            {
+                              backgroundColor: "#34C759",
+                            },
                           "& .MuiSwitch-switchBase.Mui-checked": {
                             color: "#34C759",
                           },
@@ -995,7 +1030,7 @@ const ManageAgentTable = ({ id, name, visible }) => {
                           }))
                         }
                       />
-                      <span className="font-semibold text-blue-600 text-sm">
+                      <span className="text-sm font-semibold text-blue-600">
                         {day}
                       </span>
                     </div>
@@ -1012,7 +1047,7 @@ const ManageAgentTable = ({ id, name, visible }) => {
                             }))
                           }
                           ampm
-                          className="w-35 text-xs"
+                          className="text-xs w-35"
                         />
                         <TimePicker
                           value={workingHours[day].end}
@@ -1023,12 +1058,12 @@ const ManageAgentTable = ({ id, name, visible }) => {
                             }))
                           }
                           ampm
-                          className="w-35 text-xs"
+                          className="text-xs w-35"
                         />
                       </div>
                     ) : (
-                      <div className="w-10 flex p-2 pr-10 justify-center items-center">
-                        <span className="text-gray-400 text-sm font-semibold">
+                      <div className="flex items-center justify-center w-10 p-2 pr-10">
+                        <span className="text-sm font-semibold text-gray-400">
                           Closed
                         </span>
                       </div>
@@ -1113,7 +1148,7 @@ const ManageAgentTable = ({ id, name, visible }) => {
                 /> */}
               </Tabs>
               <CustomTabPanel value={value} index={0} className="">
-                {/* <div className="flex flex-wrap sm:grid-cols-2 gap-4 mb-5 mt-2">
+                {/* <div className="flex flex-wrap gap-4 mt-2 mb-5 sm:grid-cols-2">
                   <div className="flex items-center justify-center gap-2 cursor-pointer" >
                     <RadioButton
                       inputId="radioOption1"
@@ -1122,7 +1157,7 @@ const ManageAgentTable = ({ id, name, visible }) => {
                       onChange={handleChangeOption}
                       checked={selectedOption === 'option1'}
                     />
-                    <label htmlFor="radioOption1" className="text-gray-700 font-medium text-sm cursor-pointer">Enable</label>
+                    <label htmlFor="radioOption1" className="text-sm font-medium text-gray-700 cursor-pointer">Enable</label>
                   </div>
                   <div className="flex items-center justify-center gap-2" >
                     <RadioButton
@@ -1132,10 +1167,10 @@ const ManageAgentTable = ({ id, name, visible }) => {
                       onChange={handleChangeOption}
                       checked={selectedOption === 'option2'}
                     />
-                    <label htmlFor="radioOption2" className="text-gray-700 font-medium text-sm cursor-pointer">Disable</label>
+                    <label htmlFor="radioOption2" className="text-sm font-medium text-gray-700 cursor-pointer">Disable</label>
                   </div>
                 </div> */}
-                <div className="w-full flex flex-col gap-4">
+                <div className="flex flex-col w-full gap-4">
                   {wabaTemplates.map((entry, index) => (
                     <div
                       key={index}
@@ -1185,7 +1220,7 @@ const ManageAgentTable = ({ id, name, visible }) => {
                       </div>
                       <button
                         onClick={() => removeWabaSelection(index)}
-                        className="rounded-full p-1 hover:bg-gray-200"
+                        className="p-1 rounded-full hover:bg-gray-200"
                       >
                         <MdOutlineDeleteForever
                           className="text-red-500 cursor-pointer hover:text-red-600"
@@ -1194,16 +1229,16 @@ const ManageAgentTable = ({ id, name, visible }) => {
                       </button>
                     </div>
                   ))}
-                  <div className="flex justify-center items-center gap-4">
+                  <div className="flex items-center justify-center gap-4">
                     <button
                       onClick={addWabaSelection}
-                      className="bg-blue-400 text-sm w-max text-white px-4 py-2 rounded-md hover:bg-blue-500 transition cursor-pointer"
+                      className="px-4 py-2 text-sm text-white transition bg-blue-400 rounded-md cursor-pointer w-max hover:bg-blue-500"
                     >
                       Add More
                     </button>
                     <button
                       onClick={handleSaveAssignments}
-                      className="bg-blue-400 text-sm w-max text-white px-4 py-2 rounded-md hover:bg-blue-500 transition cursor-pointer"
+                      className="px-4 py-2 text-sm text-white transition bg-blue-400 rounded-md cursor-pointer w-max hover:bg-blue-500"
                       disabled={isSaving}
                     >
                       {isSaving ? "Saving..." : "Save"}
@@ -1234,19 +1269,26 @@ const ManageAgentTable = ({ id, name, visible }) => {
               label="Agent Name"
               id="editagentname"
               name="editagentname"
-              value={editagentname}
-              onChange={(e) => setEditAgentName(e.target.value)}
+              value={updateAgentData.name}
+              onChange={(e) =>
+                setUpdateAgentData({ ...updateAgentData, name: e.target.value })
+              }
               type="text"
               placeholder="Enter Agent Name"
             />
-            <div className="grid lg:grid-cols-2 grid-cols-1 gap-3">
+            <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
               {/* Agent Email */}
               <InputField
                 label="Agent Email"
                 id="editagentemail"
                 name="editagentemail"
-                value={editagentemail}
-                onChange={(e) => setEditAgentEmail(e.target.value)}
+                value={updateAgentData.email}
+                onChange={(e) => {
+                  setUpdateAgentData({
+                    ...updateAgentData,
+                    email: e.target.value,
+                  });
+                }}
                 type="email"
                 placeholder="Enter Email ID"
                 placement="right"
@@ -1257,8 +1299,13 @@ const ManageAgentTable = ({ id, name, visible }) => {
                 label="Mobile"
                 id="editagentmobile"
                 name="editagentmobile"
-                value={editagentmobile}
-                onChange={(e) => setEditAgentMobile(e.target.value)}
+                value={updateAgentData.mobileNumber}
+                onChange={(e) => {
+                  setUpdateAgentData({
+                    ...updateAgentData,
+                    mobileNumber: e.target.value,
+                  });
+                }}
                 type="number"
                 placeholder="Enter Mobile Number"
                 placement="right"
@@ -1271,6 +1318,13 @@ const ManageAgentTable = ({ id, name, visible }) => {
               name="editgeneratepassword"
               label="Generate Password"
               placeholder="Enter Password"
+              value={updateAgentData.password}
+              onChange={(e) => {
+                setUpdateAgentData({
+                  ...updateAgentData,
+                  password: e,
+                });
+              }}
             />
 
             <div className="mb-2">
@@ -1278,9 +1332,17 @@ const ManageAgentTable = ({ id, name, visible }) => {
                 label="Department"
                 id="departmentedit"
                 name="departmentedit"
-                options={departmentedit}
-                value={editselecteddepartment}
-                onChange={(value) => setEditSelectedDepartment(value)}
+                options={deptList.map((item) => ({
+                  label: item.departmentName,
+                  value: item.departmentId,
+                }))}
+                value={updateAgentData.departmentId}
+                onChange={(value) => {
+                  setUpdateAgentData({
+                    ...updateAgentData,
+                    departmentId: value,
+                  });
+                }}
               />
             </div>
             <RadioGroupFieldupdown
@@ -1288,10 +1350,17 @@ const ManageAgentTable = ({ id, name, visible }) => {
               name="editassign"
               label="Assign"
               options={[
-                { label: "Auto", value: "Auto" },
-                { label: "Manual", value: "Manual" },
-                { label: "All", value: "All" },
+                { label: "Auto", value: 1 },
+                { label: "Manual", value: 2 },
+                { label: "All", value: 3 },
               ]}
+              value={updateAgentData.allowAllChats}
+              onChange={(e) => {
+                setUpdateAgentData({
+                  ...updateAgentData,
+                  allowAllChats: e.target.value,
+                });
+              }}
             />
             <div className="flex justify-center mt-2">
               <UniversalButton
@@ -1299,6 +1368,7 @@ const ManageAgentTable = ({ id, name, visible }) => {
                 id="editsubmit"
                 name="editsubmit"
                 variant="primary"
+                onClick={handleAgentUpdate}
               />
             </div>
           </div>
@@ -1326,12 +1396,12 @@ const ManageAgentTable = ({ id, name, visible }) => {
               }}
             />
           </div>
-          <div className="text-center p-4">
+          <div className="p-4 text-center">
             <p className="text-[1.1rem] font-semibold text-gray-700">
               Are you sure you want to delete the agent <br />
               <span className="text-green-500">"{selectedAgentName}"</span>
             </p>
-            <p className="text-sm text-gray-500 mt-2">
+            <p className="mt-2 text-sm text-gray-500">
               This action is irreversible.
             </p>
           </div>
