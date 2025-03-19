@@ -190,6 +190,8 @@ export const getAssignedTemplatesByAgentId = async (agentId) => {
   }
 };
 
+
+
 export const updateAgentDetails = async (data) => {
   return await fetchWithAuth("/proCpaasRest/agent/editAgentByAgentSrNo", {
     method: "POST",

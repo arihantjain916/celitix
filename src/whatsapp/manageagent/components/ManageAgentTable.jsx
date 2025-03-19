@@ -232,26 +232,25 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
     setDeleteDialogVisible(true);
   };
 
+  const fetchAgentList = async () => {
+    try {
+      // setIsLoading(true);
+      const response = await getAgentList();
+      if (response?.data) {
+        setAgentList(response.data);
+      } else {
+        console.error("Failed to fetch Agent details");
+        toast.error("Failed to load Agent details!");
+      }
+    } catch (error) {
+      console.error("Error fetching Agent list:", error);
+      toast.error("Error fetching Agent list.");
+    } finally {
+      // setIsLoading(false);
+    }
+  };
   // GET AGENT LIST
   useEffect(() => {
-    const fetchAgentList = async () => {
-      try {
-        // setIsLoading(true);
-        const response = await getAgentList();
-        console.log("get agent list", response);
-        if (response?.data) {
-          setAgentList(response.data);
-        } else {
-          console.error("Failed to fetch Agent details");
-          toast.error("Failed to load Agent details!");
-        }
-      } catch (error) {
-        console.error("Error fetching Agent list:", error);
-        toast.error("Error fetching Agent list.");
-      } finally {
-        // setIsLoading(false);
-      }
-    };
     fetchAgentList();
   }, []);
 
@@ -304,11 +303,8 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
   const handleWabaChange = async (index, wabaSrno) => {
     try {
       setIsLoading(true);
-      console.log(`🔄 Fetching templates for WABA: ${wabaSrno}`);
-
       // Fetch available templates for the selected WABA
       const templateList = await getTemplateList(wabaSrno);
-      console.log(`Templates for WABA ${wabaSrno}:`, templateList);
 
       setWabaTemplates((prev) => {
         const updatedTemplates = [...prev];
@@ -346,14 +342,11 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
 
   // Handle Agent Status Update
   const handleStatusChange = async (srNo, currentStatus) => {
-    console.log(`Current status for agent ${srNo}:`, currentStatus);
-
     const agent = agentList.find((agent) => agent.sr_no === srNo);
     const agentName = agent ? agent.name : "Unknown Agent"; // Default to prevent undefined
 
     try {
       const response = await updateAgentStatus(srNo, currentStatus);
-      console.log("API response for the agent status:", response);
 
       if (response?.statusCode === 200) {
         setAgentList((prevAgents) =>
@@ -513,7 +506,6 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
 
   const handleReply = () => {
     setReply(true);
-    console.log("reply");
   };
 
   // const handleAssign = (row) => {
@@ -535,24 +527,18 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
     setManageAssign(true);
     setIsLoading(true);
 
-    console.log("Agent selected for assign:", row);
-
     try {
       // Fetch assigned templates for the selected agent
       const response = await getAssignedTemplatesByAgentId(row.id);
-      console.log("Raw API Response:", response);
 
       // Ensure response data exists and is an array
       if (!response || !Array.isArray(response)) {
-        console.error("Invalid API response structure:", response);
         toast.error("Unexpected API response format.");
         setWabaTemplates([{ wabaSrno: null, templates: [], templateList: [] }]);
         return;
       }
 
       if (response.length > 0) {
-        console.log("Assigned templates exist, processing...");
-
         const formattedAssignments = await Promise.all(
           response.map(async (entry) => {
             const availableTemplates = await getTemplateList(entry.wabaSrNo);
@@ -577,13 +563,8 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
             };
           })
         );
-
-        console.log("Final assigned templates for UI:", formattedAssignments);
         setWabaTemplates(formattedAssignments);
       } else {
-        console.log(
-          "No assigned templates found, adding a default empty pair."
-        );
         setWabaTemplates([{ wabaSrno: null, templates: [], templateList: [] }]);
       }
     } catch (error) {
@@ -597,6 +578,14 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
 
   const handleEdit = (data) => {
     setManageAgentEdit(true);
+    setUpdateAgentData({
+      email: data.email,
+      password: data.password,
+      name: data.name,
+      mobileNumber: data.mobile,
+      allowAllChats: 1,
+      departmentId: data.departmentId,
+    });
     setSelectedAgentId(data);
   };
 
@@ -719,6 +708,7 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
     department_name: agent.department_name,
     status: agent.status,
     user_sr_no: agent.userSrNo,
+    departmentId: agent.department_srno,
   }));
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
@@ -728,18 +718,24 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
       (item) => item.departmentId == updateAgentData.departmentId
     );
 
-    // console.log(departName);
     const data = {
       ...updateAgentData,
       sr_no: selectedAgentId.id,
       user_sr_no: selectedAgentId.user_sr_no,
       departmentName: departName.departmentName,
     };
-    console.log(data);
 
     try {
       const res = await updateAgentDetails(data);
-      console.log(res);
+      if (res.statusCode === 500) {
+        toast.error("Mobile number already exists.");
+        return;
+      }
+      toast.success("Agent details updated successfully.");
+      await fetchAgentList();
+      setManageAgentEdit(false);
+
+      // setEditSelectedDepartment
     } catch (error) {
       console.log(error);
       toast.error("Error updating agent details.");
@@ -804,10 +800,6 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
     );
   };
 
-  useEffect(() => {
-    console.log("selected WABA", selectedWaba);
-  }, [selectedWaba]);
-
   const handleChangeOption = (event) => {
     const value = event.target.value;
     setSelectedOption(value);
@@ -836,12 +828,6 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
       toast.error("No valid WABA-Template pairs to save.");
       return;
     }
-
-    // Log Request Data Before API Call
-    console.log(
-      "Request Body for the assigning template:",
-      JSON.stringify(requestData, null, 2)
-    );
 
     try {
       setIsSaving(true);
