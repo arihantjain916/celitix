@@ -18,6 +18,7 @@ import { BsTelephoneFill } from "react-icons/bs";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import { FaLocationCrosshairs, FaReply } from "react-icons/fa6";
 import { TbLocationShare } from "react-icons/tb";
+import { FaExternalLinkAlt } from "react-icons/fa";
 
 const ManageTemplateRcs = () => {
   const [isFetching, setIsFetching] = useState(false);
@@ -101,39 +102,58 @@ const ManageTemplateRcs = () => {
     handleFetchTempData();
   }, []);
 
-  useEffect(() => {
-    const fetchTemplateDataDetails = async () => {
-      if (!templateid) {
-        toast.error("Please select template");
-        return;
-      }
-      try {
-        const res = await fetchTemplateDetails(templateid);
-        const tempName = summaryFilterData.find(
-          (item) => item.srno == templateid
-        );
+  // useEffect(() => {
+  //   const fetchTemplateDataDetails = async () => {
+  //     console.log("TempId", typeof templateid);
+  //     // if (!templateid) {
+  //     //   toast.error("Please select template");
+  //     //   return;
+  //     // }
+  //     try {
+  //       const res = await fetchTemplateDetails(templateid);
+  //       const tempName = summaryFilterData.find(
+  //         (item) => item.srno == templateid
+  //       );
 
-        setTemplateDetails({
-          ...res[0],
-          templateName: tempName.templateName,
-        });
-      } catch (err) {
-        console.log(err);
-        toast.error("Something went wrong");
-      }
-    };
+  //       setTemplateDetails({
+  //         ...res[0],
+  //         templateName: tempName.templateName,
+  //       });
+  //     } catch (err) {
+  //       console.log(err);
+  //       toast.error("Something went wrong");
+  //     }
+  //   };
 
-    fetchTemplateDataDetails();
-  }, [templateid]);
+  //   fetchTemplateDataDetails();
+  // }, [templateid]);
 
+  const fetchTemplateDataDetails = async (data) => {
+    if (!data) {
+      toast.error("Please select template");
+      return;
+    }
+    try {
+      const res = await fetchTemplateDetails(data);
+      const tempName = summaryFilterData.find((item) => item.srno == data);
+
+      setTemplateDetails({
+        ...res[0],
+        templateName: tempName.templateName,
+      });
+    } catch (err) {
+      console.log(err);
+      toast.error("Something went wrong");
+    }
+  };
   const getTemplateTypeCss = (type) => {
     switch (type) {
       case "reply button":
-        return "bg-pink-500";
-      case "url action":
-        return "bg-blue-500";
+        return "bg-gray-200 text-gray-800";
+      case "website":
+        return "bg-green-500 text-white";
       case "dialer":
-        return "bg-green-500";
+        return "bg-blue-500 text-white";
       case "view location":
         return "bg-yellow-500";
       case "share location":
@@ -147,8 +167,8 @@ const ManageTemplateRcs = () => {
     switch (type) {
       case "reply button":
         return <FaReply />;
-      case "url action":
-        return <ExternalLinkIcon />;
+      case "website":
+        return <FaExternalLinkAlt />;
       case "dialer":
         return <BsTelephoneFill />;
       case "view location":
@@ -165,7 +185,7 @@ const ManageTemplateRcs = () => {
       console.log(templateid);
       // const res = await deleteTemplate(templateid);
       toast.success("Template Deleted Successfully");
-      setTemplateDeleteVisible(false)
+      setTemplateDeleteVisible(false);
     } catch (e) {
       console.log(e);
       toast.error("Something went wrong.");
@@ -280,6 +300,7 @@ const ManageTemplateRcs = () => {
               setTemplateDialogVisible={setTemplateDialogVisible}
               setTemplateid={setTemplateid}
               setTemplateDeleteVisible={setTemplateDeleteVisible}
+              fetchTemplateDataDetails={fetchTemplateDataDetails}
             />
           </div>
         )}
@@ -292,6 +313,7 @@ const ManageTemplateRcs = () => {
         style={{ width: "27rem" }}
         onHide={() => {
           setTemplateDialogVisible(false);
+          setTemplateDetails("");
         }}
         draggable={false}
       >
@@ -308,12 +330,13 @@ const ManageTemplateRcs = () => {
               <h1>{templateDetails?.contentTitle}</h1>
               <pre>{templateDetails?.content}</pre>
             </div>
-            {templateDetails?.suggestions.map((suggestion, index) => (
-              <div className="flex flex-col gap-2">
+            {templateDetails?.suggestions?.map((suggestion, index) => (
+              <div key={index} className="flex flex-col gap-2">
                 <button
-                  className={`flex items-center justify-center px-4 py-2 text-sm text-white rounded-md  ${getTemplateTypeCss(
+                  className={`flex items-center justify-center px-4 py-2 text-sm  rounded-md  ${getTemplateTypeCss(
                     suggestion.type
                   )}`}
+                  title={suggestion.suggestionValue}
                 >
                   {getTemplateTypeLogo(suggestion.type)}
                   <p className="ml-2"> {suggestion.suggestionTitle}</p>

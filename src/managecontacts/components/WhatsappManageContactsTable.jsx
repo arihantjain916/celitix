@@ -15,6 +15,7 @@ import {
 import { Paper, Typography, Box, Button } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditNoteIcon from "@mui/icons-material/EditNote";
+import CustomNoRowsOverlay from "../../whatsapp/components/CustomNoRowsOverlay";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -244,7 +245,7 @@ const WhatsappManageContactsTable = ({
         onPaginationModelChange={setPaginationModel}
         checkboxSelection
         rowHeight={45}
-        slots={{ footer: CustomFooter }}
+        slots={{ footer: CustomFooter, noRowsOverlay: CustomNoRowsOverlay }}
         slotProps={{ footer: { totalRecords: rows.length } }}
         onRowSelectionModelChange={(ids) => {
           console.log(ids);

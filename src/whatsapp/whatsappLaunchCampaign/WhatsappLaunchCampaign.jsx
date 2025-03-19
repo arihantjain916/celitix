@@ -51,6 +51,7 @@ const WhatsappLaunchCampaign = () => {
   const [sending, setSending] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState(null);
+  const [uploadedFile, setUploadedFile] = useState(null);
 
   const [groups, setGroups] = useState([]);
 
@@ -71,6 +72,7 @@ const WhatsappLaunchCampaign = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCountryCodeChecked, setIsCountryCodeChecked] = useState(false);
   const [varLength, setVarLength] = useState(0);
+  const [isUploaded, setIsUploaded] = useState(false);
 
   const handleUrlIndexChange = (index) => {
     setUrlIndex(index);
@@ -268,14 +270,48 @@ const WhatsappLaunchCampaign = () => {
     // ✅ Send API request
     try {
       const response = await sendWhatsappCampaign(requestData);
-      console.log(requestData)
+      console.log(requestData);
       if (response?.status === true) {
         toast.success("Campaign launched successfully!");
-        setDialogVisible(false);
+        setIsLoading(false);
+        setSelectedTemplate("");
+        setSelectedWaba("");
+        setSelectedWabaMobileNo([]);
+        setInputValue("");
+        // setTemplateOptions([]);
+        setTemplateDataNew(null);
+        setWabaAccountId("");
+        // setWabaList(null);
+        setTemplateData({});
+        setFormData({});
+        setImageFile(null);
+        setSelectedOption("option2");
+        setFileHeaders([]);
+        // setTemplateList([]);
+        setImagePreview(null);
+        setSending(false);
+        setIsFetching(false);
+        setSelectedLanguage(null);
+        setSelectedGroups([]);
+        setUploadedFile(null);
+        setIsUploaded(false);
 
-        // setTimeout(() => {
-        //     window.location.reload();
-        // }, 1000); // Reload after 2 seconds to allow toast message visibility
+        // setGroups([]);
+
+        setXlsxPath("");
+        setTotalRecords("");
+        setSelectedCountryCode("");
+        setSelectedMobileColumn("");
+        setIsGroup(-1);
+        setUrlIndex(null);
+
+        setTestMobileNumber("");
+        setSchedule(false);
+        setScheduledDateTime(new Date());
+        setDialogVisible(false);
+        setIsSubmitting(false);
+        setIsCountryCodeChecked(false);
+        setVarLength(0);
       } else {
         toast.error(response?.message || "Campaign launch failed.");
       }
@@ -283,6 +319,7 @@ const WhatsappLaunchCampaign = () => {
       console.error("Error submitting campaign:", error);
       toast.error("Error launching campaign. Please try again.");
     } finally {
+      // window.reload();
       // setIsLoading(false);
     }
   };
@@ -513,9 +550,14 @@ const WhatsappLaunchCampaign = () => {
                     onFileUpload={handleFileHeadersUpdate}
                     onGroupChange={handleGroupChange}
                     setSelectedGroups={setSelectedGroups}
+                    selectedGroups={selectedGroups}
                     onUrlIndexChange={setUrlIndex}
                     groups={groups}
                     setGroups={setGroups}
+                    setUploadedFile={setUploadedFile}
+                    uploadedFile={uploadedFile}
+                    isUploaded={isUploaded}
+                    setIsUploaded={setIsUploaded}
                     // setIsCountryCodeChecked={setIsCountryCodeChecked}
                   />
                 </div>

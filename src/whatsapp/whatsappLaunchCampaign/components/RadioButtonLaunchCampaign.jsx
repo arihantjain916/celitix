@@ -23,16 +23,22 @@ function RadioButtonLaunchCampaign({
   onUrlIndexChange,
   groups,
   setGroups,
+  setSelectedGroups,
+  selectedGroups,
+  setUploadedFile,
+  uploadedFile,
+  setIsUploaded,
+  isUploaded,
   // setIsCountryCodeChecked
 }) {
   const [selectedOption, setSelectedOption] = useState("option2");
-  const [selectedGroups, setSelectedGroups] = useState([]);
-  const [uploadedFile, setUploadedFile] = useState(null);
+  // const [selectedGroups, setSelectedGroups] = useState([]);
+  // const [uploadedFile, setUploadedFile] = useState(null);
   const [showGroupList, setShowGroupList] = useState([]);
   // const [groups, setGroups] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
-  const [isUploaded, setIsUploaded] = useState(false);
+  // const [isUploaded, setIsUploaded] = useState(false);
   const [fileHeaders, setFileHeaders] = useState([]);
   const [selectedCountryCode, setSelectedCountryCode] = useState("");
   const [selectedCountryName, setSelectedCountryName] = useState("");
@@ -53,7 +59,6 @@ function RadioButtonLaunchCampaign({
     // Reset all related states when switching between options
     if (value === "option1") {
       setUploadedFile(null);
-      setSelectedGroups([]);
       setSelectedCountryCode("");
       setSelectedCountryName("");
       setFileData([]);
@@ -143,7 +148,6 @@ function RadioButtonLaunchCampaign({
     }
   };
 
-
   // Handle file removal
   const handleRemoveFile = () => {
     setUploadedFile(null);
@@ -206,7 +210,6 @@ function RadioButtonLaunchCampaign({
     xlsxPath,
     addCountryCode,
   ]); // ✅ Now listens for country code updates
-
 
   const handleFileUpload = async () => {
     if (!uploadedFile) {
