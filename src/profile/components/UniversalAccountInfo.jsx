@@ -236,8 +236,8 @@ function AccountInfoModal({ show, handleClose }) {
 
   const WhatsAppcolumns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
-    { field: "country_name", headerName: "Country", flex: 1, minWidth: 120 },
-    { field: "ISO_code", headerName: "Country Code", flex: 1, minWidth: 120 },
+    { field: "countryName", headerName: "Country", flex: 1, minWidth: 120 },
+    { field: "countryCode", headerName: "Country Code", flex: 1, minWidth: 120 },
     {
       field: "transactional",
       headerName: "Utility (INR/Credit)",
@@ -263,8 +263,8 @@ function AccountInfoModal({ show, handleClose }) {
     ? whatsapprate?.map((item, index) => ({
         id: index + 1,
         sn: index + 1,
-        country_name: item.country_name ?? "-",
-        ISO_code: item.ISO_code ?? "-",
+        countryName: item.countryName ?? "-",
+        countryCode: item.isoCode ?? "-",
         transactional: item.transactional,
         promotional: item.promotional,
       }))
