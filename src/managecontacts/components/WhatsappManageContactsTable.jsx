@@ -156,20 +156,22 @@ const WhatsappManageContactsTable = ({
     },
   ];
 
-  const rows = allContacts.map((contact, index) => ({
-    id: index + 1,
-    sn: index + 1,
-    firstName: contact.firstName ?? "-",
-    lastName: contact.lastName ?? "-",
-    mobileno: contact.mobileno ?? "-",
-    uniqueid: contact.uniqueId ?? "-",
-    emailstatus: contact.status == 1 ? "Active" : "Inactive",
-    group: contact.groupName ?? "-",
-    status: contact.status == 1 ? "Active" : "Inactive",
-    action: "True",
-    srno: contact.addSrno,
-    gender: contact.gender,
-  }));
+  const rows = Array.isArray(allContacts)
+    ? allContacts?.map((contact, index) => ({
+        id: index + 1,
+        sn: index + 1,
+        firstName: contact.firstName ?? "-",
+        lastName: contact.lastName ?? "-",
+        mobileno: contact.mobileno ?? "-",
+        uniqueid: contact.uniqueId ?? "-",
+        emailstatus: contact.status == 1 ? "Active" : "Inactive",
+        group: contact.groupName ?? "-",
+        status: contact.status == 1 ? "Active" : "Inactive",
+        action: "True",
+        srno: contact.addSrno,
+        gender: contact.gender,
+      }))
+    : [];
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
 
