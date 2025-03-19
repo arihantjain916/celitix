@@ -347,11 +347,11 @@ const DataTable = ({ id, wabaNumber, data, name, wabaList }) => {
   const getBtnCss = (type) => {
     switch (type) {
       case "PHONE_NUMBER":
-        return "bg-blue-500";
+        return "bg-blue-500 text-white";
       case "QUICK_REPLY":
         return "text-gray-800 bg-gray-200";
       default:
-        return "bg-green-500";
+        return "bg-green-500 text-white";
     }
   };
 
