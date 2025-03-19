@@ -567,7 +567,7 @@ const ManageAgent = () => {
         </>
       ) : (
         <>
-          <div className="flex flex-wrap items-center justify-between mb-5  mt-4 w-full">
+          <div className="flex flex-wrap items-center justify-between w-full mt-4 mb-5">
             <h1 className="text-xl font-medium">Manage Agent</h1>
             <div className="flex gap-5">
               <div className="w-max-content ">
@@ -590,7 +590,7 @@ const ManageAgent = () => {
           </div>
 
           {/* Manage Agent Table */}
-          <ManageAgentTable />
+          <ManageAgentTable deptList={departmentList} />
 
           {/* Add Department dialog start  */}
           <Dialog
@@ -629,7 +629,7 @@ const ManageAgent = () => {
               </TabPanel>
               <TabPanel header="Manage" rightIcon="pi pi-user ml-2">
                 <div className="m-0">
-                  <div className="card flex justify-content-center mb-4">
+                  <div className="flex mb-4 card justify-content-center">
                     <DropdownWithSearch
                       label="Department List"
                       tooltipContent="Select Department"
@@ -770,7 +770,7 @@ const ManageAgent = () => {
                 value={agentName}
                 onChange={(e) => setAgentName(e.target.value)}
               />
-              <div className="grid grid-cols-2 lg:flex-nowrap flex-wrap gap-3">
+              <div className="grid flex-wrap grid-cols-2 gap-3 lg:flex-nowrap">
                 <InputField
                   label="Email"
                   id="email"
