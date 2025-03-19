@@ -129,7 +129,7 @@ const ManageTemplateRcs = () => {
   const getTemplateTypeCss = (type) => {
     switch (type) {
       case "reply button":
-        return "text-gray-800 bg-gray-200";
+        return "bg-gray-200 text-gray-800";
       case "url action":
         return "bg-green-500 text-white";
       case "dialer":
@@ -311,7 +311,7 @@ const ManageTemplateRcs = () => {
             {templateDetails?.suggestions.map((suggestion, index) => (
               <div className="flex flex-col gap-2">
                 <button
-                  className={`flex items-center justify-center px-4 py-2 text-sm text-white rounded-md  ${getTemplateTypeCss(
+                  className={`flex items-center justify-center px-4 py-2 text-sm  rounded-md  ${getTemplateTypeCss(
                     suggestion.type
                   )}`}
                 >
