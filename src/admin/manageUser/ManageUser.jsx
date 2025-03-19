@@ -36,7 +36,7 @@ const ManageUser = () => {
     };
     try {
       setIsFetching(true);
-      const res = fetchAllUsers(data);
+      const res = await fetchAllUsers(data);
       setAllUsers(res.userMstPojoList);
     } catch (e) {
       console.log(e);

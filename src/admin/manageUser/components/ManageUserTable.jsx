@@ -1,46 +1,52 @@
-import * as React from 'react';
-import { useState } from 'react';
-import { IconButton, Paper, Typography, Box, Button, Tooltip, Popover, } from '@mui/material';
-import { DataGrid, GridFooterContainer } from '@mui/x-data-grid';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import usePagination from '@mui/material/usePagination';
-import { styled } from '@mui/material/styles';
+import * as React from "react";
+import { useState } from "react";
+import {
+  IconButton,
+  Paper,
+  Typography,
+  Box,
+  Button,
+  Tooltip,
+  Popover,
+} from "@mui/material";
+import { DataGrid, GridFooterContainer } from "@mui/x-data-grid";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import usePagination from "@mui/material/usePagination";
+import { styled } from "@mui/material/styles";
 import { Dialog } from "primereact/dialog";
-import { RadioButton } from 'primereact/radiobutton';
+import { RadioButton } from "primereact/radiobutton";
 import { Checkbox } from "primereact/checkbox";
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import PropTypes from 'prop-types';
-import WhatsAppIcon from '@mui/icons-material/WhatsApp';
-import CampaignOutlinedIcon from '@mui/icons-material/CampaignOutlined';
-import IosShareOutlinedIcon from '@mui/icons-material/IosShareOutlined';
-import { BsJournalArrowDown } from 'react-icons/bs';
-import CustomNoRowsOverlay from '../../../whatsapp/components/CustomNoRowsOverlay';
-import CustomTooltip from '../../../whatsapp/components/CustomTooltip';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import LockOpenOutlinedIcon from '@mui/icons-material/LockOpenOutlined';
-import EmergencyOutlinedIcon from '@mui/icons-material/EmergencyOutlined';
-import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
-import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
-import KeyOutlinedIcon from '@mui/icons-material/KeyOutlined';
-import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import PropTypes from "prop-types";
+import WhatsAppIcon from "@mui/icons-material/WhatsApp";
+import CampaignOutlinedIcon from "@mui/icons-material/CampaignOutlined";
+import IosShareOutlinedIcon from "@mui/icons-material/IosShareOutlined";
+import { BsJournalArrowDown } from "react-icons/bs";
+import CustomNoRowsOverlay from "../../../whatsapp/components/CustomNoRowsOverlay";
+import CustomTooltip from "../../../whatsapp/components/CustomTooltip";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
+import EmergencyOutlinedIcon from "@mui/icons-material/EmergencyOutlined";
+import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
+import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import KeyOutlinedIcon from "@mui/icons-material/KeyOutlined";
+import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
 import EditNoteIcon from "@mui/icons-material/EditNote";
-import RadioGroupField from '../../../whatsapp/components/RadioGroupField';
-import AnimatedDropdown from '../../../whatsapp/components/AnimatedDropdown';
-import InputField from '../../../whatsapp/components/InputField';
-import UniversalButton from '../../../whatsapp/components/UniversalButton';
-import DeleteIcon from '@mui/icons-material/Delete';
-import SmsOutlinedIcon from '@mui/icons-material/SmsOutlined';
-import UniversalDatePicker from '../../../whatsapp/components/UniversalDatePicker';
-import UniversalLabel from '../../../whatsapp/components/UniversalLabel';
-import { useEffect } from 'react';
-import PhoneMissedOutlinedIcon from '@mui/icons-material/PhoneMissedOutlined';
-import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
-import GeneratePasswordSettings from '../../../profile/components/GeneratePasswordSettings';
+import RadioGroupField from "../../../whatsapp/components/RadioGroupField";
+import AnimatedDropdown from "../../../whatsapp/components/AnimatedDropdown";
+import InputField from "../../../whatsapp/components/InputField";
+import UniversalButton from "../../../whatsapp/components/UniversalButton";
+import DeleteIcon from "@mui/icons-material/Delete";
+import SmsOutlinedIcon from "@mui/icons-material/SmsOutlined";
+import UniversalDatePicker from "../../../whatsapp/components/UniversalDatePicker";
+import UniversalLabel from "../../../whatsapp/components/UniversalLabel";
+import { useEffect } from "react";
+import PhoneMissedOutlinedIcon from "@mui/icons-material/PhoneMissedOutlined";
+import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
+import GeneratePasswordSettings from "../../../profile/components/GeneratePasswordSettings";
 import { MdOutlineDeleteForever } from "react-icons/md";
-import toast from 'react-hot-toast';
-
-
+import toast from "react-hot-toast";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -67,7 +73,7 @@ CustomTabPanel.propTypes = {
 function a11yProps(index) {
   return {
     id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
   };
 }
 
@@ -79,11 +85,16 @@ const PaginationList = styled("ul")({
   gap: "8px",
 });
 
-const CustomPagination = ({ totalPages, paginationModel, setPaginationModel }) => {
+const CustomPagination = ({
+  totalPages,
+  paginationModel,
+  setPaginationModel,
+}) => {
   const { items } = usePagination({
     count: totalPages,
     page: paginationModel.page + 1,
-    onChange: (_, newPage) => setPaginationModel({ ...paginationModel, page: newPage - 1 }),
+    onChange: (_, newPage) =>
+      setPaginationModel({ ...paginationModel, page: newPage - 1 }),
   });
 
   return (
@@ -108,7 +119,13 @@ const CustomPagination = ({ totalPages, paginationModel, setPaginationModel }) =
             );
           } else {
             children = (
-              <Button key={index} variant="outlined" size="small" {...item} sx={{}} >
+              <Button
+                key={index}
+                variant="outlined"
+                size="small"
+                {...item}
+                sx={{}}
+              >
                 {type === "previous" ? "Previous" : "Next"}
               </Button>
             );
@@ -122,7 +139,7 @@ const CustomPagination = ({ totalPages, paginationModel, setPaginationModel }) =
 };
 
 const ContentCell = ({ value }) => {
-  const [anchorEl, setAnchorEl] = useState(null);  // ✅ Start as null
+  const [anchorEl, setAnchorEl] = useState(null); // ✅ Start as null
   const [open, setOpen] = useState(false);
 
   const handlePopoverOpen = (event) => {
@@ -131,7 +148,7 @@ const ContentCell = ({ value }) => {
   };
 
   const handlePopoverClose = () => {
-    setAnchorEl(null);  // ✅ Close popover immediately
+    setAnchorEl(null); // ✅ Close popover immediately
     setOpen(false);
   };
 
@@ -143,16 +160,14 @@ const ContentCell = ({ value }) => {
 
   return (
     <div
-
-
       style={{
-        whiteSpace: 'nowrap',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        maxWidth: '200px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between'
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        maxWidth: "200px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
       }}
       onMouseEnter={handlePopoverOpen}
       onMouseLeave={handlePopoverClose}
@@ -186,7 +201,6 @@ const ContentCell = ({ value }) => {
           onMouseEnter: () => setOpen(true), // ✅ Keep open when inside popover
           onMouseLeave: handlePopoverClose, // ✅ Close when moving outside popover
         }}
-
       >
         {/* <Paper sx={{ p: 1, maxWidth: 300, borderRadius: 2, boxShadow: 3 }}> */}
         <Typography sx={{ fontSize: "14px", color: "#333", mb: 1 }}>
@@ -211,15 +225,16 @@ const ContentCell = ({ value }) => {
         </Button>
         {/* </Paper> */}
       </Popover>
-
     </div>
   );
 };
 
-
-const ManageUserTable = ({ id, name }) => {
+const ManageUserTable = ({ id, name, allUsers = [] }) => {
   const [selectedRows, setSelectedRows] = useState([]);
-  const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 });
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: 10,
+  });
   const [logins, setLogins] = useState(false);
   const [otpService, setOtpService] = useState(false);
   const [viewService, setViewService] = useState(false);
@@ -237,22 +252,21 @@ const ManageUserTable = ({ id, name }) => {
   const [whatsappUtility, setWhatsappUtility] = useState("");
   const [whatsappMarketing, setWhatsappMarketing] = useState("");
 
-
   const countryOptions = [
     { value: "USA", label: "USA" },
     { value: "UK", label: "UK" },
     { value: "India", label: "India" },
-  ]
+  ];
 
   const handleWhatsappAddCredit = () => {
-    console.log("hello world")
-  }
+    console.log("hello world");
+  };
 
   const handleChangewhatsapp = (event) => {
     setWhatsappStatus(event.target.value);
     // setRcsStatus(value);
     // onOptionChange(value);
-  }
+  };
 
   // whatsapp
   // RCS
@@ -264,17 +278,17 @@ const ManageUserTable = ({ id, name }) => {
     { value: "USA", label: "USA" },
     { value: "UK", label: "UK" },
     { value: "India", label: "India" },
-  ]
+  ];
 
   const handleRcsAddCredit = () => {
-    console.log("hello world")
-  }
+    console.log("hello world");
+  };
 
   const handleChangercs = (event) => {
     setRcsStatus(event.target.value);
     // setRcsStatus(value);
     // onOptionChange(value);
-  }
+  };
   // RCS
   // SMS
   const [smsStatus, setSmsStatus] = useState("disable");
@@ -283,7 +297,6 @@ const ManageUserTable = ({ id, name }) => {
   const [trans, setTrans] = useState(null);
   const [promo, setPromo] = useState(null);
   const [smsrate, setSmsRate] = useState("");
-
 
   const transOptions = [
     { value: "USA", label: "USA" },
@@ -300,7 +313,7 @@ const ManageUserTable = ({ id, name }) => {
     setSmsStatus(event.target.value);
     // setRcsStatus(value);
     // onOptionChange(value);
-  }
+  };
   // SMS
   // OBD
   const [obdStatus, setObdStatus] = useState("disable");
@@ -310,7 +323,6 @@ const ManageUserTable = ({ id, name }) => {
   const [promoobd, setPromoobd] = useState(null);
   const [obdrate, setObdRate] = useState("");
   const [obdrateStatus, setObdRateStatus] = useState("disable");
-
 
   const transOptionsobd = [
     { value: "USA", label: "USA" },
@@ -327,12 +339,12 @@ const ManageUserTable = ({ id, name }) => {
     setObdStatus(event.target.value);
     // setRcsStatus(value);
     // onOptionChange(value);
-  }
+  };
   const handleChangeobdRate = (event) => {
     setObdRateStatus(event.target.value);
     // setRcsStatus(value);
     // onOptionChange(value);
-  }
+  };
   // OBD
   // two-way
   const [twowayStatus, setTwoWayStatus] = useState("disable");
@@ -346,7 +358,7 @@ const ManageUserTable = ({ id, name }) => {
     setTwoWayStatus(event.target.value);
     // setRcsStatus(value);
     // onOptionChange(value);
-  }
+  };
   // two-way
   // misscall
   const [misscallStatus, setMisscallStatus] = useState("disable");
@@ -360,7 +372,7 @@ const ManageUserTable = ({ id, name }) => {
     setMisscallStatus(event.target.value);
     // setRcsStatus(value);
     // onOptionChange(value);
-  }
+  };
   // misscall
   // C2C
   const [clickStatus, setClickStatus] = useState("disable");
@@ -368,7 +380,7 @@ const ManageUserTable = ({ id, name }) => {
     setClickStatus(event.target.value);
     // setRcsStatus(value);
     // onOptionChange(value);
-  }
+  };
   // C2C
 
   // Email
@@ -383,7 +395,7 @@ const ManageUserTable = ({ id, name }) => {
     setEmailStatus(event.target.value);
     // setRcsStatus(value);
     // onOptionChange(value);
-  }
+  };
   // Email
 
   // IBD
@@ -399,12 +411,12 @@ const ManageUserTable = ({ id, name }) => {
     setIbdStatus(event.target.value);
     // setRcsStatus(value);
     // onOptionChange(value);
-  }
+  };
   const handleChangeibdPulse = (event) => {
     setibdPulseStatus(event.target.value);
     // setRcsStatus(value);
     // onOptionChange(value);
-  }
+  };
   // IBD
   // Function to validate input
   const validateInput = (value, setter) => {
@@ -474,16 +486,18 @@ const ManageUserTable = ({ id, name }) => {
     setEditStatusStatus(event.target.value);
     // setRcsStatus(value);
     // onOptionChange(value);
-  }
+  };
   // Edit
 
-  {/* Manage Api Key */ }
-  const [newAPIKey, setNewAPIKey] = useState('');
+  {
+    /* Manage Api Key */
+  }
+  const [newAPIKey, setNewAPIKey] = useState("");
 
   // Function to generate an API key with only lowercase letters and numbers.
   const generateAPIKey = (length = 10) => {
-    const charset = 'abcdefghijklmnopqrstuvwxyz0123456789';
-    let key = '';
+    const charset = "abcdefghijklmnopqrstuvwxyz0123456789";
+    let key = "";
     // Generate random part of full length
     for (let i = 0; i < length; i++) {
       key += charset.charAt(Math.floor(Math.random() * charset.length));
@@ -491,19 +505,25 @@ const ManageUserTable = ({ id, name }) => {
     return key + "XX";
   };
 
-
   const handleGenerateAPIKey = () => {
     const apiKey = generateAPIKey();
     setNewAPIKey(apiKey);
   };
-  {/* Manage Api Key */ }
+  {
+    /* Manage Api Key */
+  }
 
-  {/* reset service */ }
+  {
+    /* reset service */
+  }
   const [newPassword, setNewPassword] = useState("");
 
-
-  {/* reset service */ }
-  {/* OTP details */ }
+  {
+    /* reset service */
+  }
+  {
+    /* OTP details */
+  }
   const [mobileNumbers, setMobileNumbers] = useState([""]); // Initial input field
 
   // Add new input field (Max 5)
@@ -528,16 +548,22 @@ const ManageUserTable = ({ id, name }) => {
     setMobileNumbers(updatedNumbers);
   };
 
-  {/* OTP details */ }
+  {
+    /* OTP details */
+  }
 
-  {/* User Report */ }
+  {
+    /* User Report */
+  }
   const [userreportStatus, setUserReportStatus] = useState("disable");
   const handleChangeuserreport = (event) => {
     setUserReportStatus(event.target.value);
     // setRcsStatus(value);
     // onOptionChange(value);
+  };
+  {
+    /* User Report */
   }
-  {/* User Report */ }
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -569,12 +595,12 @@ const ManageUserTable = ({ id, name }) => {
   };
 
   const columns = [
-    { field: 'sn', headerName: 'S.No', flex: 0, minWidth: 80 },
-    { field: 'userid', headerName: 'User ID', flex: 1, minWidth: 120 },
-    { field: 'firstname', headerName: 'First Name', flex: 1, minWidth: 120 },
-    { field: 'lastname', headerName: 'Last Name', flex: 1, minWidth: 120 },
-    { field: 'company', headerName: 'Company', flex: 1, minWidth: 120 },
-    { field: 'status', headerName: 'Status', flex: 1, minWidth: 120 },
+    { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
+    { field: "userId", headerName: "User ID", flex: 1, minWidth: 120 },
+    { field: "firstName", headerName: "First Name", flex: 1, minWidth: 120 },
+    { field: "lastName", headerName: "Last Name", flex: 1, minWidth: 120 },
+    { field: "companyName", headerName: "Company", flex: 1, minWidth: 120 },
+    { field: "status", headerName: "Status", flex: 1, minWidth: 120 },
     {
       field: "action",
       headerName: "Action",
@@ -668,10 +694,20 @@ const ManageUserTable = ({ id, name }) => {
   ];
 
   const whatsaappcolumns = [
-    { field: 'sn', headerName: 'S.No', flex: 0, minWidth: 80 },
-    { field: 'country', headerName: 'Country', flex: 1, minWidth: 120 },
-    { field: 'utility', headerName: 'Utility (INR/Credit)', flex: 1, minWidth: 120 },
-    { field: 'marketing', headerName: 'Marketing (INR/Credit)', flex: 1, minWidth: 120 },
+    { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
+    { field: "country", headerName: "Country", flex: 1, minWidth: 120 },
+    {
+      field: "utility",
+      headerName: "Utility (INR/Credit)",
+      flex: 1,
+      minWidth: 120,
+    },
+    {
+      field: "marketing",
+      headerName: "Marketing (INR/Credit)",
+      flex: 1,
+      minWidth: 120,
+    },
     {
       field: "action",
       headerName: "Action",
@@ -699,16 +735,15 @@ const ManageUserTable = ({ id, name }) => {
               />
             </IconButton>
           </CustomTooltip>
-
         </>
       ),
     },
   ];
 
   const rcscolumns = [
-    { field: 'sn', headerName: 'S.No', flex: 0, minWidth: 80 },
-    { field: 'country', headerName: 'Country', flex: 1, minWidth: 120 },
-    { field: 'rate', headerName: 'Rate (INR/Credit)', flex: 1, minWidth: 120 },
+    { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
+    { field: "country", headerName: "Country", flex: 1, minWidth: 120 },
+    { field: "rate", headerName: "Rate (INR/Credit)", flex: 1, minWidth: 120 },
     {
       field: "action",
       headerName: "Action",
@@ -736,64 +771,83 @@ const ManageUserTable = ({ id, name }) => {
               />
             </IconButton>
           </CustomTooltip>
-
         </>
       ),
     },
   ];
 
-  const rows = Array.from({ length: 20 }, (_, i) => ({
-    id: i + 1,
-    sn: i + 1,
-    userid: 'xyz',
-    firstname: 'Demo',
-    lastname: 'demopro',
-    company: 'Dummy Company',
-    status: 'pending..',
-  }));
+  const rows = Array.isArray(allUsers)
+    ? allUsers.map((item, i) => ({
+        id: i + 1,
+        sn: i + 1,
+        ...item,
+      }))
+    : [];
 
   const whatsapprows = Array.from({ length: 20 }, (_, i) => ({
     id: i + 1,
     sn: i + 1,
-    country: 'India',
-    utility: '0.30',
-    marketing: '0.80',
+    country: "India",
+    utility: "0.30",
+    marketing: "0.80",
   }));
 
   const rcsrows = Array.from({ length: 20 }, (_, i) => ({
     id: i + 1,
     sn: i + 1,
-    country: 'India',
-    rate: '0.30',
+    country: "India",
+    rate: "0.30",
   }));
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
 
   const CustomFooter = () => {
     return (
-      <GridFooterContainer sx={{
-        display: "flex",
-        flexWrap: "wrap",
-        justifyContent: { xs: "center", lg: "space-between" },
-        alignItems: "center",
-        padding: 1,
-        gap: 2,
-        overflowX: "auto",
-      }}>
-        <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 1.5 }}>
+      <GridFooterContainer
+        sx={{
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: { xs: "center", lg: "space-between" },
+          alignItems: "center",
+          padding: 1,
+          gap: 2,
+          overflowX: "auto",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: 1.5,
+          }}
+        >
           {selectedRows.length > 0 && (
-            <Typography variant="body2" sx={{ borderRight: "1px solid #ccc", paddingRight: "10px" }}>
+            <Typography
+              variant="body2"
+              sx={{ borderRight: "1px solid #ccc", paddingRight: "10px" }}
+            >
               {selectedRows.length} Rows Selected
             </Typography>
           )}
 
           <Typography variant="body2">
-            Total Records: <span className='font-semibold'>{rows.length}</span>
+            Total Records: <span className="font-semibold">{rows.length}</span>
           </Typography>
         </Box>
 
-        <Box sx={{ display: "flex", justifyContent: "center", width: { xs: "100%", sm: "auto" } }}>
-          <CustomPagination totalPages={totalPages} paginationModel={paginationModel} setPaginationModel={setPaginationModel} />
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            width: { xs: "100%", sm: "auto" },
+          }}
+        >
+          <CustomPagination
+            totalPages={totalPages}
+            paginationModel={paginationModel}
+            setPaginationModel={setPaginationModel}
+          />
         </Box>
       </GridFooterContainer>
     );
@@ -824,13 +878,18 @@ const ManageUserTable = ({ id, name }) => {
           sx={{
             border: 0,
             "& .MuiDataGrid-cell": { outline: "none !important" },
-            "& .MuiDataGrid-columnHeaders": { color: "#193cb8", fontSize: "14px", fontWeight: "bold !important" },
-            "& .MuiDataGrid-row--borderBottom": { backgroundColor: "#e6f4ff !important" },
+            "& .MuiDataGrid-columnHeaders": {
+              color: "#193cb8",
+              fontSize: "14px",
+              fontWeight: "bold !important",
+            },
+            "& .MuiDataGrid-row--borderBottom": {
+              backgroundColor: "#e6f4ff !important",
+            },
             "& .MuiDataGrid-columnSeparator": { color: "#ccc" },
           }}
         />
       </Paper>
-
 
       {/* Login details */}
       <Dialog
@@ -852,15 +911,14 @@ const ManageUserTable = ({ id, name }) => {
         className="w-[30rem]"
         draggable={false}
       >
-        <div className="max-w-md mx-auto bg-gradient-to-r from-white to-gray-100 shadow-xl rounded-lg p-6">
-          <h2 className="text-xl font-semibold text-gray-800 text-center mb-4">Mobile Numbers</h2>
+        <div className="max-w-md p-6 mx-auto rounded-lg shadow-xl bg-gradient-to-r from-white to-gray-100">
+          <h2 className="mb-4 text-xl font-semibold text-center text-gray-800">
+            Mobile Numbers
+          </h2>
 
           <div className="flex flex-col gap-3">
             {mobileNumbers.map((number, index) => (
-              <div
-                key={index}
-                className="relative flex items-center gap-3"
-              >
+              <div key={index} className="relative flex items-center gap-3">
                 <InputField
                   variant="outlined"
                   placeholder="Enter mobile number..."
@@ -873,8 +931,9 @@ const ManageUserTable = ({ id, name }) => {
                   // <IconButton onClick={() => removeMobileNumber(index)} sx={{ color: "red", position:"absolute", right:"3rem" }}>
                   //   <DeleteIcon />
                   // </IconButton>
-                  <MdOutlineDeleteForever onClick={() => removeMobileNumber(index)}
-                    className='text-red-500 cursor-pointer hover:text-red-600 absolute right-2'
+                  <MdOutlineDeleteForever
+                    onClick={() => removeMobileNumber(index)}
+                    className="absolute text-red-500 cursor-pointer hover:text-red-600 right-2"
                     size={20}
                   />
                 )}
@@ -899,7 +958,6 @@ const ManageUserTable = ({ id, name }) => {
               color="primary"
               onClick={addMobileNumber}
             />
-
 
             {/* <IconButton
           onClick={addMobileNumber}
@@ -928,9 +986,10 @@ const ManageUserTable = ({ id, name }) => {
         className="w-[40rem]"
         draggable={false}
       >
-        <div className='space-y-3'>
-          <div className="grid lg:grid-cols-2 gap-4 mb-2">
-            <InputField label="User ID"
+        <div className="space-y-3">
+          <div className="grid gap-4 mb-2 lg:grid-cols-2">
+            <InputField
+              label="User ID"
               id="viewuserid"
               name="viewuserid"
               placeholder="Enter your User ID"
@@ -974,12 +1033,12 @@ const ManageUserTable = ({ id, name }) => {
           </div>
           {userType === "Reseller" && (
             <div className="flex items-center gap-2" id="yesnopost">
-              <div className="flex justify-center items-center">
+              <div className="flex items-center justify-center">
                 <UniversalLabel
                   text="Enable Postpaid"
                   id="viewenablepostpaid"
                   name="viewenablepostpaid"
-                  className="text-gray-700 font-medium text-sm"
+                  className="text-sm font-medium text-gray-700"
                   readOnly="true"
                 />
               </div>
@@ -992,7 +1051,7 @@ const ManageUserTable = ({ id, name }) => {
                 />
                 <label
                   htmlFor="viewenablepostpaidOption1"
-                  className="text-gray-700 font-medium text-sm cursor-pointer"
+                  className="text-sm font-medium text-gray-700 cursor-pointer"
                 >
                   Yes
                 </label>
@@ -1005,7 +1064,7 @@ const ManageUserTable = ({ id, name }) => {
                 />
                 <label
                   htmlFor="viewenablepostpaidOption2"
-                  className="text-gray-700 font-medium text-sm cursor-pointer"
+                  className="text-sm font-medium text-gray-700 cursor-pointer"
                 >
                   No
                 </label>
@@ -1024,86 +1083,114 @@ const ManageUserTable = ({ id, name }) => {
             </div>
           )}
 
-
-          <div className="lg:w-100 md:w-100 flex flex-wrap gap-4">
-            <div className="flex justify-center items-center" >
+          <div className="flex flex-wrap gap-4 lg:w-100 md:w-100">
+            <div className="flex items-center justify-center">
               <UniversalLabel
                 text="Status"
                 id="vieweditstatus"
                 name="vieweditstatus"
-                className='text-gray-700 font-medium text-sm'
+                className="text-sm font-medium text-gray-700"
               />
             </div>
             {/* Option 1 */}
-            <div className="flex items-center gap-2" >
-              <RadioButton inputId="viewstatusOption1" name="viewstatusredio" value="enable" />
-              <label htmlFor="viewstatusOption1" className="text-gray-700 font-medium text-sm cursor-pointer">Enable</label>
+            <div className="flex items-center gap-2">
+              <RadioButton
+                inputId="viewstatusOption1"
+                name="viewstatusredio"
+                value="enable"
+              />
+              <label
+                htmlFor="viewstatusOption1"
+                className="text-sm font-medium text-gray-700 cursor-pointer"
+              >
+                Enable
+              </label>
             </div>
             {/* Option 2 */}
-            <div className="flex items-center gap-2" >
-              <RadioButton inputId="viewstatusOption2" name="viewstatusredio" value="disable" />
-              <label htmlFor="viewstatusOption2" className="text-gray-700 font-medium text-sm cursor-pointer">Disable</label>
+            <div className="flex items-center gap-2">
+              <RadioButton
+                inputId="viewstatusOption2"
+                name="viewstatusredio"
+                value="disable"
+              />
+              <label
+                htmlFor="viewstatusOption2"
+                className="text-sm font-medium text-gray-700 cursor-pointer"
+              >
+                Disable
+              </label>
             </div>
           </div>
 
-          <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-4">
-            <InputField label="First Name"
+          <div className="grid gap-4 lg:grid-cols-3 md:grid-cols-2">
+            <InputField
+              label="First Name"
               id="viewfirstname"
               name="viewfirstname"
               placeholder="Enter your First Name"
               readOnly="true"
             />
-            <InputField label="Last Name"
+            <InputField
+              label="Last Name"
               id="viewlastname"
               name="viewlastname"
               placeholder="Enter your Last Name"
               readOnly="true"
             />
-            <InputField label="Email ID" type="email"
+            <InputField
+              label="Email ID"
+              type="email"
               id="viewemail"
               name="viewemail"
               placeholder="Enter your Email ID"
               readOnly="true"
             />
-            <InputField label="Mobile No."
+            <InputField
+              label="Mobile No."
               id="viewmobile"
               name="viewmobile"
               placeholder="Enter your Mobile No."
-              type='number'
+              type="number"
               readOnly="true"
             />
-            <InputField label="Company Name"
+            <InputField
+              label="Company Name"
               id="viewcompany"
               name="viewcompany"
               placeholder="Enter your Company Name"
               readOnly="true"
             />
-            <InputField label="Address"
+            <InputField
+              label="Address"
               id="viewaddress"
               name="viewaddress"
               placeholder="Enter your Address"
               readOnly="true"
             />
-            <InputField label="City"
+            <InputField
+              label="City"
               id="viewcity"
               name="viewcity"
               placeholder="Enter your City"
               readOnly="true"
             />
-            <InputField label="State"
+            <InputField
+              label="State"
               id="viewstate"
               name="viewstate"
               placeholder="Enter your State"
               readOnly="true"
             />
-            <InputField label="Country"
+            <InputField
+              label="Country"
               id="viewcountry"
               name="viewcountry"
               placeholder="Enter your Country"
               readOnly="true"
             />
-            <InputField label="Pincode"
-              id='viewPincode'
+            <InputField
+              label="Pincode"
+              id="viewPincode"
               name="viewPincode"
               placeholder="Enter your Pincode"
               readOnly="true"
@@ -1121,9 +1208,10 @@ const ManageUserTable = ({ id, name }) => {
         className="lg:w-[50rem] md:w-[40rem] w-[20rem]"
         draggable={false}
       >
-        <div className='space-y-3'>
-          <div className="grid lg:grid-cols-2 gap-4 mb-2">
-            <InputField label="User ID"
+        <div className="space-y-3">
+          <div className="grid gap-4 mb-2 lg:grid-cols-2">
+            <InputField
+              label="User ID"
               id="userid"
               name="userid"
               placeholder="Enter your User ID"
@@ -1164,12 +1252,12 @@ const ManageUserTable = ({ id, name }) => {
           </div>
           {userType === "Reseller" && (
             <div className="flex items-center gap-2" id="yesnopost">
-              <div className="flex justify-center items-center">
+              <div className="flex items-center justify-center">
                 <UniversalLabel
                   text="Enable Postpaid"
                   id="enablepostpaid"
                   name="enablepostpaid"
-                  className="text-gray-700 font-medium text-sm"
+                  className="text-sm font-medium text-gray-700"
                 />
               </div>
               {/* Option 1 */}
@@ -1183,7 +1271,7 @@ const ManageUserTable = ({ id, name }) => {
                 />
                 <label
                   htmlFor="enablepostpaidOption1"
-                  className="text-gray-700 font-medium text-sm cursor-pointer"
+                  className="text-sm font-medium text-gray-700 cursor-pointer"
                 >
                   Yes
                 </label>
@@ -1199,7 +1287,7 @@ const ManageUserTable = ({ id, name }) => {
                 />
                 <label
                   htmlFor="enablepostpaidOption2"
-                  className="text-gray-700 font-medium text-sm cursor-pointer"
+                  className="text-sm font-medium text-gray-700 cursor-pointer"
                 >
                   No
                 </label>
@@ -1218,30 +1306,52 @@ const ManageUserTable = ({ id, name }) => {
             </div>
           )}
 
-
-          <div className="lg:w-100 md:w-100 flex flex-wrap gap-4">
-            <div className="flex justify-center items-center" >
+          <div className="flex flex-wrap gap-4 lg:w-100 md:w-100">
+            <div className="flex items-center justify-center">
               <UniversalLabel
                 text="Status"
                 id="editstatus"
                 name="editstatus"
-                className='text-gray-700 font-medium text-sm'
+                className="text-sm font-medium text-gray-700"
               />
             </div>
             {/* Option 1 */}
-            <div className="flex items-center gap-2" >
-              <RadioButton inputId="editstatusOption1" name="editstatusredio" value="enable" onChange={handleChangeEditStatus} checked={editstatusStatus === 'enable'} />
-              <label htmlFor="editstatusOption1" className="text-gray-700 font-medium text-sm cursor-pointer">Enable</label>
+            <div className="flex items-center gap-2">
+              <RadioButton
+                inputId="editstatusOption1"
+                name="editstatusredio"
+                value="enable"
+                onChange={handleChangeEditStatus}
+                checked={editstatusStatus === "enable"}
+              />
+              <label
+                htmlFor="editstatusOption1"
+                className="text-sm font-medium text-gray-700 cursor-pointer"
+              >
+                Enable
+              </label>
             </div>
             {/* Option 2 */}
-            <div className="flex items-center gap-2" >
-              <RadioButton inputId="editstatusOption2" name="editstatusredio" value="disable" onChange={handleChangeEditStatus} checked={editstatusStatus === 'disable'} />
-              <label htmlFor="editstatusOption2" className="text-gray-700 font-medium text-sm cursor-pointer">Disable</label>
+            <div className="flex items-center gap-2">
+              <RadioButton
+                inputId="editstatusOption2"
+                name="editstatusredio"
+                value="disable"
+                onChange={handleChangeEditStatus}
+                checked={editstatusStatus === "disable"}
+              />
+              <label
+                htmlFor="editstatusOption2"
+                className="text-sm font-medium text-gray-700 cursor-pointer"
+              >
+                Disable
+              </label>
             </div>
           </div>
 
-          <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-4">
-            <InputField label="First Name"
+          <div className="grid gap-4 lg:grid-cols-3 md:grid-cols-2">
+            <InputField
+              label="First Name"
               id="firstname"
               name="firstname"
               placeholder="Enter your First Name"
@@ -1249,7 +1359,8 @@ const ManageUserTable = ({ id, name }) => {
               onChange={(e) => setUserName(e.target.value)}
               required
             />
-            <InputField label="Last Name"
+            <InputField
+              label="Last Name"
               id="lastname"
               name="lastname"
               placeholder="Enter your Last Name"
@@ -1257,7 +1368,9 @@ const ManageUserTable = ({ id, name }) => {
               onChange={(e) => setUserLastName(e.target.value)}
               required
             />
-            <InputField label="Email ID" type="email"
+            <InputField
+              label="Email ID"
+              type="email"
               id="email"
               name="email"
               placeholder="Enter your Email ID"
@@ -1265,36 +1378,41 @@ const ManageUserTable = ({ id, name }) => {
               onChange={(e) => setUserEmail(e.target.value)}
               required
             />
-            <InputField label="Mobile No."
+            <InputField
+              label="Mobile No."
               id="mobile"
               name="mobile"
               placeholder="Enter your Mobile No."
-              type='number'
+              type="number"
               value={userPhoneNumber}
               onChange={(e) => setUserPhoneNumber(e.target.value)}
             />
-            <InputField label="Company Name"
+            <InputField
+              label="Company Name"
               id="company"
               name="company"
               placeholder="Enter your Company Name"
               value={companyName}
               onChange={(e) => setCompanyName(e.target.value)}
             />
-            <InputField label="Address"
+            <InputField
+              label="Address"
               id="address"
               name="address"
               placeholder="Enter your Address"
               value={userAddress}
               onChange={(e) => setUserAddress(e.target.value)}
             />
-            <InputField label="City"
+            <InputField
+              label="City"
               id="city"
               name="city"
               placeholder="Enter your City"
               value={city}
               onChange={(e) => setCity(e.target.value)}
             />
-            <InputField label="State"
+            <InputField
+              label="State"
               id="state"
               name="state"
               placeholder="Enter your State"
@@ -1302,15 +1420,17 @@ const ManageUserTable = ({ id, name }) => {
               onChange={(e) => setState(e.target.value)}
               required
             />
-            <InputField label="Country"
+            <InputField
+              label="Country"
               id="country"
               name="country"
               placeholder="Enter your Country"
               value={country}
               onChange={(e) => setCountry(e.target.value)}
             />
-            <InputField label="Pincode"
-              id='Pincode'
+            <InputField
+              label="Pincode"
+              id="Pincode"
               name="Pincode"
               placeholder="Enter your Pincode"
               value={zipCode}
@@ -1318,7 +1438,7 @@ const ManageUserTable = ({ id, name }) => {
             />
           </div>
 
-          <div className='flex justify-center mt-3'>
+          <div className="flex justify-center mt-3">
             <UniversalButton
               label="Save"
               id="whatsappsave"
@@ -1337,7 +1457,7 @@ const ManageUserTable = ({ id, name }) => {
         className="lg:w-[65rem] md:w-[50rem] w-[20rem]"
         draggable={false}
       >
-        <Box sx={{ width: '100%' }}>
+        <Box sx={{ width: "100%" }}>
           <Tabs
             value={value}
             onChange={handleChange}
@@ -1353,31 +1473,32 @@ const ManageUserTable = ({ id, name }) => {
               }
               {...a11yProps(0)}
               sx={{
-                textTransform: 'none',
-                fontWeight: 'bold',
-                color: 'text.secondary',
-                '&:hover': {
-                  color: 'primary.main',
-                  backgroundColor: '#f0f4ff',
-                  borderRadius: '8px',
+                textTransform: "none",
+                fontWeight: "bold",
+                color: "text.secondary",
+                "&:hover": {
+                  color: "primary.main",
+                  backgroundColor: "#f0f4ff",
+                  borderRadius: "8px",
                 },
               }}
             />
             <Tab
               label={
-                <span className='flex gap-2 items-center' >
-                  <BsJournalArrowDown size={18} />RCS
+                <span className="flex items-center gap-2">
+                  <BsJournalArrowDown size={18} />
+                  RCS
                 </span>
               }
               {...a11yProps(1)}
               sx={{
-                textTransform: 'none',
-                fontWeight: 'bold',
-                color: 'text.secondary',
-                '&:hover': {
-                  color: 'primary.main',
-                  backgroundColor: '#f0f4ff',
-                  borderRadius: '8px',
+                textTransform: "none",
+                fontWeight: "bold",
+                color: "text.secondary",
+                "&:hover": {
+                  color: "primary.main",
+                  backgroundColor: "#f0f4ff",
+                  borderRadius: "8px",
                 },
               }}
             />
@@ -1389,140 +1510,168 @@ const ManageUserTable = ({ id, name }) => {
               }
               {...a11yProps(2)}
               sx={{
-                textTransform: 'none',
-                fontWeight: 'bold',
-                color: 'text.secondary',
-                '&:hover': {
-                  color: 'primary.main',
-                  backgroundColor: '#f0f4ff',
-                  borderRadius: '8px',
+                textTransform: "none",
+                fontWeight: "bold",
+                color: "text.secondary",
+                "&:hover": {
+                  color: "primary.main",
+                  backgroundColor: "#f0f4ff",
+                  borderRadius: "8px",
                 },
               }}
             />
             <Tab
               label={
                 <span>
-                  <CampaignOutlinedIcon size={20} />OBD
+                  <CampaignOutlinedIcon size={20} />
+                  OBD
                 </span>
               }
               {...a11yProps(3)}
               sx={{
-                textTransform: 'none',
-                fontWeight: 'bold',
-                color: 'text.secondary',
-                '&:hover': {
-                  color: 'primary.main',
-                  backgroundColor: '#f0f4ff',
-                  borderRadius: '8px',
+                textTransform: "none",
+                fontWeight: "bold",
+                color: "text.secondary",
+                "&:hover": {
+                  color: "primary.main",
+                  backgroundColor: "#f0f4ff",
+                  borderRadius: "8px",
                 },
               }}
             />
             <Tab
               label={
                 <span>
-                  <CampaignOutlinedIcon size={20} />Two Way
+                  <CampaignOutlinedIcon size={20} />
+                  Two Way
                 </span>
               }
               {...a11yProps(4)}
               sx={{
-                textTransform: 'none',
-                fontWeight: 'bold',
-                color: 'text.secondary',
-                '&:hover': {
-                  color: 'primary.main',
-                  backgroundColor: '#f0f4ff',
-                  borderRadius: '8px',
+                textTransform: "none",
+                fontWeight: "bold",
+                color: "text.secondary",
+                "&:hover": {
+                  color: "primary.main",
+                  backgroundColor: "#f0f4ff",
+                  borderRadius: "8px",
                 },
               }}
             />
             <Tab
               label={
                 <span>
-                  <PhoneMissedOutlinedIcon size={20} />Missed Call
+                  <PhoneMissedOutlinedIcon size={20} />
+                  Missed Call
                 </span>
               }
               {...a11yProps(5)}
               sx={{
-                textTransform: 'none',
-                fontWeight: 'bold',
-                color: 'text.secondary',
-                '&:hover': {
-                  color: 'primary.main',
-                  backgroundColor: '#f0f4ff',
-                  borderRadius: '8px',
+                textTransform: "none",
+                fontWeight: "bold",
+                color: "text.secondary",
+                "&:hover": {
+                  color: "primary.main",
+                  backgroundColor: "#f0f4ff",
+                  borderRadius: "8px",
                 },
               }}
             />
             <Tab
               label={
                 <span>
-                  <CampaignOutlinedIcon size={20} />C2C
+                  <CampaignOutlinedIcon size={20} />
+                  C2C
                 </span>
               }
               {...a11yProps(6)}
               sx={{
-                textTransform: 'none',
-                fontWeight: 'bold',
-                color: 'text.secondary',
-                '&:hover': {
-                  color: 'primary.main',
-                  backgroundColor: '#f0f4ff',
-                  borderRadius: '8px',
+                textTransform: "none",
+                fontWeight: "bold",
+                color: "text.secondary",
+                "&:hover": {
+                  color: "primary.main",
+                  backgroundColor: "#f0f4ff",
+                  borderRadius: "8px",
                 },
               }}
             />
             <Tab
               label={
                 <span>
-                  <EmailOutlinedIcon size={20} />E-mail
+                  <EmailOutlinedIcon size={20} />
+                  E-mail
                 </span>
               }
               {...a11yProps(7)}
               sx={{
-                textTransform: 'none',
-                fontWeight: 'bold',
-                color: 'text.secondary',
-                '&:hover': {
-                  color: 'primary.main',
-                  backgroundColor: '#f0f4ff',
-                  borderRadius: '8px',
+                textTransform: "none",
+                fontWeight: "bold",
+                color: "text.secondary",
+                "&:hover": {
+                  color: "primary.main",
+                  backgroundColor: "#f0f4ff",
+                  borderRadius: "8px",
                 },
               }}
             />
             <Tab
               label={
                 <span>
-                  <CampaignOutlinedIcon size={20} />IBD
+                  <CampaignOutlinedIcon size={20} />
+                  IBD
                 </span>
               }
               {...a11yProps(8)}
               sx={{
-                textTransform: 'none',
-                fontWeight: 'bold',
-                color: 'text.secondary',
-                '&:hover': {
-                  color: 'primary.main',
-                  backgroundColor: '#f0f4ff',
-                  borderRadius: '8px',
+                textTransform: "none",
+                fontWeight: "bold",
+                color: "text.secondary",
+                "&:hover": {
+                  color: "primary.main",
+                  backgroundColor: "#f0f4ff",
+                  borderRadius: "8px",
                 },
               }}
             />
           </Tabs>
           <CustomTabPanel value={value} index={0} className="">
             <div>
-              <div className="lg:w-100 md:w-100 flex flex-wrap gap-2 mb-2">
+              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
                 {/* Option 1 */}
-                <div className="flex-1 cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-3 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-center gap-2" >
-                    <RadioButton inputId="whatsaapOption1" name="whatsappredio" value="enable" onChange={handleChangewhatsapp} checked={whatsappStatus === 'enable'} />
-                    <label htmlFor="whatsaapOption1" className="text-gray-700 font-medium text-sm cursor-pointer">Enable</label>
+                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
+                  <div className="flex items-center gap-2">
+                    <RadioButton
+                      inputId="whatsaapOption1"
+                      name="whatsappredio"
+                      value="enable"
+                      onChange={handleChangewhatsapp}
+                      checked={whatsappStatus === "enable"}
+                    />
+                    <label
+                      htmlFor="whatsaapOption1"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
+                    >
+                      Enable
+                    </label>
                   </div>
                 </div>
                 {/* Option 2 */}
                 <div className="flex-1  cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2.5 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-center gap-2" >
-                    <RadioButton inputId="whatsOption2" name="whatsappredio" value="disable" onChange={handleChangewhatsapp} checked={whatsappStatus === 'disable'} />
-                    <label htmlFor="whatsOption2" className="text-gray-700 font-medium text-sm cursor-pointer">Disable</label>
+                  <div className="flex items-center gap-2">
+                    <RadioButton
+                      inputId="whatsOption2"
+                      name="whatsappredio"
+                      value="disable"
+                      onChange={handleChangewhatsapp}
+                      checked={whatsappStatus === "disable"}
+                    />
+                    <label
+                      htmlFor="whatsOption2"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
+                    >
+                      Disable
+                    </label>
                   </div>
                 </div>
               </div>
@@ -1536,8 +1685,8 @@ const ManageUserTable = ({ id, name }) => {
               /> */}
               {whatsappStatus === "enable" && (
                 <>
-                  <div id='whatsapptable'>
-                    <div className='flex flex-wrap lg:flex-nowrap gap-4 items-end justify-start align-middle pb-5 w-full'>
+                  <div id="whatsapptable">
+                    <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle lg:flex-nowrap">
                       <AnimatedDropdown
                         id="whatsappcountryselect"
                         name="whatsappcountryselect"
@@ -1553,7 +1702,9 @@ const ManageUserTable = ({ id, name }) => {
                         label="Utility"
                         placeholder="INR / Credit"
                         value={whatsappUtility}
-                        onChange={(e) => validateInput(e.target.value, setWhatsappUtility)}
+                        onChange={(e) =>
+                          validateInput(e.target.value, setWhatsappUtility)
+                        }
                         type="text"
                         readOnly={!whatsappCountry}
                       />
@@ -1564,7 +1715,9 @@ const ManageUserTable = ({ id, name }) => {
                         label="Marketing"
                         placeholder="INR / Credit"
                         value={whatsappMarketing}
-                        onChange={(e) => validateInput(e.target.value, setWhatsappMarketing)}
+                        onChange={(e) =>
+                          validateInput(e.target.value, setWhatsappMarketing)
+                        }
                         type="text"
                         readOnly={!whatsappCountry}
                       />
@@ -1576,7 +1729,6 @@ const ManageUserTable = ({ id, name }) => {
                         onClick={handleWhatsappAddCredit}
                       />
                     </div>
-
 
                     <Paper sx={{ height: 250 }} id={id} name={name}>
                       <DataGrid
@@ -1594,21 +1746,29 @@ const ManageUserTable = ({ id, name }) => {
                           footer: CustomFooter,
                           noRowsOverlay: CustomNoRowsOverlay,
                         }}
-                        onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
+                        onRowSelectionModelChange={(ids) =>
+                          setSelectedRows(ids)
+                        }
                         disableRowSelectionOnClick
                         disableColumnResize
                         disableColumnMenu
                         sx={{
                           border: 0,
                           "& .MuiDataGrid-cell": { outline: "none !important" },
-                          "& .MuiDataGrid-columnHeaders": { color: "#193cb8", fontSize: "14px", fontWeight: "bold !important" },
-                          "& .MuiDataGrid-row--borderBottom": { backgroundColor: "#e6f4ff !important" },
+                          "& .MuiDataGrid-columnHeaders": {
+                            color: "#193cb8",
+                            fontSize: "14px",
+                            fontWeight: "bold !important",
+                          },
+                          "& .MuiDataGrid-row--borderBottom": {
+                            backgroundColor: "#e6f4ff !important",
+                          },
                           "& .MuiDataGrid-columnSeparator": { color: "#ccc" },
                         }}
                       />
                     </Paper>
                   </div>
-                  <div className='flex justify-center mt-3'>
+                  <div className="flex justify-center mt-3">
                     <UniversalButton
                       label="Save"
                       id="whatsappsave"
@@ -1617,26 +1777,46 @@ const ManageUserTable = ({ id, name }) => {
                   </div>
                 </>
               )}
-
-
             </div>
           </CustomTabPanel>
 
           <CustomTabPanel value={value} index={1}>
             <div>
-              <div className="lg:w-100 md:w-100 flex flex-wrap gap-2 mb-2">
+              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
                 {/* Option 1 */}
-                <div className="flex-1 cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-3 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-center gap-2" >
-                    <RadioButton inputId="rcsOption1" name="rcsredio" value="enable" onChange={handleChangercs} checked={rcsStatus === 'enable'} />
-                    <label htmlFor="rcsOption1" className="text-gray-700 font-medium text-sm cursor-pointer">Enable</label>
+                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
+                  <div className="flex items-center gap-2">
+                    <RadioButton
+                      inputId="rcsOption1"
+                      name="rcsredio"
+                      value="enable"
+                      onChange={handleChangercs}
+                      checked={rcsStatus === "enable"}
+                    />
+                    <label
+                      htmlFor="rcsOption1"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
+                    >
+                      Enable
+                    </label>
                   </div>
                 </div>
                 {/* Option 2 */}
                 <div className="flex-1  cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2.5 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-center gap-2" >
-                    <RadioButton inputId="rcsOption2" name="rcsredio" value="disable" onChange={handleChangercs} checked={rcsStatus === 'disable'} />
-                    <label htmlFor="rcsOption2" className="text-gray-700 font-medium text-sm cursor-pointer">Disable</label>
+                  <div className="flex items-center gap-2">
+                    <RadioButton
+                      inputId="rcsOption2"
+                      name="rcsredio"
+                      value="disable"
+                      onChange={handleChangercs}
+                      checked={rcsStatus === "disable"}
+                    />
+                    <label
+                      htmlFor="rcsOption2"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
+                    >
+                      Disable
+                    </label>
                   </div>
                 </div>
               </div>
@@ -1651,8 +1831,8 @@ const ManageUserTable = ({ id, name }) => {
               /> */}
               {rcsStatus === "enable" && (
                 <>
-                  <div id='rcstable'>
-                    <div className='flex flex-wrap lg:flex-nowrap gap-4 items-end justify-start align-middle pb-5 w-full'>
+                  <div id="rcstable">
+                    <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle lg:flex-nowrap">
                       <AnimatedDropdown
                         id="rcscountryselect"
                         name="rcscountryselect"
@@ -1668,7 +1848,9 @@ const ManageUserTable = ({ id, name }) => {
                         label="Rate"
                         placeholder="INR / Credit"
                         value={rcsrate}
-                        onChange={(e) => validateInput(e.target.value, setRcsrate)}
+                        onChange={(e) =>
+                          validateInput(e.target.value, setRcsrate)
+                        }
                         type="text"
                         readOnly={!rcsCountry}
                       />
@@ -1680,7 +1862,6 @@ const ManageUserTable = ({ id, name }) => {
                         onClick={handleRcsAddCredit}
                       />
                     </div>
-
 
                     <Paper sx={{ height: 250 }} id={id} name={name}>
                       <DataGrid
@@ -1698,26 +1879,30 @@ const ManageUserTable = ({ id, name }) => {
                           footer: CustomFooter,
                           noRowsOverlay: CustomNoRowsOverlay,
                         }}
-                        onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
+                        onRowSelectionModelChange={(ids) =>
+                          setSelectedRows(ids)
+                        }
                         disableRowSelectionOnClick
                         disableColumnResize
                         disableColumnMenu
                         sx={{
                           border: 0,
                           "& .MuiDataGrid-cell": { outline: "none !important" },
-                          "& .MuiDataGrid-columnHeaders": { color: "#193cb8", fontSize: "14px", fontWeight: "bold !important" },
-                          "& .MuiDataGrid-row--borderBottom": { backgroundColor: "#e6f4ff !important" },
+                          "& .MuiDataGrid-columnHeaders": {
+                            color: "#193cb8",
+                            fontSize: "14px",
+                            fontWeight: "bold !important",
+                          },
+                          "& .MuiDataGrid-row--borderBottom": {
+                            backgroundColor: "#e6f4ff !important",
+                          },
                           "& .MuiDataGrid-columnSeparator": { color: "#ccc" },
                         }}
                       />
                     </Paper>
                   </div>
-                  <div className='flex justify-center mt-3'>
-                    <UniversalButton
-                      label="Save"
-                      id="rcssave"
-                      name="rcssave"
-                    />
+                  <div className="flex justify-center mt-3">
+                    <UniversalButton label="Save" id="rcssave" name="rcssave" />
                   </div>
                 </>
               )}
@@ -1726,27 +1911,48 @@ const ManageUserTable = ({ id, name }) => {
 
           <CustomTabPanel value={value} index={2}>
             <div>
-              <div className="lg:w-100 md:w-100 flex flex-wrap gap-2 mb-2">
+              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
                 {/* Option 1 */}
-                <div className="flex-1 cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-3 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-center gap-2" >
-                    <RadioButton inputId="smsOption1" name="smsredio" value="enable" onChange={handleChangesms} checked={smsStatus === 'enable'} />
-                    <label htmlFor="smsOption1" className="text-gray-700 font-medium text-sm cursor-pointer">Enable</label>
+                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
+                  <div className="flex items-center gap-2">
+                    <RadioButton
+                      inputId="smsOption1"
+                      name="smsredio"
+                      value="enable"
+                      onChange={handleChangesms}
+                      checked={smsStatus === "enable"}
+                    />
+                    <label
+                      htmlFor="smsOption1"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
+                    >
+                      Enable
+                    </label>
                   </div>
                 </div>
                 {/* Option 2 */}
                 <div className="flex-1  cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2.5 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-center gap-2" >
-                    <RadioButton inputId="smsOption2" name="smsredio" value="disable" onChange={handleChangesms} checked={smsStatus === 'disable'} />
-                    <label htmlFor="smsOption2" className="text-gray-700 font-medium text-sm cursor-pointer">Disable</label>
+                  <div className="flex items-center gap-2">
+                    <RadioButton
+                      inputId="smsOption2"
+                      name="smsredio"
+                      value="disable"
+                      onChange={handleChangesms}
+                      checked={smsStatus === "disable"}
+                    />
+                    <label
+                      htmlFor="smsOption2"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
+                    >
+                      Disable
+                    </label>
                   </div>
                 </div>
               </div>
 
               {smsStatus === "enable" && (
-
                 <div>
-                  <div className='flex lg:w-100 md:w-100 mb-2'>
+                  <div className="flex mb-2 lg:w-100 md:w-100">
                     <Checkbox
                       id="smsstatus"
                       name="smsstatus"
@@ -1764,7 +1970,7 @@ const ManageUserTable = ({ id, name }) => {
                       disabled={!transcheck}
                     />
                   </div>
-                  <div className='flex lg:w-100 md:w-100'>
+                  <div className="flex lg:w-100 md:w-100">
                     <Checkbox
                       id="smspromo"
                       name="smspromo"
@@ -1783,18 +1989,20 @@ const ManageUserTable = ({ id, name }) => {
                     />
                   </div>
 
-                  <div className=' lg:w-100 md:w-100'>
+                  <div className=" lg:w-100 md:w-100">
                     <InputField
                       id="translimit"
                       name="translimit"
                       label="Rate"
                       placeholder="(INR / Credit)"
                       value={smsrate}
-                      onChange={(e) => validateInput(e.target.value, setSmsRate)}
+                      onChange={(e) =>
+                        validateInput(e.target.value, setSmsRate)
+                      }
                       type="number"
                     />
                   </div>
-                  <div className='flex justify-center mt-3'>
+                  <div className="flex justify-center mt-3">
                     <UniversalButton
                       label="Save"
                       id="whatsappsave"
@@ -1802,34 +2010,54 @@ const ManageUserTable = ({ id, name }) => {
                     />
                   </div>
                 </div>
-
               )}
             </div>
           </CustomTabPanel>
 
           <CustomTabPanel value={value} index={3}>
             <div>
-              <div className="lg:w-100 md:w-100 flex flex-wrap gap-2 mb-2">
+              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
                 {/* Option 1 */}
-                <div className="flex-1 cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-3 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-center gap-2" >
-                    <RadioButton inputId="obdOption1" name="obdredio" value="enable" onChange={handleChangeobd} checked={obdStatus === 'enable'} />
-                    <label htmlFor="obdOption1" className="text-gray-700 font-medium text-sm cursor-pointer">Enable</label>
+                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
+                  <div className="flex items-center gap-2">
+                    <RadioButton
+                      inputId="obdOption1"
+                      name="obdredio"
+                      value="enable"
+                      onChange={handleChangeobd}
+                      checked={obdStatus === "enable"}
+                    />
+                    <label
+                      htmlFor="obdOption1"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
+                    >
+                      Enable
+                    </label>
                   </div>
                 </div>
                 {/* Option 2 */}
                 <div className="flex-1  cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2.5 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-center gap-2" >
-                    <RadioButton inputId="obdOption2" name="obdredio" value="disable" onChange={handleChangeobd} checked={obdStatus === 'disable'} />
-                    <label htmlFor="obdOption2" className="text-gray-700 font-medium text-sm cursor-pointer">Disable</label>
+                  <div className="flex items-center gap-2">
+                    <RadioButton
+                      inputId="obdOption2"
+                      name="obdredio"
+                      value="disable"
+                      onChange={handleChangeobd}
+                      checked={obdStatus === "disable"}
+                    />
+                    <label
+                      htmlFor="obdOption2"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
+                    >
+                      Disable
+                    </label>
                   </div>
                 </div>
               </div>
 
               {obdStatus === "enable" && (
-
                 <div>
-                  <div className='flex lg:w-100 md:w-100 mb-2'>
+                  <div className="flex mb-2 lg:w-100 md:w-100">
                     <Checkbox
                       id="obdstatusobd"
                       name="obdstatusobd"
@@ -1847,7 +2075,7 @@ const ManageUserTable = ({ id, name }) => {
                       disabled={!transcheckobd}
                     />
                   </div>
-                  <div className='flex lg:w-100 md:w-100'>
+                  <div className="flex lg:w-100 md:w-100">
                     <Checkbox
                       id="obdstatuspromo"
                       name="obdstatuspromo"
@@ -1866,17 +2094,39 @@ const ManageUserTable = ({ id, name }) => {
                     />
                   </div>
 
-                  <div className=' lg:w-100 md:w-100'>
-                    <div className="lg:w-100 md:w-100 flex flex-wrap gap-4 my-2 ">
+                  <div className=" lg:w-100 md:w-100">
+                    <div className="flex flex-wrap gap-4 my-2 lg:w-100 md:w-100 ">
                       {/* Option 1 */}
-                      <div className="flex items-center gap-2" >
-                        <RadioButton inputId="obdrateOption1" name="obdrateredio" value="enable" onChange={handleChangeobdRate} checked={obdrateStatus === 'enable'} />
-                        <label htmlFor="obdrateOption1" className="text-gray-700 font-medium text-sm cursor-pointer">@ 15 sec</label>
+                      <div className="flex items-center gap-2">
+                        <RadioButton
+                          inputId="obdrateOption1"
+                          name="obdrateredio"
+                          value="enable"
+                          onChange={handleChangeobdRate}
+                          checked={obdrateStatus === "enable"}
+                        />
+                        <label
+                          htmlFor="obdrateOption1"
+                          className="text-sm font-medium text-gray-700 cursor-pointer"
+                        >
+                          @ 15 sec
+                        </label>
                       </div>
                       {/* Option 2 */}
-                      <div className="flex items-center gap-2" >
-                        <RadioButton inputId="obdrateOption2" name="obdrateredio" value="disable" onChange={handleChangeobdRate} checked={obdrateStatus === 'disable'} />
-                        <label htmlFor="obdrateOption2" className="text-gray-700 font-medium text-sm cursor-pointer">@ 30 sec</label>
+                      <div className="flex items-center gap-2">
+                        <RadioButton
+                          inputId="obdrateOption2"
+                          name="obdrateredio"
+                          value="disable"
+                          onChange={handleChangeobdRate}
+                          checked={obdrateStatus === "disable"}
+                        />
+                        <label
+                          htmlFor="obdrateOption2"
+                          className="text-sm font-medium text-gray-700 cursor-pointer"
+                        >
+                          @ 30 sec
+                        </label>
                       </div>
                     </div>
                     <InputField
@@ -1885,11 +2135,13 @@ const ManageUserTable = ({ id, name }) => {
                       label="Rate"
                       placeholder="(INR / Credit)"
                       value={obdrate}
-                      onChange={(e) => validateInput(e.target.value, setObdRate)}
+                      onChange={(e) =>
+                        validateInput(e.target.value, setObdRate)
+                      }
                       type="number"
                     />
                   </div>
-                  <div className='flex justify-center mt-3'>
+                  <div className="flex justify-center mt-3">
                     <UniversalButton
                       label="Save"
                       id="whatsappsave"
@@ -1897,32 +2149,53 @@ const ManageUserTable = ({ id, name }) => {
                     />
                   </div>
                 </div>
-
               )}
             </div>
           </CustomTabPanel>
 
           <CustomTabPanel value={value} index={4}>
             <div>
-              <div className="lg:w-100 md:w-100 flex flex-wrap gap-2 mb-2">
+              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
                 {/* Option 1 */}
-                <div className="flex-1 cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-3 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-center gap-2" >
-                    <RadioButton inputId="twowayOption1" name="twowayredio" value="enable" onChange={handleChangetwoway} checked={twowayStatus === 'enable'} />
-                    <label htmlFor="twowayOption1" className="text-gray-700 font-medium text-sm cursor-pointer">Enable</label>
+                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
+                  <div className="flex items-center gap-2">
+                    <RadioButton
+                      inputId="twowayOption1"
+                      name="twowayredio"
+                      value="enable"
+                      onChange={handleChangetwoway}
+                      checked={twowayStatus === "enable"}
+                    />
+                    <label
+                      htmlFor="twowayOption1"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
+                    >
+                      Enable
+                    </label>
                   </div>
                 </div>
                 {/* Option 2 */}
                 <div className="flex-1  cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2.5 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-center gap-2" >
-                    <RadioButton inputId="twowayOption2" name="twowayredio" value="disable" onChange={handleChangetwoway} checked={twowayStatus === 'disable'} />
-                    <label htmlFor="twowayOption2" className="text-gray-700 font-medium text-sm cursor-pointer">Disable</label>
+                  <div className="flex items-center gap-2">
+                    <RadioButton
+                      inputId="twowayOption2"
+                      name="twowayredio"
+                      value="disable"
+                      onChange={handleChangetwoway}
+                      checked={twowayStatus === "disable"}
+                    />
+                    <label
+                      htmlFor="twowayOption2"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
+                    >
+                      Disable
+                    </label>
                   </div>
                 </div>
               </div>
               {twowayStatus === "enable" && (
                 <>
-                  <div className='flex flex-wrap lg:flex-nowrap gap-4 items-end justify-start align-middle pb-5 w-full'>
+                  <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle lg:flex-nowrap">
                     <AnimatedDropdown
                       id="twowayselect"
                       name="twowayselect"
@@ -1936,17 +2209,15 @@ const ManageUserTable = ({ id, name }) => {
                       name="twowayrate"
                       label="Rate"
                       placeholder="INR"
-
                       type="number"
                     />
                   </div>
-                  <div className='flex justify-center mt-3'>
+                  <div className="flex justify-center mt-3">
                     <UniversalButton
                       label="Save"
                       id="twowaysave"
                       name="twowaysave"
                     />
-
                   </div>
                 </>
               )}
@@ -1955,25 +2226,47 @@ const ManageUserTable = ({ id, name }) => {
 
           <CustomTabPanel value={value} index={5}>
             <div>
-              <div className="lg:w-100 md:w-100 flex flex-wrap gap-2 mb-2">
+              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
                 {/* Option 1 */}
-                <div className="flex-1 cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-3 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-center gap-2" >
-                    <RadioButton inputId="misscallOption1" name="misscallredio" value="enable" onChange={handleChangeMisscall} checked={misscallStatus === 'enable'} />
-                    <label htmlFor="misscallOption1" className="text-gray-700 font-medium text-sm cursor-pointer">Enable</label>
+                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
+                  <div className="flex items-center gap-2">
+                    <RadioButton
+                      inputId="misscallOption1"
+                      name="misscallredio"
+                      value="enable"
+                      onChange={handleChangeMisscall}
+                      checked={misscallStatus === "enable"}
+                    />
+                    <label
+                      htmlFor="misscallOption1"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
+                    >
+                      Enable
+                    </label>
                   </div>
                 </div>
                 {/* Option 2 */}
                 <div className="flex-1  cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2.5 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-center gap-2" >
-                    <RadioButton inputId="misscallOption2" name="misscallredio" value="disable" onChange={handleChangeMisscall} checked={misscallStatus === 'disable'} />
-                    <label htmlFor="misscallOption2" className="text-gray-700 font-medium text-sm cursor-pointer">Disable</label>
+                  <div className="flex items-center gap-2">
+                    <RadioButton
+                      inputId="misscallOption2"
+                      name="misscallredio"
+                      value="disable"
+                      onChange={handleChangeMisscall}
+                      checked={misscallStatus === "disable"}
+                    />
+                    <label
+                      htmlFor="misscallOption2"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
+                    >
+                      Disable
+                    </label>
                   </div>
                 </div>
               </div>
               {misscallStatus === "enable" && (
                 <>
-                  <div className='flex flex-wrap lg:flex-nowrap gap-4 items-end justify-start align-middle pb-5 w-full'>
+                  <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle lg:flex-nowrap">
                     <AnimatedDropdown
                       id="misscallselect"
                       name="misscallselect"
@@ -1987,17 +2280,15 @@ const ManageUserTable = ({ id, name }) => {
                       name="misscallrate"
                       label="Rate"
                       placeholder="INR"
-
                       type="number"
                     />
                   </div>
-                  <div className='flex justify-center mt-3'>
+                  <div className="flex justify-center mt-3">
                     <UniversalButton
                       label="Save"
                       id="misscallsave"
                       name="misscallsave"
                     />
-
                   </div>
                 </>
               )}
@@ -2006,26 +2297,47 @@ const ManageUserTable = ({ id, name }) => {
 
           <CustomTabPanel value={value} index={6}>
             <div>
-              <div className="lg:w-100 md:w-100 flex flex-wrap gap-2 mb-2">
+              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
                 {/* Option 1 */}
-                <div className="flex-1 cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-3 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-center gap-2" >
-                    <RadioButton inputId="clickOption1" name="clickredio" value="enable" onChange={handleChangeClick} checked={clickStatus === 'enable'} />
-                    <label htmlFor="clickOption1" className="text-gray-700 font-medium text-sm cursor-pointer">Enable</label>
+                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
+                  <div className="flex items-center gap-2">
+                    <RadioButton
+                      inputId="clickOption1"
+                      name="clickredio"
+                      value="enable"
+                      onChange={handleChangeClick}
+                      checked={clickStatus === "enable"}
+                    />
+                    <label
+                      htmlFor="clickOption1"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
+                    >
+                      Enable
+                    </label>
                   </div>
                 </div>
                 {/* Option 2 */}
                 <div className="flex-1  cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2.5 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-center gap-2" >
-                    <RadioButton inputId="clickOption2" name="clickredio" value="disable" onChange={handleChangeClick} checked={clickStatus === 'disable'} />
-                    <label htmlFor="clickOption2" className="text-gray-700 font-medium text-sm cursor-pointer">Disable</label>
+                  <div className="flex items-center gap-2">
+                    <RadioButton
+                      inputId="clickOption2"
+                      name="clickredio"
+                      value="disable"
+                      onChange={handleChangeClick}
+                      checked={clickStatus === "disable"}
+                    />
+                    <label
+                      htmlFor="clickOption2"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
+                    >
+                      Disable
+                    </label>
                   </div>
                 </div>
               </div>
               {clickStatus === "enable" && (
                 <>
-                  <div className='flex flex-wrap lg:flex-nowrap gap-4 items-end justify-start align-middle pb-5 w-full lg:w-100 md:w-100'>
-
+                  <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle lg:flex-nowrap lg:w-100 md:w-100">
                     <InputField
                       id="clickrate"
                       name="clickrate"
@@ -2034,13 +2346,12 @@ const ManageUserTable = ({ id, name }) => {
                       type="number"
                     />
                   </div>
-                  <div className='flex justify-center mt-3'>
+                  <div className="flex justify-center mt-3">
                     <UniversalButton
                       label="Save"
                       id="clicksave"
                       name="clicksave"
                     />
-
                   </div>
                 </>
               )}
@@ -2049,25 +2360,47 @@ const ManageUserTable = ({ id, name }) => {
 
           <CustomTabPanel value={value} index={7}>
             <div>
-              <div className="lg:w-100 md:w-100 flex flex-wrap gap-2 mb-2">
+              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
                 {/* Option 1 */}
-                <div className="flex-1 cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-3 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-center gap-2" >
-                    <RadioButton inputId="emailOption1" name="emailredio" value="enable" onChange={handleChangeEmail} checked={emailStatus === 'enable'} />
-                    <label htmlFor="emailOption1" className="text-gray-700 font-medium text-sm cursor-pointer">Enable</label>
+                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
+                  <div className="flex items-center gap-2">
+                    <RadioButton
+                      inputId="emailOption1"
+                      name="emailredio"
+                      value="enable"
+                      onChange={handleChangeEmail}
+                      checked={emailStatus === "enable"}
+                    />
+                    <label
+                      htmlFor="emailOption1"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
+                    >
+                      Enable
+                    </label>
                   </div>
                 </div>
                 {/* Option 2 */}
                 <div className="flex-1  cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2.5 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-center gap-2" >
-                    <RadioButton inputId="emailOption2" name="emailredio" value="disable" onChange={handleChangeEmail} checked={emailStatus === 'disable'} />
-                    <label htmlFor="emailOption2" className="text-gray-700 font-medium text-sm cursor-pointer">Disable</label>
+                  <div className="flex items-center gap-2">
+                    <RadioButton
+                      inputId="emailOption2"
+                      name="emailredio"
+                      value="disable"
+                      onChange={handleChangeEmail}
+                      checked={emailStatus === "disable"}
+                    />
+                    <label
+                      htmlFor="emailOption2"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
+                    >
+                      Disable
+                    </label>
                   </div>
                 </div>
               </div>
               {emailStatus === "enable" && (
                 <>
-                  <div className='flex flex-wrap lg:flex-nowrap gap-4 items-end justify-start align-middle pb-5 w-full'>
+                  <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle lg:flex-nowrap">
                     <AnimatedDropdown
                       id="emailselect"
                       name="emailselect"
@@ -2081,18 +2414,16 @@ const ManageUserTable = ({ id, name }) => {
                       name="emailrate"
                       label="Rate"
                       placeholder="(INR / Credit)"
-
                       type="number"
                     />
                   </div>
 
-                  <div className='flex justify-center mt-3'>
+                  <div className="flex justify-center mt-3">
                     <UniversalButton
                       label="Save"
                       id="emailsave"
                       name="emailsave"
                     />
-
                   </div>
                 </>
               )}
@@ -2100,25 +2431,47 @@ const ManageUserTable = ({ id, name }) => {
           </CustomTabPanel>
           <CustomTabPanel value={value} index={8}>
             <div>
-              <div className="lg:w-100 md:w-100 flex flex-wrap gap-2 mb-2">
+              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
                 {/* Option 1 */}
-                <div className="flex-1 cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-3 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-center gap-2" >
-                    <RadioButton inputId="ibdOption1" name="ibdredio" value="enable" onChange={handleChangeIbd} checked={ibdStatus === 'enable'} />
-                    <label htmlFor="ibdOption1" className="text-gray-700 font-medium text-sm cursor-pointer">Enable</label>
+                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
+                  <div className="flex items-center gap-2">
+                    <RadioButton
+                      inputId="ibdOption1"
+                      name="ibdredio"
+                      value="enable"
+                      onChange={handleChangeIbd}
+                      checked={ibdStatus === "enable"}
+                    />
+                    <label
+                      htmlFor="ibdOption1"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
+                    >
+                      Enable
+                    </label>
                   </div>
                 </div>
                 {/* Option 2 */}
                 <div className="flex-1  cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2.5 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-center gap-2" >
-                    <RadioButton inputId="ibdOption2" name="ibdredio" value="disable" onChange={handleChangeIbd} checked={ibdStatus === 'disable'} />
-                    <label htmlFor="ibdOption2" className="text-gray-700 font-medium text-sm cursor-pointer">Disable</label>
+                  <div className="flex items-center gap-2">
+                    <RadioButton
+                      inputId="ibdOption2"
+                      name="ibdredio"
+                      value="disable"
+                      onChange={handleChangeIbd}
+                      checked={ibdStatus === "disable"}
+                    />
+                    <label
+                      htmlFor="ibdOption2"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
+                    >
+                      Disable
+                    </label>
                   </div>
                 </div>
               </div>
               {ibdStatus === "enable" && (
                 <>
-                  <div className='flex flex-wrap lg:flex-nowrap gap-4 items-end justify-start align-middle pb-5 w-full'>
+                  <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle lg:flex-nowrap">
                     <AnimatedDropdown
                       id="ibdselect"
                       name="ibdselect"
@@ -2135,17 +2488,39 @@ const ManageUserTable = ({ id, name }) => {
                       type="number"
                     />
                   </div>
-                  <div className=' lg:w-100 md:w-100'>
-                    <div className="lg:w-100 md:w-100 flex flex-wrap gap-4 my-2 ">
+                  <div className=" lg:w-100 md:w-100">
+                    <div className="flex flex-wrap gap-4 my-2 lg:w-100 md:w-100 ">
                       {/* Option 1 */}
-                      <div className="flex items-center gap-2" >
-                        <RadioButton inputId="ibdpulseOption1" name="ibdpulseredio" value="enable" onChange={handleChangeibdPulse} checked={ibdpulseStatus === 'enable'} />
-                        <label htmlFor="ibdpulseOption1" className="text-gray-700 font-medium text-sm cursor-pointer">Enable</label>
+                      <div className="flex items-center gap-2">
+                        <RadioButton
+                          inputId="ibdpulseOption1"
+                          name="ibdpulseredio"
+                          value="enable"
+                          onChange={handleChangeibdPulse}
+                          checked={ibdpulseStatus === "enable"}
+                        />
+                        <label
+                          htmlFor="ibdpulseOption1"
+                          className="text-sm font-medium text-gray-700 cursor-pointer"
+                        >
+                          Enable
+                        </label>
                       </div>
                       {/* Option 2 */}
-                      <div className="flex items-center gap-2" >
-                        <RadioButton inputId="ibdpulseOption2" name="ibdpulseredio" value="disable" onChange={handleChangeibdPulse} checked={ibdpulseStatus === 'disable'} />
-                        <label htmlFor="ibdpulseOption2" className="text-gray-700 font-medium text-sm cursor-pointer">Disable</label>
+                      <div className="flex items-center gap-2">
+                        <RadioButton
+                          inputId="ibdpulseOption2"
+                          name="ibdpulseredio"
+                          value="disable"
+                          onChange={handleChangeibdPulse}
+                          checked={ibdpulseStatus === "disable"}
+                        />
+                        <label
+                          htmlFor="ibdpulseOption2"
+                          className="text-sm font-medium text-gray-700 cursor-pointer"
+                        >
+                          Disable
+                        </label>
                       </div>
                     </div>
                     {ibdpulseStatus === "enable" && (
@@ -2158,13 +2533,8 @@ const ManageUserTable = ({ id, name }) => {
                       />
                     )}
                   </div>
-                  <div className='flex justify-center mt-3'>
-                    <UniversalButton
-                      label="Save"
-                      id="ibdsave"
-                      name="ibdsave"
-                    />
-
+                  <div className="flex justify-center mt-3">
+                    <UniversalButton label="Save" id="ibdsave" name="ibdsave" />
                   </div>
                 </>
               )}
@@ -2182,17 +2552,17 @@ const ManageUserTable = ({ id, name }) => {
         className="w-[30rem]"
         draggable={false}
       >
-        <div className='space-y-4'>
+        <div className="space-y-4">
           <InputField
-            id='apimanagekey'
-            name='apimanagekey'
+            id="apimanagekey"
+            name="apimanagekey"
             type="text"
-            label='Old key'
-            placeholder='Enter Old key'
+            label="Old key"
+            placeholder="Enter Old key"
             readOnly
           />
-          <div className="flex gap-2 items-end">
-            <div className='flex-1 '>
+          <div className="flex items-end gap-2">
+            <div className="flex-1 ">
               <InputField
                 id="newapikey"
                 name="newapikey"
@@ -2201,13 +2571,13 @@ const ManageUserTable = ({ id, name }) => {
                 placeholder="Generate New Key"
                 value={newAPIKey}
                 readOnly
-                style={{ cursor: 'not-allowed', backgroundColor: '#E5E7EB' }}
+                style={{ cursor: "not-allowed", backgroundColor: "#E5E7EB" }}
               />
             </div>
             <div>
               <button
                 onClick={handleGenerateAPIKey}
-                className="bg-blue-400 hover:bg-blue-500 text-white text-sm py-2 px-2 rounded-md shadow-md focus:outline-none"
+                className="px-2 py-2 text-sm text-white bg-blue-400 rounded-md shadow-md hover:bg-blue-500 focus:outline-none"
               >
                 Generate Key
               </button>
@@ -2233,13 +2603,13 @@ const ManageUserTable = ({ id, name }) => {
         className="w-[30rem]"
         draggable={false}
       >
-        <div className='space-y-4'>
+        <div className="space-y-4">
           <div className="relative">
             <InputField
-              id='username'
-              name='username'
-              label='User Name'
-              placeholder='demo'
+              id="username"
+              name="username"
+              label="User Name"
+              placeholder="demo"
             />
           </div>
           <GeneratePasswordSettings
@@ -2270,24 +2640,46 @@ const ManageUserTable = ({ id, name }) => {
         className="w-[30rem]"
         draggable={false}
       >
-        <div className="lg:w-100 md:w-100 flex flex-wrap gap-2 mb-2">
+        <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
           {/* Option 1 */}
-          <div className="flex-1 cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-3 hover:shadow-lg transition-shadow duration-300">
-            <div className="flex items-center gap-2" >
-              <RadioButton inputId="userreportOption1" name="userreportredio" value="enable" onChange={handleChangeuserreport} checked={userreportStatus === 'enable'} />
-              <label htmlFor="userreportOption1" className="text-gray-700 font-medium text-sm cursor-pointer">Enable</label>
+          <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
+            <div className="flex items-center gap-2">
+              <RadioButton
+                inputId="userreportOption1"
+                name="userreportredio"
+                value="enable"
+                onChange={handleChangeuserreport}
+                checked={userreportStatus === "enable"}
+              />
+              <label
+                htmlFor="userreportOption1"
+                className="text-sm font-medium text-gray-700 cursor-pointer"
+              >
+                Enable
+              </label>
             </div>
           </div>
           {/* Option 2 */}
           <div className="flex-1  cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2.5 hover:shadow-lg transition-shadow duration-300">
-            <div className="flex items-center gap-2" >
-              <RadioButton inputId="userreportOption2" name="userreportredio" value="disable" onChange={handleChangeuserreport} checked={userreportStatus === 'disable'} />
-              <label htmlFor="userreportOption2" className="text-gray-700 font-medium text-sm cursor-pointer">Disable</label>
+            <div className="flex items-center gap-2">
+              <RadioButton
+                inputId="userreportOption2"
+                name="userreportredio"
+                value="disable"
+                onChange={handleChangeuserreport}
+                checked={userreportStatus === "disable"}
+              />
+              <label
+                htmlFor="userreportOption2"
+                className="text-sm font-medium text-gray-700 cursor-pointer"
+              >
+                Disable
+              </label>
             </div>
           </div>
         </div>
 
-        <div className='flex justify-center mt-3'>
+        <div className="flex justify-center mt-3">
           <UniversalButton
             label="Save"
             id="userreportsave"
@@ -2298,6 +2690,6 @@ const ManageUserTable = ({ id, name }) => {
       {/* User Report */}
     </>
   );
-}
+};
 
-export default ManageUserTable
+export default ManageUserTable;
