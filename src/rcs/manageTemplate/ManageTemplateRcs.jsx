@@ -103,10 +103,10 @@ const ManageTemplateRcs = () => {
 
   useEffect(() => {
     const fetchTemplateDataDetails = async () => {
-      if (!templateid) {
-        toast.error("Please select template");
-        return;
-      }
+      // if (!templateid) {
+      //   toast.error("Please select template");
+      //   return;
+      // }
       try {
         const res = await fetchTemplateDetails(templateid);
         const tempName = summaryFilterData.find(
@@ -129,11 +129,11 @@ const ManageTemplateRcs = () => {
   const getTemplateTypeCss = (type) => {
     switch (type) {
       case "reply button":
-        return "bg-pink-500";
+        return "text-gray-800 bg-gray-200";
       case "url action":
-        return "bg-blue-500";
+        return "bg-green-500 text-white";
       case "dialer":
-        return "bg-green-500";
+        return "bg-blue-500 text-white";
       case "view location":
         return "bg-yellow-500";
       case "share location":
@@ -165,7 +165,7 @@ const ManageTemplateRcs = () => {
       console.log(templateid);
       // const res = await deleteTemplate(templateid);
       toast.success("Template Deleted Successfully");
-      setTemplateDeleteVisible(false)
+      setTemplateDeleteVisible(false);
     } catch (e) {
       console.log(e);
       toast.error("Something went wrong.");
