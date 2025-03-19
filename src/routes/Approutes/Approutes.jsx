@@ -57,6 +57,7 @@ import SuggestionReportRcs from '../../rcs/suggestionReport/SuggestionReportRcs'
 import DeliveryreportRcs from '../../rcs/deliveryReport/DeliveryreportRcs';
 import ManageBotRcs from '../../rcs/manageBot/ManageBotRcs';
 import AddTemplateRcs from '../../rcs/manageTemplate/pages/AddTemplateRcs';
+import LoginIpDetails from '../../profile/pages/LoginIpDetails';
 
 
 const Approutes = () => {
@@ -116,6 +117,8 @@ const Approutes = () => {
                 <Route path="/rcssuggestionreport" element={<SuggestionReportRcs/>} />
                 <Route path="/rcsdeliveryreport" element={<DeliveryreportRcs/>} />
                 <Route path="/rcsmanagebot" element={<ManageBotRcs/>} />
+                <Route path="/loginIpdetails" element={<LoginIpDetails/>} />
+                
             </Route>
             <Route path="/dummy" element={<Dummy />} />
 
