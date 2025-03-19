@@ -238,12 +238,42 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
   const [logins, setLogins] = useState(false);
   const [otpService, setOtpService] = useState(false);
   const [viewService, setViewService] = useState(false);
-  const [editService, setEditService] = useState(false);
+  const [editService, setEditDetailsDialogVisible] = useState(false);
   const [assignService, setAssignService] = useState(false);
   const [manageApiKeys, setManageApiKeys] = useState(false);
   const [reset, setreset] = useState(false);
   const [userReports, setuserReports] = useState("");
   const [value, setValue] = useState(0);
+
+  //userId
+  const [selectedId, setSelectedId] = useState("");
+
+  //updateDetails
+  const [updateDetails, setUpdateDetails] = useState({
+    domain: "",
+    userId: "",
+    status: "",
+    emailId: "",
+    mobileNo: "",
+    firstName: "",
+    lastName: "",
+    address: "",
+    companyName: "",
+    expiryDate: "",
+    applicationType: "",
+    userType: "",
+    country: "",
+    state: "",
+    city: "",
+    pinCode: "",
+  });
+  const handleDetailsUpdate = async () => {
+    const data = {
+      srno: selectedId,
+      ...updateDetails,
+    };
+    console.log(data);
+  };
 
   // assignService
   // whatsapp
@@ -573,7 +603,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
     setViewService(true);
   };
   const handleEdit = (id, name) => {
-    setEditService(true);
+    setEditDetailsDialogVisible(true);
   };
   const handleAssign = (id, name) => {
     setAssignService(true);
@@ -633,7 +663,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             </IconButton>
           </CustomTooltip>
           <CustomTooltip arrow title="Edit User Details" placement="top">
-            <IconButton onClick={() => handleEdit(params.row)}>
+            <IconButton onClick={() => setEditDetailsDialogVisible(true)}>
               <EditNoteIcon
                 sx={{
                   fontSize: "1.2rem",
@@ -885,320 +915,13 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
         />
       </Paper>
 
-      {/* Login details */}
-      <Dialog
-        header="Login details"
-        visible={logins}
-        onHide={() => setLogins(false)}
-        className="w-[30rem]"
-        draggable={false}
-      >
-        Login details
-      </Dialog>
-      {/* Login details */}
-
-      {/* OTP details */}
-      <Dialog
-        header="OTP details"
-        visible={otpService}
-        onHide={() => setOtpService(false)}
-        className="w-[30rem]"
-        draggable={false}
-      >
-        <div className="max-w-md p-6 mx-auto rounded-lg shadow-xl bg-gradient-to-r from-white to-gray-100">
-          <h2 className="mb-4 text-xl font-semibold text-center text-gray-800">
-            Mobile Numbers
-          </h2>
-
-          <div className="flex flex-col gap-3">
-            {mobileNumbers.map((number, index) => (
-              <div key={index} className="relative flex items-center gap-3">
-                <InputField
-                  variant="outlined"
-                  placeholder="Enter mobile number..."
-                  value={number}
-                  onChange={(e) => handleInputChange(index, e.target.value)}
-                  className="w-full"
-                  size="small"
-                />
-                {index > 0 && (
-                  // <IconButton onClick={() => removeMobileNumber(index)} sx={{ color: "red", position:"absolute", right:"3rem" }}>
-                  //   <DeleteIcon />
-                  // </IconButton>
-                  <MdOutlineDeleteForever
-                    onClick={() => removeMobileNumber(index)}
-                    className="absolute text-red-500 cursor-pointer hover:text-red-600 right-2"
-                    size={20}
-                  />
-                )}
-              </div>
-            ))}
-          </div>
-
-          <div className="flex justify-center gap-2 mt-4">
-            <UniversalButton
-              label="Add"
-              id="addButton"
-              name="addButton"
-              variant="contained"
-              color="primary"
-              onClick={addMobileNumber}
-            />
-            <UniversalButton
-              label="Save"
-              id="saveButton"
-              name="saveButton"
-              variant="contained"
-              color="primary"
-              onClick={addMobileNumber}
-            />
-
-            {/* <IconButton
-          onClick={addMobileNumber}
-          sx={{
-            bgcolor: "#1E40AF",
-            color: "white",
-            borderRadius: "50%",
-            width: 50,
-            height: 50,
-            boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
-            "&:hover": { bgcolor: "#2563EB" },
-          }}
-        >
-          <AddCircleIcon sx={{ fontSize: 36 }} />
-        </IconButton> */}
-          </div>
-        </div>
-      </Dialog>
-      {/* OTP details */}
-
-      {/* View details */}
-      <Dialog
-        header="View details"
-        visible={viewService}
-        onHide={() => setViewService(false)}
-        className="w-[40rem]"
-        draggable={false}
-      >
-        <div className="space-y-3">
-          <div className="grid gap-4 mb-2 lg:grid-cols-2">
-            <InputField
-              label="User ID"
-              id="viewuserid"
-              name="viewuserid"
-              placeholder="Enter your User ID"
-              readOnly="true"
-            />
-            <UniversalDatePicker
-              label="Expiry Date"
-              id="viewexpiryDate"
-              name="viewexpiryDate"
-              placeholder="Enter Expiry Date"
-              readOnly="true"
-            />
-          </div>
-          <div className="flex gap-2">
-            {/* <AnimatedDropdown
-              label="User Type"
-              id="viewuserType"
-              name="viewuserType"
-              options={useroption}
-              value={userType} // Ensure correct value is set
-              onChange={(selected) => {
-                console.log("Dropdown selected:", selected); // Debugging log
-                setUserType(selected); // Correctly update the state
-              }}
-            /> */}
-
-            <InputField
-              label="User Type"
-              id="viewuserType"
-              name="viewuserType"
-              placeholder="Enter URL"
-              readOnly="true"
-            />
-            <InputField
-              label="Account URL"
-              id="viewaccounturl"
-              name="viewaccounturl"
-              placeholder="Enter URL"
-              readOnly="true"
-            />
-          </div>
-          {userType === "Reseller" && (
-            <div className="flex items-center gap-2" id="yesnopost">
-              <div className="flex items-center justify-center">
-                <UniversalLabel
-                  text="Enable Postpaid"
-                  id="viewenablepostpaid"
-                  name="viewenablepostpaid"
-                  className="text-sm font-medium text-gray-700"
-                  readOnly="true"
-                />
-              </div>
-              {/* Option 1 */}
-              <div className="flex items-center gap-2">
-                <RadioButton
-                  inputId="viewenablepostpaidOption1"
-                  name="viewenablepostpaidredio"
-                  value="enable"
-                />
-                <label
-                  htmlFor="viewenablepostpaidOption1"
-                  className="text-sm font-medium text-gray-700 cursor-pointer"
-                >
-                  Yes
-                </label>
-              </div>
-              {/* Option 2 */}
-              <div className="flex items-center gap-2">
-                <RadioButton
-                  inputId="viewenablepostpaidOption2"
-                  name="viewenablepostpaidredio"
-                />
-                <label
-                  htmlFor="viewenablepostpaidOption2"
-                  className="text-sm font-medium text-gray-700 cursor-pointer"
-                >
-                  No
-                </label>
-              </div>
-
-              {/* Conditional Display of Input Field */}
-              {enablepostpaid === "enable" && (
-                <div>
-                  <InputField
-                    id="viewenablepostinput"
-                    name="viewenablepostinput"
-                    placeholder="Enter Limit"
-                  />
-                </div>
-              )}
-            </div>
-          )}
-
-          <div className="flex flex-wrap gap-4 lg:w-100 md:w-100">
-            <div className="flex items-center justify-center">
-              <UniversalLabel
-                text="Status"
-                id="vieweditstatus"
-                name="vieweditstatus"
-                className="text-sm font-medium text-gray-700"
-              />
-            </div>
-            {/* Option 1 */}
-            <div className="flex items-center gap-2">
-              <RadioButton
-                inputId="viewstatusOption1"
-                name="viewstatusredio"
-                value="enable"
-              />
-              <label
-                htmlFor="viewstatusOption1"
-                className="text-sm font-medium text-gray-700 cursor-pointer"
-              >
-                Enable
-              </label>
-            </div>
-            {/* Option 2 */}
-            <div className="flex items-center gap-2">
-              <RadioButton
-                inputId="viewstatusOption2"
-                name="viewstatusredio"
-                value="disable"
-              />
-              <label
-                htmlFor="viewstatusOption2"
-                className="text-sm font-medium text-gray-700 cursor-pointer"
-              >
-                Disable
-              </label>
-            </div>
-          </div>
-
-          <div className="grid gap-4 lg:grid-cols-3 md:grid-cols-2">
-            <InputField
-              label="First Name"
-              id="viewfirstname"
-              name="viewfirstname"
-              placeholder="Enter your First Name"
-              readOnly="true"
-            />
-            <InputField
-              label="Last Name"
-              id="viewlastname"
-              name="viewlastname"
-              placeholder="Enter your Last Name"
-              readOnly="true"
-            />
-            <InputField
-              label="Email ID"
-              type="email"
-              id="viewemail"
-              name="viewemail"
-              placeholder="Enter your Email ID"
-              readOnly="true"
-            />
-            <InputField
-              label="Mobile No."
-              id="viewmobile"
-              name="viewmobile"
-              placeholder="Enter your Mobile No."
-              type="number"
-              readOnly="true"
-            />
-            <InputField
-              label="Company Name"
-              id="viewcompany"
-              name="viewcompany"
-              placeholder="Enter your Company Name"
-              readOnly="true"
-            />
-            <InputField
-              label="Address"
-              id="viewaddress"
-              name="viewaddress"
-              placeholder="Enter your Address"
-              readOnly="true"
-            />
-            <InputField
-              label="City"
-              id="viewcity"
-              name="viewcity"
-              placeholder="Enter your City"
-              readOnly="true"
-            />
-            <InputField
-              label="State"
-              id="viewstate"
-              name="viewstate"
-              placeholder="Enter your State"
-              readOnly="true"
-            />
-            <InputField
-              label="Country"
-              id="viewcountry"
-              name="viewcountry"
-              placeholder="Enter your Country"
-              readOnly="true"
-            />
-            <InputField
-              label="Pincode"
-              id="viewPincode"
-              name="viewPincode"
-              placeholder="Enter your Pincode"
-              readOnly="true"
-            />
-          </div>
-        </div>
-      </Dialog>
-      {/* View details */}
+      {/* Dialog Section Start */}
 
       {/* Edit details */}
       <Dialog
         header="Edit details"
         visible={editService}
-        onHide={() => setEditService(false)}
+        onHide={() => setEditDetailsDialogVisible(false)}
         className="lg:w-[50rem] md:w-[40rem] w-[20rem]"
         draggable={false}
       >
@@ -1210,16 +933,16 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               name="userid"
               placeholder="Enter your User ID"
               required
-              value={userid}
-              onChange={(e) => setUserId(e.target.value)}
+              // value={userid}
+              // onChange={(e) => setUserId(e.target.value)}
             />
             <UniversalDatePicker
               label="Expiry Date"
               id="expiryDate"
               name="expiryDate"
               placeholder="Enter Expiry Date"
-              value={expiryDate}
-              onChange={(newValue) => setExpiryDate(newValue)}
+              // value={expiryDate}
+              // onChange={(newValue) => setExpiryDate(newValue)}
             />
           </div>
           <div className="flex gap-2">
@@ -1228,20 +951,17 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               id="userType"
               name="userType"
               options={useroption}
-              value={userType} // Ensure correct value is set
-              onChange={(selected) => {
-                console.log("Dropdown selected:", selected); // Debugging log
-                setUserType(selected); // Correctly update the state
-              }}
+              // value={userType} // Ensure correct value is set
+              onChange={() => {}}
             />
             <InputField
               label="Account URL"
               id="accounturl"
               name="accounturl"
               placeholder="Enter URL"
-              value={accountUrl} // Controlled input value
+              // value={accountUrl} // Controlled input value
               readOnly={isReadOnly} // Controlled readOnly property
-              onChange={(e) => setAccountUrl(e.target.value)} // Handle manual input
+              // onChange={(e) => setAccountUrl(e.target.value)} // Handle manual input
             />
           </div>
           {userType === "Reseller" && (
@@ -1254,13 +974,13 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                   className="text-sm font-medium text-gray-700"
                 />
               </div>
-              {/* Option 1 */}
+
               <div className="flex items-center gap-2">
                 <RadioButton
                   inputId="enablepostpaidOption1"
                   name="enablepostpaidredio"
-                  value="enable"
-                  onChange={handleChangeEnablePostpaid}
+                  // value="enable"
+                  // onChange={handleChangeEnablePostpaid}
                   checked={enablepostpaid === "enable"}
                 />
                 <label
@@ -1270,14 +990,14 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                   Yes
                 </label>
               </div>
-              {/* Option 2 */}
+
               <div className="flex items-center gap-2">
                 <RadioButton
                   inputId="enablepostpaidOption2"
                   name="enablepostpaidredio"
                   value="disable"
-                  onChange={handleChangeEnablePostpaid}
-                  checked={enablepostpaid === "disable"}
+                  // onChange={handleChangeEnablePostpaid}
+                  // checked={enablepostpaid === "disable"}
                 />
                 <label
                   htmlFor="enablepostpaidOption2"
@@ -1286,8 +1006,6 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                   No
                 </label>
               </div>
-
-              {/* Conditional Display of Input Field */}
               {enablepostpaid === "enable" && (
                 <div>
                   <InputField
@@ -1309,14 +1027,14 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                 className="text-sm font-medium text-gray-700"
               />
             </div>
-            {/* Option 1 */}
+
             <div className="flex items-center gap-2">
               <RadioButton
                 inputId="editstatusOption1"
                 name="editstatusredio"
-                value="enable"
-                onChange={handleChangeEditStatus}
-                checked={editstatusStatus === "enable"}
+                // value="enable"
+                // onChange={handleChangeEditStatus}
+                checked={updateDetails.status === "enable"}
               />
               <label
                 htmlFor="editstatusOption1"
@@ -1325,14 +1043,12 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                 Enable
               </label>
             </div>
-            {/* Option 2 */}
+
             <div className="flex items-center gap-2">
               <RadioButton
                 inputId="editstatusOption2"
                 name="editstatusredio"
-                value="disable"
-                onChange={handleChangeEditStatus}
-                checked={editstatusStatus === "disable"}
+                checked={updateDetails.status === "disable"}
               />
               <label
                 htmlFor="editstatusOption2"
@@ -1349,8 +1065,13 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               id="firstname"
               name="firstname"
               placeholder="Enter your First Name"
-              value={userName}
-              onChange={(e) => setUserName(e.target.value)}
+              value={updateDetails.firstName}
+              onChange={(e) => {
+                setUpdateDetails({
+                  ...updateDetails,
+                  firstName: e.target.value,
+                });
+              }}
               required
             />
             <InputField
@@ -1358,8 +1079,13 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               id="lastname"
               name="lastname"
               placeholder="Enter your Last Name"
-              value={userLastName}
-              onChange={(e) => setUserLastName(e.target.value)}
+              value={updateDetails.lastName}
+              onChange={(e) => {
+                setUpdateDetails({
+                  ...updateDetails,
+                  lastName: e.target.value,
+                });
+              }}
               required
             />
             <InputField
@@ -1368,8 +1094,13 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               id="email"
               name="email"
               placeholder="Enter your Email ID"
-              value={userEmail}
-              onChange={(e) => setUserEmail(e.target.value)}
+              value={updateDetails.emailId}
+              onChange={(e) => {
+                setUpdateDetails({
+                  ...updateDetails,
+                  emailId: e.target.value,
+                });
+              }}
               required
             />
             <InputField
@@ -1378,40 +1109,65 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               name="mobile"
               placeholder="Enter your Mobile No."
               type="number"
-              value={userPhoneNumber}
-              onChange={(e) => setUserPhoneNumber(e.target.value)}
+              value={updateDetails.mobileNo}
+              onChange={(e) => {
+                setUpdateDetails({
+                  ...updateDetails,
+                  mobileNo: e.target.value,
+                });
+              }}
             />
             <InputField
               label="Company Name"
               id="company"
               name="company"
               placeholder="Enter your Company Name"
-              value={companyName}
-              onChange={(e) => setCompanyName(e.target.value)}
+              value={updateDetails.country}
+              onChange={(e) => {
+                setUpdateDetails({
+                  ...updateDetails,
+                  country: e.target.value,
+                });
+              }}
             />
             <InputField
               label="Address"
               id="address"
               name="address"
               placeholder="Enter your Address"
-              value={userAddress}
-              onChange={(e) => setUserAddress(e.target.value)}
+              value={updateDetails.address}
+              onChange={(e) => {
+                setUpdateDetails({
+                  ...updateDetails,
+                  address: e.target.value,
+                });
+              }}
             />
             <InputField
               label="City"
               id="city"
               name="city"
               placeholder="Enter your City"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
+              value={updateDetails.city}
+              onChange={(e) => {
+                setUpdateDetails({
+                  ...updateDetails,
+                  city: e.target.value,
+                });
+              }}
             />
             <InputField
               label="State"
               id="state"
               name="state"
               placeholder="Enter your State"
-              value={state}
-              onChange={(e) => setState(e.target.value)}
+              value={updateDetails.state}
+              onChange={(e) => {
+                setUpdateDetails({
+                  ...updateDetails,
+                  state: e.target.value,
+                });
+              }}
               required
             />
             <InputField
@@ -1419,16 +1175,26 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               id="country"
               name="country"
               placeholder="Enter your Country"
-              value={country}
-              onChange={(e) => setCountry(e.target.value)}
+              value={updateDetails.country}
+              onChange={(e) => {
+                setUpdateDetails({
+                  ...updateDetails,
+                  country: e.target.value,
+                });
+              }}
             />
             <InputField
               label="Pincode"
               id="Pincode"
               name="Pincode"
               placeholder="Enter your Pincode"
-              value={zipCode}
-              onChange={(e) => setZipCode(e.target.value)}
+              value={updateDetails?.zipCode}
+              onChange={(e) => {
+                setUpdateDetails({
+                  ...updateDetails,
+                  zipCode: e.target.value,
+                });
+              }}
             />
           </div>
 
@@ -1437,1251 +1203,11 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               label="Save"
               id="whatsappsave"
               name="whatsappsave"
+              onClick={handleDetailsUpdate}
             />
           </div>
         </div>
       </Dialog>
-      {/* Edit details */}
-
-      {/* assignService */}
-      <Dialog
-        header="Assign Service"
-        visible={assignService}
-        onHide={() => setAssignService(false)}
-        className="lg:w-[65rem] md:w-[50rem] w-[20rem]"
-        draggable={false}
-      >
-        <Box sx={{ width: "100%" }}>
-          <Tabs
-            value={value}
-            onChange={handleChange}
-            aria-label="Assign Service Tabs"
-            textColor="primary"
-            indicatorColor="primary"
-          >
-            <Tab
-              label={
-                <span>
-                  <WhatsAppIcon size={20} /> WhatsApp
-                </span>
-              }
-              {...a11yProps(0)}
-              sx={{
-                textTransform: "none",
-                fontWeight: "bold",
-                color: "text.secondary",
-                "&:hover": {
-                  color: "primary.main",
-                  backgroundColor: "#f0f4ff",
-                  borderRadius: "8px",
-                },
-              }}
-            />
-            <Tab
-              label={
-                <span className="flex items-center gap-2">
-                  <BsJournalArrowDown size={18} />
-                  RCS
-                </span>
-              }
-              {...a11yProps(1)}
-              sx={{
-                textTransform: "none",
-                fontWeight: "bold",
-                color: "text.secondary",
-                "&:hover": {
-                  color: "primary.main",
-                  backgroundColor: "#f0f4ff",
-                  borderRadius: "8px",
-                },
-              }}
-            />
-            <Tab
-              label={
-                <span>
-                  <SmsOutlinedIcon size={20} /> SMS
-                </span>
-              }
-              {...a11yProps(2)}
-              sx={{
-                textTransform: "none",
-                fontWeight: "bold",
-                color: "text.secondary",
-                "&:hover": {
-                  color: "primary.main",
-                  backgroundColor: "#f0f4ff",
-                  borderRadius: "8px",
-                },
-              }}
-            />
-            <Tab
-              label={
-                <span>
-                  <CampaignOutlinedIcon size={20} />
-                  OBD
-                </span>
-              }
-              {...a11yProps(3)}
-              sx={{
-                textTransform: "none",
-                fontWeight: "bold",
-                color: "text.secondary",
-                "&:hover": {
-                  color: "primary.main",
-                  backgroundColor: "#f0f4ff",
-                  borderRadius: "8px",
-                },
-              }}
-            />
-            <Tab
-              label={
-                <span>
-                  <CampaignOutlinedIcon size={20} />
-                  Two Way
-                </span>
-              }
-              {...a11yProps(4)}
-              sx={{
-                textTransform: "none",
-                fontWeight: "bold",
-                color: "text.secondary",
-                "&:hover": {
-                  color: "primary.main",
-                  backgroundColor: "#f0f4ff",
-                  borderRadius: "8px",
-                },
-              }}
-            />
-            <Tab
-              label={
-                <span>
-                  <PhoneMissedOutlinedIcon size={20} />
-                  Missed Call
-                </span>
-              }
-              {...a11yProps(5)}
-              sx={{
-                textTransform: "none",
-                fontWeight: "bold",
-                color: "text.secondary",
-                "&:hover": {
-                  color: "primary.main",
-                  backgroundColor: "#f0f4ff",
-                  borderRadius: "8px",
-                },
-              }}
-            />
-            <Tab
-              label={
-                <span>
-                  <CampaignOutlinedIcon size={20} />
-                  C2C
-                </span>
-              }
-              {...a11yProps(6)}
-              sx={{
-                textTransform: "none",
-                fontWeight: "bold",
-                color: "text.secondary",
-                "&:hover": {
-                  color: "primary.main",
-                  backgroundColor: "#f0f4ff",
-                  borderRadius: "8px",
-                },
-              }}
-            />
-            <Tab
-              label={
-                <span>
-                  <EmailOutlinedIcon size={20} />
-                  E-mail
-                </span>
-              }
-              {...a11yProps(7)}
-              sx={{
-                textTransform: "none",
-                fontWeight: "bold",
-                color: "text.secondary",
-                "&:hover": {
-                  color: "primary.main",
-                  backgroundColor: "#f0f4ff",
-                  borderRadius: "8px",
-                },
-              }}
-            />
-            <Tab
-              label={
-                <span>
-                  <CampaignOutlinedIcon size={20} />
-                  IBD
-                </span>
-              }
-              {...a11yProps(8)}
-              sx={{
-                textTransform: "none",
-                fontWeight: "bold",
-                color: "text.secondary",
-                "&:hover": {
-                  color: "primary.main",
-                  backgroundColor: "#f0f4ff",
-                  borderRadius: "8px",
-                },
-              }}
-            />
-          </Tabs>
-          <CustomTabPanel value={value} index={0} className="">
-            <div>
-              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
-                {/* Option 1 */}
-                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="whatsaapOption1"
-                      name="whatsappredio"
-                      value="enable"
-                      onChange={handleChangewhatsapp}
-                      checked={whatsappStatus === "enable"}
-                    />
-                    <label
-                      htmlFor="whatsaapOption1"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Enable
-                    </label>
-                  </div>
-                </div>
-                {/* Option 2 */}
-                <div className="flex-1  cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2.5 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="whatsOption2"
-                      name="whatsappredio"
-                      value="disable"
-                      onChange={handleChangewhatsapp}
-                      checked={whatsappStatus === "disable"}
-                    />
-                    <label
-                      htmlFor="whatsOption2"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Disable
-                    </label>
-                  </div>
-                </div>
-              </div>
-              {/* <RadioGroupField
-                id="whatsappenabledisabled"
-                name="whatsappenabledisabled"
-                // label="Enable Whatsapp"
-                options={whatsappenabledisabled}
-                value={whatsappStatus}
-                onChange={(e) => setWhatsappStatus(e.target.value)}
-              /> */}
-              {whatsappStatus === "enable" && (
-                <>
-                  <div id="whatsapptable">
-                    <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle lg:flex-nowrap">
-                      <AnimatedDropdown
-                        id="whatsappcountryselect"
-                        name="whatsappcountryselect"
-                        label="Select Country"
-                        options={countryOptions}
-                        value={whatsappCountry}
-                        onChange={(value) => setWhatsappCountry(value)}
-                      />
-
-                      <InputField
-                        id="whatsapputility"
-                        name="whatsapputility"
-                        label="Utility"
-                        placeholder="INR / Credit"
-                        value={whatsappUtility}
-                        onChange={(e) =>
-                          validateInput(e.target.value, setWhatsappUtility)
-                        }
-                        type="text"
-                        readOnly={!whatsappCountry}
-                      />
-
-                      <InputField
-                        id="whatsappmarketing"
-                        name="whatsappmarketing"
-                        label="Marketing"
-                        placeholder="INR / Credit"
-                        value={whatsappMarketing}
-                        onChange={(e) =>
-                          validateInput(e.target.value, setWhatsappMarketing)
-                        }
-                        type="text"
-                        readOnly={!whatsappCountry}
-                      />
-
-                      <UniversalButton
-                        label="Add"
-                        id="whatsaapaddcredit"
-                        name="whatsaapaddcredit"
-                        onClick={handleWhatsappAddCredit}
-                      />
-                    </div>
-
-                    <Paper sx={{ height: 250 }} id={id} name={name}>
-                      <DataGrid
-                        id={id}
-                        name={name}
-                        rows={whatsapprows}
-                        columns={whatsaappcolumns}
-                        initialState={{ pagination: { paginationModel } }}
-                        pageSizeOptions={[10, 20, 50]}
-                        pagination
-                        paginationModel={paginationModel}
-                        onPaginationModelChange={setPaginationModel}
-                        rowHeight={45}
-                        slots={{
-                          footer: CustomFooter,
-                          noRowsOverlay: CustomNoRowsOverlay,
-                        }}
-                        onRowSelectionModelChange={(ids) =>
-                          setSelectedRows(ids)
-                        }
-                        disableRowSelectionOnClick
-                        disableColumnResize
-                        disableColumnMenu
-                        sx={{
-                          border: 0,
-                          "& .MuiDataGrid-cell": { outline: "none !important" },
-                          "& .MuiDataGrid-columnHeaders": {
-                            color: "#193cb8",
-                            fontSize: "14px",
-                            fontWeight: "bold !important",
-                          },
-                          "& .MuiDataGrid-row--borderBottom": {
-                            backgroundColor: "#e6f4ff !important",
-                          },
-                          "& .MuiDataGrid-columnSeparator": { color: "#ccc" },
-                        }}
-                      />
-                    </Paper>
-                  </div>
-                  <div className="flex justify-center mt-3">
-                    <UniversalButton
-                      label="Save"
-                      id="whatsappsave"
-                      name="whatsappsave"
-                    />
-                  </div>
-                </>
-              )}
-            </div>
-          </CustomTabPanel>
-
-          <CustomTabPanel value={value} index={1}>
-            <div>
-              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
-                {/* Option 1 */}
-                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="rcsOption1"
-                      name="rcsredio"
-                      value="enable"
-                      onChange={handleChangercs}
-                      checked={rcsStatus === "enable"}
-                    />
-                    <label
-                      htmlFor="rcsOption1"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Enable
-                    </label>
-                  </div>
-                </div>
-                {/* Option 2 */}
-                <div className="flex-1  cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2.5 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="rcsOption2"
-                      name="rcsredio"
-                      value="disable"
-                      onChange={handleChangercs}
-                      checked={rcsStatus === "disable"}
-                    />
-                    <label
-                      htmlFor="rcsOption2"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Disable
-                    </label>
-                  </div>
-                </div>
-              </div>
-
-              {/* <RadioGroupField
-                id="rcsenabledisabled"
-                name="rcsenabledisabled"
-                // label="Enable Whatsapp"
-                options={rcsenabledisabled}
-                value={rcsStatus}
-                onChange={(e) => setRcsStatus(e.target.value)}
-              /> */}
-              {rcsStatus === "enable" && (
-                <>
-                  <div id="rcstable">
-                    <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle lg:flex-nowrap">
-                      <AnimatedDropdown
-                        id="rcscountryselect"
-                        name="rcscountryselect"
-                        label="Select Country"
-                        options={rcscountryOptions}
-                        value={rcsCountry}
-                        onChange={(value) => setRcsCountry(value)}
-                      />
-
-                      <InputField
-                        id="rcsrate"
-                        name="rcsrate"
-                        label="Rate"
-                        placeholder="INR / Credit"
-                        value={rcsrate}
-                        onChange={(e) =>
-                          validateInput(e.target.value, setRcsrate)
-                        }
-                        type="text"
-                        readOnly={!rcsCountry}
-                      />
-
-                      <UniversalButton
-                        label="Add"
-                        id="rcsaddcredit"
-                        name="rcsaddcredit"
-                        onClick={handleRcsAddCredit}
-                      />
-                    </div>
-
-                    <Paper sx={{ height: 250 }} id={id} name={name}>
-                      <DataGrid
-                        id={id}
-                        name={name}
-                        rows={rcsrows}
-                        columns={rcscolumns}
-                        initialState={{ pagination: { paginationModel } }}
-                        pageSizeOptions={[10, 20, 50]}
-                        pagination
-                        paginationModel={paginationModel}
-                        onPaginationModelChange={setPaginationModel}
-                        rowHeight={45}
-                        slots={{
-                          footer: CustomFooter,
-                          noRowsOverlay: CustomNoRowsOverlay,
-                        }}
-                        onRowSelectionModelChange={(ids) =>
-                          setSelectedRows(ids)
-                        }
-                        disableRowSelectionOnClick
-                        disableColumnResize
-                        disableColumnMenu
-                        sx={{
-                          border: 0,
-                          "& .MuiDataGrid-cell": { outline: "none !important" },
-                          "& .MuiDataGrid-columnHeaders": {
-                            color: "#193cb8",
-                            fontSize: "14px",
-                            fontWeight: "bold !important",
-                          },
-                          "& .MuiDataGrid-row--borderBottom": {
-                            backgroundColor: "#e6f4ff !important",
-                          },
-                          "& .MuiDataGrid-columnSeparator": { color: "#ccc" },
-                        }}
-                      />
-                    </Paper>
-                  </div>
-                  <div className="flex justify-center mt-3">
-                    <UniversalButton label="Save" id="rcssave" name="rcssave" />
-                  </div>
-                </>
-              )}
-            </div>
-          </CustomTabPanel>
-
-          <CustomTabPanel value={value} index={2}>
-            <div>
-              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
-                {/* Option 1 */}
-                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="smsOption1"
-                      name="smsredio"
-                      value="enable"
-                      onChange={handleChangesms}
-                      checked={smsStatus === "enable"}
-                    />
-                    <label
-                      htmlFor="smsOption1"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Enable
-                    </label>
-                  </div>
-                </div>
-                {/* Option 2 */}
-                <div className="flex-1  cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2.5 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="smsOption2"
-                      name="smsredio"
-                      value="disable"
-                      onChange={handleChangesms}
-                      checked={smsStatus === "disable"}
-                    />
-                    <label
-                      htmlFor="smsOption2"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Disable
-                    </label>
-                  </div>
-                </div>
-              </div>
-
-              {smsStatus === "enable" && (
-                <div>
-                  <div className="flex mb-2 lg:w-100 md:w-100">
-                    <Checkbox
-                      id="smsstatus"
-                      name="smsstatus"
-                      onChange={(e) => setTranscheck(e.checked)}
-                      checked={transcheck}
-                      className="m-2"
-                    />
-
-                    <AnimatedDropdown
-                      id="transdropdown"
-                      name="transdropdown"
-                      options={transOptions}
-                      value={trans}
-                      onChange={(value) => setTrans(value)}
-                      disabled={!transcheck}
-                    />
-                  </div>
-                  <div className="flex lg:w-100 md:w-100">
-                    <Checkbox
-                      id="smspromo"
-                      name="smspromo"
-                      onChange={(e) => setPromocheck(e.checked)}
-                      checked={promocheck}
-                      className="m-2"
-                    />
-
-                    <AnimatedDropdown
-                      id="transdropdown"
-                      name="transdropdown"
-                      options={promoOption}
-                      value={promo}
-                      onChange={(value) => setPromo(value)}
-                      disabled={!promocheck}
-                    />
-                  </div>
-
-                  <div className=" lg:w-100 md:w-100">
-                    <InputField
-                      id="translimit"
-                      name="translimit"
-                      label="Rate"
-                      placeholder="(INR / Credit)"
-                      value={smsrate}
-                      onChange={(e) =>
-                        validateInput(e.target.value, setSmsRate)
-                      }
-                      type="number"
-                    />
-                  </div>
-                  <div className="flex justify-center mt-3">
-                    <UniversalButton
-                      label="Save"
-                      id="whatsappsave"
-                      name="whatsappsave"
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-          </CustomTabPanel>
-
-          <CustomTabPanel value={value} index={3}>
-            <div>
-              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
-                {/* Option 1 */}
-                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="obdOption1"
-                      name="obdredio"
-                      value="enable"
-                      onChange={handleChangeobd}
-                      checked={obdStatus === "enable"}
-                    />
-                    <label
-                      htmlFor="obdOption1"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Enable
-                    </label>
-                  </div>
-                </div>
-                {/* Option 2 */}
-                <div className="flex-1  cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2.5 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="obdOption2"
-                      name="obdredio"
-                      value="disable"
-                      onChange={handleChangeobd}
-                      checked={obdStatus === "disable"}
-                    />
-                    <label
-                      htmlFor="obdOption2"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Disable
-                    </label>
-                  </div>
-                </div>
-              </div>
-
-              {obdStatus === "enable" && (
-                <div>
-                  <div className="flex mb-2 lg:w-100 md:w-100">
-                    <Checkbox
-                      id="obdstatusobd"
-                      name="obdstatusobd"
-                      onChange={(e) => setTranscheckobd(e.checked)}
-                      checked={transcheckobd}
-                      className="m-2"
-                    />
-
-                    <AnimatedDropdown
-                      id="transdropdownobd"
-                      name="transdropdownobd"
-                      options={transOptionsobd}
-                      value={transobd}
-                      onChange={(value) => setTransobd(value)}
-                      disabled={!transcheckobd}
-                    />
-                  </div>
-                  <div className="flex lg:w-100 md:w-100">
-                    <Checkbox
-                      id="obdstatuspromo"
-                      name="obdstatuspromo"
-                      onChange={(e) => setPromocheckobd(e.checked)}
-                      checked={promocheckobd}
-                      className="m-2"
-                    />
-
-                    <AnimatedDropdown
-                      id="transdropdownobd"
-                      name="transdropdownobd"
-                      options={promoOptionobd}
-                      value={promoobd}
-                      onChange={(value) => setPromoobd(value)}
-                      disabled={!promocheckobd}
-                    />
-                  </div>
-
-                  <div className=" lg:w-100 md:w-100">
-                    <div className="flex flex-wrap gap-4 my-2 lg:w-100 md:w-100 ">
-                      {/* Option 1 */}
-                      <div className="flex items-center gap-2">
-                        <RadioButton
-                          inputId="obdrateOption1"
-                          name="obdrateredio"
-                          value="enable"
-                          onChange={handleChangeobdRate}
-                          checked={obdrateStatus === "enable"}
-                        />
-                        <label
-                          htmlFor="obdrateOption1"
-                          className="text-sm font-medium text-gray-700 cursor-pointer"
-                        >
-                          @ 15 sec
-                        </label>
-                      </div>
-                      {/* Option 2 */}
-                      <div className="flex items-center gap-2">
-                        <RadioButton
-                          inputId="obdrateOption2"
-                          name="obdrateredio"
-                          value="disable"
-                          onChange={handleChangeobdRate}
-                          checked={obdrateStatus === "disable"}
-                        />
-                        <label
-                          htmlFor="obdrateOption2"
-                          className="text-sm font-medium text-gray-700 cursor-pointer"
-                        >
-                          @ 30 sec
-                        </label>
-                      </div>
-                    </div>
-                    <InputField
-                      id="transratesobd"
-                      name="transratesobd"
-                      label="Rate"
-                      placeholder="(INR / Credit)"
-                      value={obdrate}
-                      onChange={(e) =>
-                        validateInput(e.target.value, setObdRate)
-                      }
-                      type="number"
-                    />
-                  </div>
-                  <div className="flex justify-center mt-3">
-                    <UniversalButton
-                      label="Save"
-                      id="whatsappsave"
-                      name="whatsappsave"
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-          </CustomTabPanel>
-
-          <CustomTabPanel value={value} index={4}>
-            <div>
-              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
-                {/* Option 1 */}
-                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="twowayOption1"
-                      name="twowayredio"
-                      value="enable"
-                      onChange={handleChangetwoway}
-                      checked={twowayStatus === "enable"}
-                    />
-                    <label
-                      htmlFor="twowayOption1"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Enable
-                    </label>
-                  </div>
-                </div>
-                {/* Option 2 */}
-                <div className="flex-1  cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2.5 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="twowayOption2"
-                      name="twowayredio"
-                      value="disable"
-                      onChange={handleChangetwoway}
-                      checked={twowayStatus === "disable"}
-                    />
-                    <label
-                      htmlFor="twowayOption2"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Disable
-                    </label>
-                  </div>
-                </div>
-              </div>
-              {twowayStatus === "enable" && (
-                <>
-                  <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle lg:flex-nowrap">
-                    <AnimatedDropdown
-                      id="twowayselect"
-                      name="twowayselect"
-                      label="Assign Validity"
-                      options={twowayOptions}
-                      value={twowayAssign}
-                      onChange={(value) => setTwowayAssign(value)}
-                    />
-                    <InputField
-                      id="twowayrate"
-                      name="twowayrate"
-                      label="Rate"
-                      placeholder="INR"
-                      type="number"
-                    />
-                  </div>
-                  <div className="flex justify-center mt-3">
-                    <UniversalButton
-                      label="Save"
-                      id="twowaysave"
-                      name="twowaysave"
-                    />
-                  </div>
-                </>
-              )}
-            </div>
-          </CustomTabPanel>
-
-          <CustomTabPanel value={value} index={5}>
-            <div>
-              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
-                {/* Option 1 */}
-                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="misscallOption1"
-                      name="misscallredio"
-                      value="enable"
-                      onChange={handleChangeMisscall}
-                      checked={misscallStatus === "enable"}
-                    />
-                    <label
-                      htmlFor="misscallOption1"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Enable
-                    </label>
-                  </div>
-                </div>
-                {/* Option 2 */}
-                <div className="flex-1  cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2.5 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="misscallOption2"
-                      name="misscallredio"
-                      value="disable"
-                      onChange={handleChangeMisscall}
-                      checked={misscallStatus === "disable"}
-                    />
-                    <label
-                      htmlFor="misscallOption2"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Disable
-                    </label>
-                  </div>
-                </div>
-              </div>
-              {misscallStatus === "enable" && (
-                <>
-                  <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle lg:flex-nowrap">
-                    <AnimatedDropdown
-                      id="misscallselect"
-                      name="misscallselect"
-                      label="Assign Validity"
-                      options={misscallOptions}
-                      value={misscallAssign}
-                      onChange={(value) => setMisscallAssign(value)}
-                    />
-                    <InputField
-                      id="misscallrate"
-                      name="misscallrate"
-                      label="Rate"
-                      placeholder="INR"
-                      type="number"
-                    />
-                  </div>
-                  <div className="flex justify-center mt-3">
-                    <UniversalButton
-                      label="Save"
-                      id="misscallsave"
-                      name="misscallsave"
-                    />
-                  </div>
-                </>
-              )}
-            </div>
-          </CustomTabPanel>
-
-          <CustomTabPanel value={value} index={6}>
-            <div>
-              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
-                {/* Option 1 */}
-                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="clickOption1"
-                      name="clickredio"
-                      value="enable"
-                      onChange={handleChangeClick}
-                      checked={clickStatus === "enable"}
-                    />
-                    <label
-                      htmlFor="clickOption1"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Enable
-                    </label>
-                  </div>
-                </div>
-                {/* Option 2 */}
-                <div className="flex-1  cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2.5 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="clickOption2"
-                      name="clickredio"
-                      value="disable"
-                      onChange={handleChangeClick}
-                      checked={clickStatus === "disable"}
-                    />
-                    <label
-                      htmlFor="clickOption2"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Disable
-                    </label>
-                  </div>
-                </div>
-              </div>
-              {clickStatus === "enable" && (
-                <>
-                  <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle lg:flex-nowrap lg:w-100 md:w-100">
-                    <InputField
-                      id="clickrate"
-                      name="clickrate"
-                      label="Rate"
-                      placeholder="(INR / Credit)"
-                      type="number"
-                    />
-                  </div>
-                  <div className="flex justify-center mt-3">
-                    <UniversalButton
-                      label="Save"
-                      id="clicksave"
-                      name="clicksave"
-                    />
-                  </div>
-                </>
-              )}
-            </div>
-          </CustomTabPanel>
-
-          <CustomTabPanel value={value} index={7}>
-            <div>
-              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
-                {/* Option 1 */}
-                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="emailOption1"
-                      name="emailredio"
-                      value="enable"
-                      onChange={handleChangeEmail}
-                      checked={emailStatus === "enable"}
-                    />
-                    <label
-                      htmlFor="emailOption1"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Enable
-                    </label>
-                  </div>
-                </div>
-                {/* Option 2 */}
-                <div className="flex-1  cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2.5 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="emailOption2"
-                      name="emailredio"
-                      value="disable"
-                      onChange={handleChangeEmail}
-                      checked={emailStatus === "disable"}
-                    />
-                    <label
-                      htmlFor="emailOption2"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Disable
-                    </label>
-                  </div>
-                </div>
-              </div>
-              {emailStatus === "enable" && (
-                <>
-                  <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle lg:flex-nowrap">
-                    <AnimatedDropdown
-                      id="emailselect"
-                      name="emailselect"
-                      label="Assign Validity"
-                      options={emailOptions}
-                      value={emailAssign}
-                      onChange={(value) => setEmailAssign(value)}
-                    />
-                    <InputField
-                      id="emailrate"
-                      name="emailrate"
-                      label="Rate"
-                      placeholder="(INR / Credit)"
-                      type="number"
-                    />
-                  </div>
-
-                  <div className="flex justify-center mt-3">
-                    <UniversalButton
-                      label="Save"
-                      id="emailsave"
-                      name="emailsave"
-                    />
-                  </div>
-                </>
-              )}
-            </div>
-          </CustomTabPanel>
-          <CustomTabPanel value={value} index={8}>
-            <div>
-              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
-                {/* Option 1 */}
-                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="ibdOption1"
-                      name="ibdredio"
-                      value="enable"
-                      onChange={handleChangeIbd}
-                      checked={ibdStatus === "enable"}
-                    />
-                    <label
-                      htmlFor="ibdOption1"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Enable
-                    </label>
-                  </div>
-                </div>
-                {/* Option 2 */}
-                <div className="flex-1  cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2.5 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="ibdOption2"
-                      name="ibdredio"
-                      value="disable"
-                      onChange={handleChangeIbd}
-                      checked={ibdStatus === "disable"}
-                    />
-                    <label
-                      htmlFor="ibdOption2"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Disable
-                    </label>
-                  </div>
-                </div>
-              </div>
-              {ibdStatus === "enable" && (
-                <>
-                  <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle lg:flex-nowrap">
-                    <AnimatedDropdown
-                      id="ibdselect"
-                      name="ibdselect"
-                      label="Assign Validity"
-                      options={ibdOptions}
-                      value={ibdAssign}
-                      onChange={(value) => setIbdAssign(value)}
-                    />
-                    <InputField
-                      id="ibdrate"
-                      name="ibdrate"
-                      label="Rate"
-                      placeholder="(INR / Credit)"
-                      type="number"
-                    />
-                  </div>
-                  <div className=" lg:w-100 md:w-100">
-                    <div className="flex flex-wrap gap-4 my-2 lg:w-100 md:w-100 ">
-                      {/* Option 1 */}
-                      <div className="flex items-center gap-2">
-                        <RadioButton
-                          inputId="ibdpulseOption1"
-                          name="ibdpulseredio"
-                          value="enable"
-                          onChange={handleChangeibdPulse}
-                          checked={ibdpulseStatus === "enable"}
-                        />
-                        <label
-                          htmlFor="ibdpulseOption1"
-                          className="text-sm font-medium text-gray-700 cursor-pointer"
-                        >
-                          Enable
-                        </label>
-                      </div>
-                      {/* Option 2 */}
-                      <div className="flex items-center gap-2">
-                        <RadioButton
-                          inputId="ibdpulseOption2"
-                          name="ibdpulseredio"
-                          value="disable"
-                          onChange={handleChangeibdPulse}
-                          checked={ibdpulseStatus === "disable"}
-                        />
-                        <label
-                          htmlFor="ibdpulseOption2"
-                          className="text-sm font-medium text-gray-700 cursor-pointer"
-                        >
-                          Disable
-                        </label>
-                      </div>
-                    </div>
-                    {ibdpulseStatus === "enable" && (
-                      <InputField
-                        id="ibdpulselimit"
-                        name="ibdpulselimit"
-                        label="Pulse Limit"
-                        placeholder="(INR / Credit)"
-                        type="number"
-                      />
-                    )}
-                  </div>
-                  <div className="flex justify-center mt-3">
-                    <UniversalButton label="Save" id="ibdsave" name="ibdsave" />
-                  </div>
-                </>
-              )}
-            </div>
-          </CustomTabPanel>
-        </Box>
-      </Dialog>
-      {/* assignService */}
-
-      {/* Manage Api Key */}
-      <Dialog
-        header="Manage Api Key "
-        visible={manageApiKeys}
-        onHide={() => setManageApiKeys(false)}
-        className="w-[30rem]"
-        draggable={false}
-      >
-        <div className="space-y-4">
-          <InputField
-            id="apimanagekey"
-            name="apimanagekey"
-            type="text"
-            label="Old key"
-            placeholder="Enter Old key"
-            readOnly
-          />
-          <div className="flex items-end gap-2">
-            <div className="flex-1 ">
-              <InputField
-                id="newapikey"
-                name="newapikey"
-                type="text"
-                label="New API Key"
-                placeholder="Generate New Key"
-                value={newAPIKey}
-                readOnly
-                style={{ cursor: "not-allowed", backgroundColor: "#E5E7EB" }}
-              />
-            </div>
-            <div>
-              <button
-                onClick={handleGenerateAPIKey}
-                className="px-2 py-2 text-sm text-white bg-blue-400 rounded-md shadow-md hover:bg-blue-500 focus:outline-none"
-              >
-                Generate Key
-              </button>
-            </div>
-          </div>
-        </div>
-        <div className="flex justify-center mt-4">
-          <UniversalButton
-            label="Save"
-            id="apisaveButton"
-            name="apisaveButton"
-            variant="primary"
-          />
-        </div>
-      </Dialog>
-      {/* Manage Api Key */}
-
-      {/* reset service */}
-      <Dialog
-        header="reset service"
-        visible={reset}
-        onHide={() => setreset(false)}
-        className="w-[30rem]"
-        draggable={false}
-      >
-        <div className="space-y-4">
-          <div className="relative">
-            <InputField
-              id="username"
-              name="username"
-              label="User Name"
-              placeholder="demo"
-            />
-          </div>
-          <GeneratePasswordSettings
-            id="newPassword"
-            name="newPassword"
-            type={"text"}
-            label="New Password"
-            placeholder="Enter your new password"
-            value={newPassword}
-          />
-        </div>
-        <div className="flex justify-center mt-4">
-          <UniversalButton
-            label="Save"
-            id="apisaveButton"
-            name="apisaveButton"
-            variant="primary"
-          />
-        </div>
-      </Dialog>
-      {/* reset service */}
-
-      {/* User Report */}
-      <Dialog
-        header="User Report"
-        visible={userReports}
-        onHide={() => setuserReports(false)}
-        className="w-[30rem]"
-        draggable={false}
-      >
-        <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
-          {/* Option 1 */}
-          <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
-            <div className="flex items-center gap-2">
-              <RadioButton
-                inputId="userreportOption1"
-                name="userreportredio"
-                value="enable"
-                onChange={handleChangeuserreport}
-                checked={userreportStatus === "enable"}
-              />
-              <label
-                htmlFor="userreportOption1"
-                className="text-sm font-medium text-gray-700 cursor-pointer"
-              >
-                Enable
-              </label>
-            </div>
-          </div>
-          {/* Option 2 */}
-          <div className="flex-1  cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2.5 hover:shadow-lg transition-shadow duration-300">
-            <div className="flex items-center gap-2">
-              <RadioButton
-                inputId="userreportOption2"
-                name="userreportredio"
-                value="disable"
-                onChange={handleChangeuserreport}
-                checked={userreportStatus === "disable"}
-              />
-              <label
-                htmlFor="userreportOption2"
-                className="text-sm font-medium text-gray-700 cursor-pointer"
-              >
-                Disable
-              </label>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex justify-center mt-3">
-          <UniversalButton
-            label="Save"
-            id="userreportsave"
-            name="userreportsave"
-          />
-        </div>
-      </Dialog>
-      {/* User Report */}
     </>
   );
 };
