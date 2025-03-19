@@ -127,8 +127,8 @@ const WhatsappLaunchCampaign = () => {
         toast.error("Please upload an Excel file with contact numbers.");
         return;
       }
-      console.log("ss" + selectedMobileColumn);
-      if (!(selectedMobileColumn + 1)) {
+
+      if (!String(selectedMobileColumn)) {
         toast.error(
           "Please select the mobile number column from the uploaded file."
         );
@@ -142,6 +142,9 @@ const WhatsappLaunchCampaign = () => {
         return;
       }
     }
+
+    // console.log("ad" , varLength);
+    // console.log("Objl", formData)
 
     if (varLength !== Object.keys(formData).length) {
       toast.error("Please enter a all variable values!");
@@ -283,7 +286,7 @@ const WhatsappLaunchCampaign = () => {
         setWabaAccountId("");
         // setWabaList(null);
         setTemplateData({});
-        setFormData({});
+        // setFormData({});
         setImageFile(null);
         setSelectedOption("option2");
         setFileHeaders([]);
