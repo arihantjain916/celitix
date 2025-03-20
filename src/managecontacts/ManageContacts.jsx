@@ -41,6 +41,7 @@ import { eslintUseValue } from "@mui/x-data-grid/internals";
 import { DataGrid, GridFooterContainer } from "@mui/x-data-grid";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { Typography, Button } from "@mui/material";
+import { ManageSearch } from "@mui/icons-material";
 
 const ManageContacts = () => {
   const [selectedMultiGroup, setSelectedMultiGroup] = useState(null);
@@ -65,6 +66,7 @@ const ManageContacts = () => {
   const [manageContactFirst, setMmanageContactFirst] = useState("");
   const [manageContactMobile, setManageContactMobile] = useState("");
   const [allContacts, setAllContacts] = useState([]);
+  const [filterContacts, setFilterContacts] = useState([]);
   const [grpList, setGrpList] = useState([]);
   const [addContactDetails, setAddContactDetails] = useState({
     firstName: "",
@@ -253,18 +255,45 @@ const ManageContacts = () => {
       toast.error("Please select group");
       return;
     }
+    try {
+      setIsFetching(true);
+      const res = await getContactListByGrpId({
+        groupSrNo: selectedMultiGroup,
+        status: selectedStatus,
+      });
+      console.log("res", res.flag === false);
+      if (res.flag === false) {
+        setAllContacts([]);
+        setFilterContacts([]);
+      }
+      setAllContacts(res);
 
-    setIsFetching(true);
-    const res = await getContactListByGrpId({
-      groupSrNo: selectedMultiGroup,
-      status: selectedStatus,
-    });
-    if (!res.flag) {
-      setAllContacts([]);
+      if (res.length > 0) {
+        //filter data name and ContactNumber
+        const filteredData =
+          res.filter(
+            (contact) =>
+              (contact?.firstName
+                ?.toLowerCase()
+                .includes(manageContactFirst.toLowerCase()) ||
+                contact?.lastName
+                  ?.toLowerCase()
+                  .includes(manageContactFirst.toLowerCase())) &&
+              contact?.mobileno
+                .toLowerCase()
+                .includes(manageContactMobile.toLowerCase())
+          ) ?? [];
+
+        setFilterContacts(filteredData);
+      } else {
+        setFilterContacts(res);
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error("Something went wrong");
+    } finally {
+      setIsFetching(false);
     }
-    setAllContacts(res);
-
-    setIsFetching(false);
   };
 
   // handle File drop
@@ -370,18 +399,6 @@ const ManageContacts = () => {
     const res = await updateContactsDetails(data);
     console.log(res);
   };
-
-  useEffect(() => {
-    console.log("updateContactDetails", updateContactDetails);
-    setUpdatedContactDetails({
-      srNo: updateContactDetails.srno,
-      firstName: updateContactDetails.firstName,
-      lastName: updateContactDetails.lastName,
-      mobileNo: updateContactDetails.mobileno,
-      activeStatus: updateContactDetails.status === "Active" ? 1 : 0,
-      uniqueId: updateContactDetails.uniqueid,
-    });
-  }, [updateContactDetails]);
 
   // Excel file upload
   const handleFileUpload = async () => {
@@ -735,7 +752,7 @@ const ManageContacts = () => {
         <UniversalSkeleton height="35rem" width="100%" />
       ) : (
         <WhatsappManageContactsTable
-          allContacts={allContacts}
+          allContacts={filterContacts}
           updateContactData={updateContactData}
           setUpdateContactDetails={setUpdateContactDetails}
           setUpdateContactVisible={setUpdateContactVisible}
