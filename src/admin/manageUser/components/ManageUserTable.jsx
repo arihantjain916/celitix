@@ -690,7 +690,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               onClick={() => {
                 setEditDetailsDialogVisible(true);
                 setSelectedId(params.row);
-                console.log(params.row);
+                
                 setUpdateDetails({
                   domain: params.row.domain,
                   userId: params.row.userId,
