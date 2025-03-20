@@ -11,7 +11,7 @@ import WhatsappManageContactsTable from "./components/WhatsappManageContactsTabl
 import { Dialog } from "primereact/dialog";
 import { TabView, TabPanel } from "primereact/tabview";
 import { Dropdown } from "primereact/dropdown";
-import { IconButton } from "@mui/material";
+import { Box, IconButton, Paper } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import RadioGroupField from "../whatsapp/components/RadioGroupField";
@@ -20,6 +20,8 @@ import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import toast from "react-hot-toast";
 import UniversalSkeleton from "../whatsapp/components/UniversalSkeleton";
+import usePagination from "@mui/material/usePagination";
+import { styled } from "@mui/material/styles";
 import {
   addContact,
   addGrp,
@@ -36,6 +38,9 @@ import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import CustomNoRowsOverlay from "../whatsapp/components/CustomNoRowsOverlay";
 import { campaignUploadFile } from "../apis/whatsapp/whatsapp";
 import { eslintUseValue } from "@mui/x-data-grid/internals";
+import { DataGrid, GridFooterContainer } from "@mui/x-data-grid";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import { Typography, Button } from "@mui/material";
 
 const ManageContacts = () => {
   const [selectedMultiGroup, setSelectedMultiGroup] = useState(null);
@@ -84,6 +89,11 @@ const ManageContacts = () => {
   const [updateContactDetails, setUpdateContactDetails] = useState("");
   const [updatedContactDetails, setUpdatedContactDetails] = useState({});
   const [updateContactVisible, setUpdateContactVisible] = useState(false);
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: 10,
+  });
+  const [selectedRows, setSelectedRows] = useState([]);
 
   async function getGrpListData() {
     const res = await getGrpList();
@@ -435,6 +445,182 @@ const ManageContacts = () => {
     await getGrpListData();
   };
 
+  const CustomFooter = () => {
+    return (
+      <GridFooterContainer
+        sx={{
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: {
+            xs: "center",
+            lg: "space-between",
+          },
+          alignItems: "center",
+          padding: 1,
+          gap: 2,
+          overflowX: "auto",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: 1.5,
+          }}
+        >
+          {selectedRows.length > 0 && (
+            <Typography
+              variant="body2"
+              sx={{
+                borderRight: "1px solid #ccc",
+                paddingRight: "10px",
+              }}
+            >
+              {selectedRows.length} Rows Selected
+            </Typography>
+          )}
+
+          <Typography variant="body2">
+            Total Records: <span className="font-semibold">{rows.length}</span>
+          </Typography>
+        </Box>
+
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            width: { xs: "100%", sm: "auto" },
+          }}
+        >
+          <CustomPagination
+            totalPages={totalPages}
+            paginationModel={paginationModel}
+            setPaginationModel={setPaginationModel}
+          />
+        </Box>
+      </GridFooterContainer>
+    );
+  };
+
+  const PaginationList = styled("ul")({
+    listStyle: "none",
+    padding: 0,
+    margin: 0,
+    display: "flex",
+    gap: "8px",
+  });
+
+  const CustomPagination = ({
+    totalPages,
+    paginationModel,
+    setPaginationModel,
+  }) => {
+    const { items } = usePagination({
+      count: totalPages,
+      page: paginationModel.page + 1,
+      onChange: (_, newPage) =>
+        setPaginationModel({ ...paginationModel, page: newPage - 1 }),
+    });
+
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", padding: 0 }}>
+        <PaginationList>
+          {items.map(({ page, type, selected, ...item }, index) => {
+            let children = null;
+
+            if (type === "start-ellipsis" || type === "end-ellipsis") {
+              children = "…";
+            } else if (type === "page") {
+              children = (
+                <Button
+                  key={index}
+                  variant={selected ? "contained" : "outlined"}
+                  size="small"
+                  sx={{ minWidth: "27px" }}
+                  {...item}
+                >
+                  {page}
+                </Button>
+              );
+            } else {
+              children = (
+                <Button
+                  key={index}
+                  variant="outlined"
+                  size="small"
+                  {...item}
+                  sx={{}}
+                >
+                  {type === "previous" ? "Previous" : "Next"}
+                </Button>
+              );
+            }
+
+            return <li key={index}>{children}</li>;
+          })}
+        </PaginationList>
+      </Box>
+    );
+  };
+
+  const contactColumns = [
+    { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
+    { field: "groupName", headerName: "Group Name", flex: 1, minWidth: 120 },
+    {
+      field: "action",
+      headerName: "Action",
+      flex: 1,
+      minWidth: 200,
+      renderCell: (params) => (
+        <>
+          <CustomTooltip placement="top" arrow title="Edit">
+            <IconButton
+              onClick={() => {
+                setUpdateGrpId(params.row);
+                setEditGrpVisible(true);
+                setGroupName(params.row.groupName);
+              }}
+            >
+              <EditNoteIcon
+                sx={{
+                  fontSize: "1.2rem",
+                  color: "gray",
+                }}
+              />
+            </IconButton>
+          </CustomTooltip>
+          <CustomTooltip placement="top" arrow title="Delete">
+            <IconButton
+              className="no-xs"
+              onClick={() => {
+                setDeleteGrpId(params.row);
+                setDeleteDialogVisible(true);
+              }}
+            >
+              <DeleteForeverIcon
+                sx={{
+                  fontSize: "1.2rem",
+                  color: "#e31a1a",
+                }}
+              />
+            </IconButton>
+          </CustomTooltip>
+        </>
+      ),
+    },
+  ];
+
+  const rows = Array.isArray(grpList)
+    ? grpList?.map((grp, index) => ({
+        id: grp.groupCode,
+        sn: index + 1,
+        groupName: grp.groupName,
+      }))
+    : [];
+
+  const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
+
   return (
     <div>
       <div className="flex flex-wrap items-end justify-end w-full gap-4 pb-1 align-middle">
@@ -593,7 +779,7 @@ const ManageContacts = () => {
               </TabPanel>
               <TabPanel header="Manage" rightIcon="pi pi-user ml-2">
                 <div className="m-0">
-                  <div className="flex card justify-content-center">
+                  <div className="flex mb-2 card justify-content-center">
                     <DropdownWithSearch
                       options={grpList?.map((item) => ({
                         value: item.groupCode,
@@ -609,47 +795,54 @@ const ManageContacts = () => {
                       className="w-full md:w-14rem"
                     />
                   </div>
-                  <table className="w-full my-2 text-left border border-gray-300">
-                    <thead className="bg-gray-100 border-b-2 border-gray-300">
-                      <tr>
-                        <th className="px-4 py-1 border-r">Group Name</th>
-                        <th className="px-4 py-1">Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {grpList?.map((group, index) => (
-                        <tr
-                          key={index}
-                          className="h-10 border-b border-gray-300"
-                        >
-                          <td className="px-4 py-1 border-r">
-                            {group.groupName}
-                          </td>
-                          <td className="flex gap-3 px-4 py-1">
-                            <IconButton className="no-xs">
-                              <DeleteIcon
-                                sx={{ fontSize: "1.2rem", color: "green" }}
-                                onClick={() => {
-                                  setDeleteGrpId(group);
-                                  setDeleteDialogVisible(true);
-                                }}
-                              />
-                            </IconButton>
 
-                            <IconButton>
-                              <EditNoteIcon
-                                sx={{ fontSize: "1.2rem", color: "gray" }}
-                                onClick={() => {
-                                  setUpdateGrpId(group);
-                                  setEditGrpVisible(true);
-                                }}
-                              />
-                            </IconButton>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                  <Paper
+                    sx={{ height: 558 }}
+                    id={"ManageGroup"}
+                    name={"ManageGroup"}
+                  >
+                    <DataGrid
+                      id={"ManageGroup"}
+                      name={"ManageGroup"}
+                      rows={rows}
+                      columns={contactColumns}
+                      initialState={{ pagination: { paginationModel } }}
+                      pageSizeOptions={[10, 20, 50]}
+                      pagination
+                      paginationModel={paginationModel}
+                      onPaginationModelChange={setPaginationModel}
+                      checkboxSelection
+                      rowHeight={45}
+                      slots={{ footer: CustomFooter }}
+                      slotProps={{ footer: { totalRecords: rows.length } }}
+                      onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
+                      disableRowSelectionOnClick
+                      // autoPageSize
+                      disableColumnResize
+                      disableColumnMenu
+                      sx={{
+                        border: 0,
+                        "& .MuiDataGrid-cellCheckbox": {
+                          outline: "none !important",
+                        },
+                        "& .MuiDataGrid-cell": {
+                          outline: "none !important",
+                        },
+                        "& .MuiDataGrid-columnHeaders": {
+                          color: "#193cb8",
+                          fontSize: "14px",
+                          fontWeight: "bold !important",
+                        },
+                        "& .MuiDataGrid-row--borderBottom": {
+                          backgroundColor: "#e6f4ff !important",
+                        },
+                        "& .MuiDataGrid-columnSeparator": {
+                          // display: "none",
+                          color: "#ccc",
+                        },
+                      }}
+                    />
+                  </Paper>
                 </div>
               </TabPanel>
             </TabView>
@@ -1177,7 +1370,10 @@ const ManageContacts = () => {
       <Dialog
         header="Edit Group Name"
         visible={editGrpVisible}
-        onHide={() => setEditGrpVisible(false)}
+        onHide={() => {
+          setEditGrpVisible(false);
+          setGroupName("");
+        }}
         className="w-[30rem]"
         draggable={false}
       >
