@@ -142,11 +142,10 @@ const WhatsappLaunchCampaign = () => {
         return;
       }
     }
-    
+
     const filterObj = Object.fromEntries(
       Object.entries(formData).filter(([key, value]) => value !== "")
     );
-  
 
     if (varLength !== Object.keys(filterObj).length) {
       toast.error("Please enter a all variable values!");
@@ -298,12 +297,12 @@ const WhatsappLaunchCampaign = () => {
         setIsFetching(false);
         setSelectedLanguage(null);
         setSelectedGroups([]);
-        setUploadedFile(null);
+        setUploadedFile("");
         setIsUploaded(false);
 
         // setGroups([]);
 
-        setXlsxPath("");
+        // setXlsxPath("");
         setTotalRecords("");
         setSelectedCountryCode("");
         setSelectedMobileColumn("");
