@@ -33,7 +33,7 @@ const TemplateForm = ({
   setVarLength,
 }) => {
   const [inputValues, setInputValues] = useState({});
-  const [selectedVariable, setSelectedVariable] = useState("");
+  // const [selectedVariable, setSelectedVariable] = useState("");
   const [urlIndex, setUrlIndex] = useState(null); // ✅ Stores the selected URL column index
 
   const [imageState, setImageState] = useState({
@@ -125,7 +125,6 @@ const TemplateForm = ({
 
     onInputChange(value, `${type}${variable}`);
   };
-
 
   const handleSelectVariable = (variable, inputKey, type = "body") => {
     setInputValues((prev) => {

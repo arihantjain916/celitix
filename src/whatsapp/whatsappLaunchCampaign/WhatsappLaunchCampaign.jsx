@@ -128,7 +128,7 @@ const WhatsappLaunchCampaign = () => {
         return;
       }
 
-      if (!String(selectedMobileColumn)) {
+      if (!selectedMobileColumn?.toString()) {
         toast.error(
           "Please select the mobile number column from the uploaded file."
         );
@@ -142,11 +142,13 @@ const WhatsappLaunchCampaign = () => {
         return;
       }
     }
+    
+    const filterObj = Object.fromEntries(
+      Object.entries(formData).filter(([key, value]) => value !== "")
+    );
+  
 
-    // console.log("ad" , varLength);
-    // console.log("Objl", formData)
-
-    if (varLength !== Object.keys(formData).length) {
+    if (varLength !== Object.keys(filterObj).length) {
       toast.error("Please enter a all variable values!");
       return;
     }
@@ -177,8 +179,8 @@ const WhatsappLaunchCampaign = () => {
     setDialogVisible(true);
   };
 
-  const handleFinalSubmit = async (event) => {
-    if (event) event.preventDefault();
+  const handleFinalSubmit = async () => {
+    // if (event) event.preventDefault();
 
     const selectedWabaData = wabaList?.find(
       (waba) => waba.mobileNo === selectedWaba
@@ -677,7 +679,7 @@ const WhatsappLaunchCampaign = () => {
                 {/*final Submit Button */}
                 <UniversalButton
                   label="Send Campaign"
-                  onClick={(e) => handleFinalSubmit(e)}
+                  onClick={handleFinalSubmit}
                   style={{
                     borderRadius: "40px",
                     letterSpacing: "1px",
