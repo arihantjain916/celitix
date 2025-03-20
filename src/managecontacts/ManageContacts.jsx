@@ -454,8 +454,9 @@ const ManageContacts = () => {
   };
 
   const handleGrpDelete = async () => {
+    console.log(deleteGrpId);
     if (!deleteGrpId) return;
-    const res = await deleteGrp(deleteGrpId.groupName, deleteGrpId.groupCode);
+    const res = await deleteGrp(deleteGrpId.groupName, deleteGrpId.id);
     toast.success(res.message);
     setDeleteDialogVisible(false);
     setaddGroupVisible(false);
