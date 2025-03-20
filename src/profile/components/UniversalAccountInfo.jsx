@@ -200,7 +200,7 @@ function AccountInfoModal({ show, handleClose }) {
         item?.ISO_code?.toString().includes(searchTerm.toString())
     );
     setFilteredData(filtered);
-    // setSearchTerm("");
+    setSearchTerm("");
   };
 
   // Handle RCS Search
@@ -211,7 +211,7 @@ function AccountInfoModal({ show, handleClose }) {
         item?.countryCode?.toString().includes(searchTerm.toString())
     );
     setFilteredWhatsAppData(filtered);
-    // setSearchTerm("")
+    setSearchTerm("")
   };
 
   const [paginationModel, setPaginationModel] = useState({
