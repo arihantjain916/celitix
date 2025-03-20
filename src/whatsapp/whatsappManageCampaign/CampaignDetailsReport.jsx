@@ -97,7 +97,7 @@ const CampaignDetailsReport = () => {
     page: 0,
     pageSize: 10,
   });
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0);
   const [totalPage, setTotalPage] = useState(1);
 
   useEffect(() => {
@@ -220,10 +220,10 @@ const CampaignDetailsReport = () => {
       </GridFooterContainer>
     );
   };
-  function handlePag() {
-    setCurrentPage(currentPage + 1);
-    console.log("current page", currentPage);
-  }
+  // function handlePag() {
+  //   setCurrentPage(currentPage + 1);
+  //   console.log("current page", currentPage);
+  // }
   return (
     <div className="w-full">
       {/* <button onClick={handlePag}>Click</button> */}
