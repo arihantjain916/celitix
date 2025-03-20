@@ -97,6 +97,10 @@ const WhatsappManageContactsTable = ({
     setLocalSelectedRows(ids);
   };
 
+  const handlemultipleDelete = async (data) => {
+    console.log("Multiple Delete Ids", data);
+  };
+
   const toggleButtons = (isEnabled) => {
     document.getElementById("manageoptinsettingsbtn").disabled = !isEnabled;
     document.getElementById("manageoptinblockbtn").disabled = !isEnabled;
@@ -158,7 +162,7 @@ const WhatsappManageContactsTable = ({
 
   const rows = Array.isArray(allContacts)
     ? allContacts?.map((contact, index) => ({
-        id: index + 1,
+        id: contact.addSrno,
         sn: index + 1,
         firstName: contact.firstName ?? "-",
         lastName: contact.lastName ?? "-",
@@ -249,9 +253,7 @@ const WhatsappManageContactsTable = ({
         rowHeight={45}
         slots={{ footer: CustomFooter, noRowsOverlay: CustomNoRowsOverlay }}
         slotProps={{ footer: { totalRecords: rows.length } }}
-        onRowSelectionModelChange={(ids) => {
-          console.log(ids);
-        }}
+        onRowSelectionModelChange={(srno) => handlemultipleDelete(srno)}
         disableRowSelectionOnClick
         // autoPageSize
         disableColumnResize

@@ -261,7 +261,7 @@ const ManageContacts = () => {
         groupSrNo: selectedMultiGroup,
         status: selectedStatus,
       });
-      console.log("res", res.flag === false);
+     
       if (res.flag === false) {
         setAllContacts([]);
         setFilterContacts([]);
