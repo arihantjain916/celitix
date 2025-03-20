@@ -91,7 +91,7 @@ const ManageContacts = () => {
   const [updateContactVisible, setUpdateContactVisible] = useState(false);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
-    pageSize: 10,
+    pageSize: 5,
   });
   const [selectedRows, setSelectedRows] = useState([]);
 
@@ -797,7 +797,7 @@ const ManageContacts = () => {
                   </div>
 
                   <Paper
-                    sx={{ height: 558 }}
+                    sx={{ height: 333 }}
                     id={"ManageGroup"}
                     name={"ManageGroup"}
                   >
@@ -811,11 +811,11 @@ const ManageContacts = () => {
                       pagination
                       paginationModel={paginationModel}
                       onPaginationModelChange={setPaginationModel}
-                      checkboxSelection
+                      // checkboxSelection
                       rowHeight={45}
                       slots={{ footer: CustomFooter }}
                       slotProps={{ footer: { totalRecords: rows.length } }}
-                      onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
+                      // onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
                       disableRowSelectionOnClick
                       // autoPageSize
                       disableColumnResize
