@@ -9,13 +9,14 @@ import UniversalDatePicker from "../../whatsapp/components/UniversalDatePicker";
 import InputField from "../../components/layout/InputField";
 import AnimatedDropdown from "../../whatsapp/components/AnimatedDropdown";
 import UniversalButton from "../../whatsapp/components/UniversalButton";
-import TransactionsHistoryTable from "./components/TransactionsHistoryTable";
+// import TransactionsHistoryTable from "./components/TransactionsHistoryTable";
 import TransactionsSummaryTable from "./components/TransactionsSummaryTable";
 import { MultiSelect } from "primereact/multiselect";
 import CustomTooltip from "../../components/common/CustomTooltip";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import UniversalSkeleton from "../../whatsapp/components/UniversalSkeleton";
 import { fetchTransactions } from "../../apis/settings/setting";
+import { DataTable } from "../../components/layout/DataTable";
 
 const Transactions = () => {
   const [isFetching, setIsFetching] = useState(false);
@@ -27,13 +28,79 @@ const Transactions = () => {
   const [transactionalData, setTransactionalData] = useState([]);
 
   const handleSearch = async () => {
+   try{
+    setIsFetching(true)
     const res = await fetchTransactions(filterData);
     setTransactionalData(res);
+   }
+   catch(e){
+    toast.error("Something went wring!")
+   }
+   finally{
+    setIsFetching(false)
+   }
   };
 
   useEffect(() => {
     handleSearch();
   }, []);
+
+  const columns = [
+    { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
+    { field: "user", headerName: "UserName", flex: 1, minWidth: 120 },
+    {
+      field: "rechargeDate",
+      headerName: "Recharge Data",
+      flex: 1,
+      minWidth: 120,
+    },
+    {
+      field: "before",
+      headerName: "Amount Before Recharge",
+      flex: 1,
+      minWidth: 120,
+    },
+    {
+      field: "amount",
+      headerName: "Amount Recharged",
+      flex: 1,
+      minWidth: 120,
+    },
+    {
+      field: "after",
+      headerName: "Amount After Recharge",
+      flex: 1,
+      minWidth: 120,
+    },
+    {
+      field: "type",
+      headerName: "Recharge Type",
+      flex: 1,
+      minWidth: 120,
+    },
+    {
+      field: "gst",
+      headerName: "Gst Amount",
+      flex: 1,
+      minWidth: 120,
+    },
+    {
+      field: "balance",
+      headerName: "Total Amount",
+      flex: 1,
+      minWidth: 120,
+    },
+    { field: "remark", headerName: "Remarks", flex: 1, minWidth: 120 },
+  ];
+
+  console.log(transactionalData);
+  const rows = Array.isArray(transactionalData)
+    ? transactionalData.map((item, index) => ({
+        ...item,
+        sn: index + 1,
+        id: index + 1,
+      }))
+    : [];
 
   return (
     <div className="w-full">
@@ -144,10 +211,12 @@ const Transactions = () => {
         </div>
       ) : (
         <div className="w-full">
-          <TransactionsHistoryTable
+         
+          <DataTable
             id="transactionshistorytable"
             name="transactionshistorytable"
-            transactionalData={transactionalData}
+            col={columns}
+            rows={rows}
           />
         </div>
       )}
