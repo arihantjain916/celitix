@@ -238,6 +238,10 @@ const WhatsappLaunchCampaign = () => {
     }
 
     setTotalRecords(finalTotalRecords);
+    if (schedule && scheduledDateTime < new Date()) {
+      toast.error("Scheduled date and time cannot be in the past.");
+      return;
+    }
 
     if (!finalTotalRecords) {
       toast.error("Total records cannot be zero. Please check your selection.");
