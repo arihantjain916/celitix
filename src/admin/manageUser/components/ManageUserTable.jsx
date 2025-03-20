@@ -47,6 +47,7 @@ import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import GeneratePasswordSettings from "../../../profile/components/GeneratePasswordSettings";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import toast from "react-hot-toast";
+import { updateUserbySrno } from "../../../apis/admin/admin";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -274,17 +275,30 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
 
-    return `${year}-${month}-${day}`;
+    return `${year}/${month}/${day}`;
   };
   const handleDetailsUpdate = async () => {
     const data = {
       ...updateDetails,
       srno: selectedId.srno,
+      userType: 1,
       expiryDate: formatDate(new Date(updateDetails.expiryDate)),
     };
-    console.log(data);
 
-    console.log(new Date("2025-03-20"));
+    try {
+      const res = await updateUserbySrno(data);
+      if (res.msg.includes("Successfully")) {
+        toast.success("User Details Updated Successfully");
+      } else {
+        toast.error("Something went wrong");
+      }
+    } catch (e) {
+      console.log(e);
+      toast.error("Something went wrong");
+    } finally {
+      setEditDetailsDialogVisible(false);
+      setUpdateDetails({});
+    }
   };
 
   // assignService
@@ -836,7 +850,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
   const rows = Array.isArray(allUsers)
     ? allUsers.map((item, i) => ({
         id: i + 1,
-        sn: item.srno,
+        sn: i + 1,
         ...item,
       }))
     : [];
