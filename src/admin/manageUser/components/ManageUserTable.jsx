@@ -267,12 +267,24 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
     city: "",
     pinCode: "",
   });
+
+  //formatDate
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  };
   const handleDetailsUpdate = async () => {
     const data = {
-      srno: selectedId,
       ...updateDetails,
+      srno: selectedId.srno,
+      expiryDate: formatDate(new Date(updateDetails.expiryDate)),
     };
     console.log(data);
+
+    console.log(new Date("2025-03-20"));
   };
 
   // assignService
@@ -602,9 +614,6 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
   const handleView = (id, name) => {
     setViewService(true);
   };
-  const handleEdit = (id, name) => {
-    setEditDetailsDialogVisible(true);
-  };
   const handleAssign = (id, name) => {
     setAssignService(true);
   };
@@ -663,7 +672,31 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             </IconButton>
           </CustomTooltip>
           <CustomTooltip arrow title="Edit User Details" placement="top">
-            <IconButton onClick={() => setEditDetailsDialogVisible(true)}>
+            <IconButton
+              onClick={() => {
+                setEditDetailsDialogVisible(true);
+                setSelectedId(params.row);
+                console.log(params.row);
+                setUpdateDetails({
+                  domain: params.row.domain,
+                  userId: params.row.userId,
+                  status: params.row.status,
+                  emailId: params.row.emailId,
+                  mobileNo: params.row.mobileNo,
+                  firstName: params.row.firstName,
+                  lastName: params.row.lastName,
+                  address: params.row.address,
+                  companyName: params.row.companyName,
+                  expiryDate: new Date(params.row.expiryDate),
+                  applicationType: params.row.applicationType,
+                  userType: params.row.userType,
+                  country: params.row.country,
+                  state: params.row.state,
+                  city: params.row.city,
+                  pinCode: params.row.pinCode,
+                });
+              }}
+            >
               <EditNoteIcon
                 sx={{
                   fontSize: "1.2rem",
@@ -803,7 +836,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
   const rows = Array.isArray(allUsers)
     ? allUsers.map((item, i) => ({
         id: i + 1,
-        sn: i + 1,
+        sn: item.srno,
         ...item,
       }))
     : [];
@@ -933,16 +966,26 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               name="userid"
               placeholder="Enter your User ID"
               required
-              // value={userid}
-              // onChange={(e) => setUserId(e.target.value)}
+              value={updateDetails.userId}
+              onChange={(e) => {
+                setUpdateDetails({
+                  ...updateDetails,
+                  userId: e.target.value,
+                });
+              }}
             />
             <UniversalDatePicker
               label="Expiry Date"
               id="expiryDate"
               name="expiryDate"
               placeholder="Enter Expiry Date"
-              // value={expiryDate}
-              // onChange={(newValue) => setExpiryDate(newValue)}
+              value={updateDetails.expiryDate}
+              onChange={(newValue) => {
+                setUpdateDetails({
+                  ...updateDetails,
+                  expiryDate: newValue,
+                });
+              }}
             />
           </div>
           <div className="flex gap-2">
@@ -951,8 +994,13 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               id="userType"
               name="userType"
               options={useroption}
-              // value={userType} // Ensure correct value is set
-              onChange={() => {}}
+              value={updateDetails.userType}
+              onChange={(e) => {
+                setUpdateDetails({
+                  ...updateDetails,
+                  userType: e,
+                });
+              }}
             />
             <InputField
               label="Account URL"
@@ -1032,9 +1080,14 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               <RadioButton
                 inputId="editstatusOption1"
                 name="editstatusredio"
-                // value="enable"
-                // onChange={handleChangeEditStatus}
-                checked={updateDetails.status === "enable"}
+                value={1}
+                onChange={(e) => {
+                  setUpdateDetails({
+                    ...updateDetails,
+                    status: e.target.value,
+                  });
+                }}
+                checked={updateDetails.status == 1}
               />
               <label
                 htmlFor="editstatusOption1"
@@ -1048,7 +1101,14 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               <RadioButton
                 inputId="editstatusOption2"
                 name="editstatusredio"
-                checked={updateDetails.status === "disable"}
+                value={0}
+                onChange={(e) => {
+                  setUpdateDetails({
+                    ...updateDetails,
+                    status: e.target.value,
+                  });
+                }}
+                checked={updateDetails.status == 0}
               />
               <label
                 htmlFor="editstatusOption2"
@@ -1122,11 +1182,11 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               id="company"
               name="company"
               placeholder="Enter your Company Name"
-              value={updateDetails.country}
+              value={updateDetails.companyName}
               onChange={(e) => {
                 setUpdateDetails({
                   ...updateDetails,
-                  country: e.target.value,
+                  companyName: e.target.value,
                 });
               }}
             />
@@ -1188,11 +1248,11 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               id="Pincode"
               name="Pincode"
               placeholder="Enter your Pincode"
-              value={updateDetails?.zipCode}
+              value={updateDetails?.pinCode}
               onChange={(e) => {
                 setUpdateDetails({
                   ...updateDetails,
-                  zipCode: e.target.value,
+                  pinCode: e.target.value,
                 });
               }}
             />
