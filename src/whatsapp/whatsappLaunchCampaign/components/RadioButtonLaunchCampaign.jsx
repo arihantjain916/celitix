@@ -131,7 +131,6 @@ function RadioButtonLaunchCampaign({
     if (file) {
       const validExtensions = [".xls", ".xlsx", ".xlsm"];
       const fileExtension = file.name.split(".").pop();
-
       if (validExtensions.includes(`.${fileExtension.toLowerCase()}`)) {
         if (isValidFileName(file.name.split(".")[0])) {
           setUploadedFile(file);
@@ -216,12 +215,14 @@ function RadioButtonLaunchCampaign({
       toast.error("No file selected for upload.");
       return;
     }
+    console.log(223);
 
     if (isUploaded) {
       toast.error("File already uploaded. Please select a different one.");
       return;
     }
 
+    console.log(230);
     setIsUploading(true);
 
     try {
