@@ -61,7 +61,16 @@ export const downloadDetailedLogs = async (data) => {
 
 export const searchDetailLogsByMobileNo = async (srno, mobile) => {
   return await fetchWithAuth(
-    `proCpaasRest/searchDetailLogsByMobileNo?campaignSrNo=${srno}&mobileNo=${mobile}`,
+    `/proCpaasRest/searchDetailLogsByMobileNo?campaignSrNo=${srno}&mobileNo=${mobile}`,
+    {
+      method: "POST",
+    }
+  );
+};
+
+export const fetchDetailsAttachment = async (data) => {
+  return await fetchWithAuth(
+    `/proCpaasRest/downloadDetailedLogs?campaignSrNo=${data}`,
     {
       method: "POST",
     }
