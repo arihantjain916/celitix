@@ -12,9 +12,6 @@ import AnimatedDropdown from "../../whatsapp/components/AnimatedDropdown";
 import UniversalButton from "../../whatsapp/components/UniversalButton";
 import { IoSearch } from "react-icons/io5";
 import { RadioButton } from "primereact/radiobutton";
-import CampaignTableSms from "./components/CampaignTableSms";
-import PreviousDaysTableSms from "./components/PreviousDaysTableSms";
-import DayWiseSummaryTableSms from "./components/DayWiseSummaryTableSms";
 import AttachmentLogsTbaleSms from "./components/AttachmentLogsTbaleSms";
 import { Dialog } from "primereact/dialog";
 import DropdownWithSearch from "../../whatsapp/components/DropdownWithSearch";
@@ -24,7 +21,7 @@ import toast from "react-hot-toast";
 import {
   fetchCampaignData,
   fetchPreviousDayReport,
-  getPreviousCampaignDetails,
+  getAttachmentLogs,
   getSummaryReport,
 } from "../../apis/sms/sms";
 import { DataTable } from "../../components/layout/DataTable";
@@ -34,7 +31,7 @@ import CustomTooltip from "../../whatsapp/components/CustomTooltip";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import UniversalSkeleton from "../../whatsapp/components/UniversalSkeleton";
 import { useNavigate } from "react-router-dom";
-import DownloadForOfflineOutlinedIcon from '@mui/icons-material/DownloadForOfflineOutlined';
+import DownloadForOfflineOutlinedIcon from "@mui/icons-material/DownloadForOfflineOutlined";
 
 const SmsReports = () => {
   const navigate = useNavigate();
@@ -93,6 +90,15 @@ const SmsReports = () => {
     toDate: new Date(),
   });
   const [daywiseTableData, setDaywiseTableData] = useState([]);
+
+  //attachment state
+  const [attachmentDataToFilter, setAttachmentDataToFilter] = useState({
+    startDate: new Date(),
+    endDate: new Date(),
+    type: "",
+  });
+
+  const [attachmentTableData, setAttachmentTableData] = useState([]);
 
   const templatetypeOptions = [
     { label: "Transactional", value: "Transactional" },
@@ -408,6 +414,93 @@ const SmsReports = () => {
                     sx={{
                       fontSize: "1.2rem",
                       color: "green",
+                    }}
+                  />
+                </IconButton>
+              </CustomTooltip>
+            </>
+          ),
+        },
+      ]);
+
+      setRows(
+        Array.isArray(res)
+          ? res.map((item, i) => ({
+              id: i + 1,
+              sn: i + 1,
+              ...item,
+            }))
+          : []
+      );
+    } catch (e) {
+      console.log(e);
+      toast.error("Something went wrong.");
+    } finally {
+      setIsFetching(false);
+    }
+  };
+
+  const handleAttachmentSearch = async () => {
+    const data = {
+      ...attachmentDataToFilter,
+      startDate: new Date(attachmentDataToFilter.startDate).toLocaleDateString(
+        "en-GB"
+      ),
+      endDate: new Date(attachmentDataToFilter.endDate).toLocaleDateString(
+        "en-GB"
+      ),
+      type: "",
+    };
+
+    try {
+      setIsFetching(true);
+      const res = await getAttachmentLogs(data);
+      console.log(res);
+      setColumns([
+        { field: "sn", headerName: "S.No", flex: 0, minWidth: 120 },
+        {
+          field: "campaign_name",
+          headerName: "Campaign Name",
+          flex: 1,
+          minWidth: 120,
+        },
+        { field: "queTime", headerName: "Date", flex: 1, minWidth: 120 },
+        {
+          field: "count",
+          headerName: "Total clicks",
+          flex: 1,
+          minWidth: 120,
+        },
+        {
+          field: "action",
+          headerName: "Action",
+          flex: 1,
+          minWidth: 100,
+          renderCell: (params) => (
+            <>
+              <CustomTooltip title="Detailed Log" placement="top" arrow>
+                <IconButton
+                  className="no-xs"
+                  onClick={() => navigate("/download")}
+                >
+                  <DescriptionOutlinedIcon
+                    sx={{
+                      fontSize: "1.2rem",
+                      color: "green",
+                    }}
+                  />
+                </IconButton>
+              </CustomTooltip>
+              <CustomTooltip title="Download" placement="top" arrow>
+                <IconButton
+                  onClick={() => {
+                    console.log(params.row);
+                  }}
+                >
+                  <DownloadForOfflineOutlinedIcon
+                    sx={{
+                      fontSize: "1.2rem",
+                      color: "gray",
                     }}
                   />
                 </IconButton>
@@ -844,6 +937,13 @@ const SmsReports = () => {
                   label="From Date"
                   id="attachmentfromDate"
                   name="attachmentfromDate"
+                  value={attachmentDataToFilter.startDate}
+                  onChange={(e) => {
+                    setAttachmentDataToFilter((prev) => ({
+                      ...prev,
+                      startDate: e,
+                    }));
+                  }}
                 />
               </div>
               <div className="w-full sm:w-56">
@@ -851,6 +951,13 @@ const SmsReports = () => {
                   label="To Date"
                   id="attachmenttodate"
                   name="attachmenttodate"
+                  value={attachmentDataToFilter.endDate}
+                  onChange={(e) => {
+                    setAttachmentDataToFilter((prev) => ({
+                      ...prev,
+                      endDate: e,
+                    }));
+                  }}
                 />
               </div>
 
@@ -860,9 +967,14 @@ const SmsReports = () => {
                   id="attachmentType"
                   name="attachmentType"
                   options={attachmentoptions}
-                  value={selectattachment}
                   placeholder="Select Type"
-                  onChange={(value) => setSelectAttachment(value)}
+                  value={attachmentDataToFilter.type}
+                  onChange={(value) => {
+                    setAttachmentDataToFilter((prev) => ({
+                      ...prev,
+                      type: value,
+                    }));
+                  }}
                 />
               </div>
               <div className="w-full sm:w-56">
@@ -872,6 +984,7 @@ const SmsReports = () => {
                     id="attachmentshow"
                     name="attachmentshow"
                     variant="primary"
+                    onClick={handleAttachmentSearch}
                   />
                 </div>
               </div>
@@ -879,12 +992,17 @@ const SmsReports = () => {
           </div>
 
           {isFetching ? (
-            <div className="">
+            <div>
               <UniversalSkeleton height="35rem" width="100%" />
             </div>
           ) : (
             <div className="w-full">
-              <AttachmentLogsTbaleSms />
+              <DataTable
+                id="AttachmentTableSms"
+                name="AttachmentTableSms"
+                col={columns}
+                rows={rows}
+              />
             </div>
           )}
         </CustomTabPanel>
