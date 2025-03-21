@@ -22,6 +22,7 @@ import {
   fetchCampaignData,
   fetchPreviousDayReport,
   getAttachmentLogs,
+  getPreviousCampaignDetails,
   getSummaryReport,
 } from "../../apis/sms/sms";
 import { DataTable } from "../../components/layout/DataTable";
@@ -38,11 +39,6 @@ const SmsReports = () => {
 
   const [value, setValue] = useState(0);
   const [isFetching, setIsFetching] = useState(false);
-  const [selectcampaign, setSelectCampaign] = useState(null);
-  const [selectprevious, setSelectPrevious] = useState(null);
-  const [selectsummary, setSelectSummary] = useState(null);
-  const [selectattachment, setSelectAttachment] = useState(null);
-  const [smsStatus, setSmsStatus] = useState("1");
   const [exports, setExports] = useState(false);
   const [exportStatus, setExportStatus] = useState("disable");
   const [selectexportcampaign, setSelectExportCampaign] = useState(null);
@@ -81,6 +77,11 @@ const SmsReports = () => {
     searchUserId: "",
   });
   const [previousTableData, setPreviousTableData] = useState([]);
+  const [previousDayDetailsDialog, setPreviousDayDetailsDialog] =
+    useState(false);
+  const [selectedColDetails, setSelectedColDetails] = useState("");
+  const [previousDayColumn, setPreviousDayColumn] = useState([]);
+  const [previousDayRows, setPreviousDayRows] = useState([]);
 
   //day wise State
   const [daywiseDataToFilter, setDaywiseDataToFilter] = useState({
@@ -322,16 +323,108 @@ const SmsReports = () => {
           flex: 1,
           minWidth: 120,
         },
-        { field: "TOTALSMS", headerName: "Total SMS", flex: 1, minWidth: 120 },
-        { field: "Pending", headerName: "Pending", flex: 1, minWidth: 90 },
-        { field: "failed", headerName: "Failed", flex: 1, minWidth: 70 },
-        { field: "Sent", headerName: "Sent", flex: 1, minWidth: 60 },
-        { field: "delivered", headerName: "Delivered", flex: 1, minWidth: 90 },
+        {
+          field: "TOTALSMS",
+          headerName: "Total SMS",
+          flex: 1,
+          minWidth: 120,
+          renderCell: (params) => (
+            <CustomTooltip title={params.row.TOTALSMS} placement="top" arrow>
+              <button
+                onClick={() => {
+                  handlePreviosDayDetailDisplay("TOTALSMS");
+                }}
+              >
+                {params.row.TOTALSMS}
+              </button>
+            </CustomTooltip>
+          ),
+        },
+        {
+          field: "Pending",
+          headerName: "Pending",
+          flex: 1,
+          minWidth: 90,
+          renderCell: (params) => (
+            <CustomTooltip title={params.row.Pending} placement="top" arrow>
+              <button
+                onClick={() => {
+                  handlePreviosDayDetailDisplay("Pending");
+                }}
+              >
+                {params.row.Pending}
+              </button>
+            </CustomTooltip>
+          ),
+        },
+        {
+          field: "failed",
+          headerName: "Failed",
+          flex: 1,
+          minWidth: 70,
+          renderCell: (params) => (
+            <CustomTooltip title={params.row.failed} placement="top" arrow>
+              <button
+                onClick={() => {
+                  handlePreviosDayDetailDisplay("failed");
+                }}
+              >
+                {params.row.failed}
+              </button>
+            </CustomTooltip>
+          ),
+        },
+        {
+          field: "Sent",
+          headerName: "Sent",
+          flex: 1,
+          minWidth: 60,
+          renderCell: (params) => (
+            <CustomTooltip title={params.row.Sent} placement="top" arrow>
+              <button
+                onClick={() => {
+                  handlePreviosDayDetailDisplay("Sent");
+                }}
+              >
+                {params.row.Sent}
+              </button>
+            </CustomTooltip>
+          ),
+        },
+        {
+          field: "delivered",
+          headerName: "Delivered",
+          flex: 1,
+          minWidth: 90,
+          renderCell: (params) => (
+            <CustomTooltip title={params.row.delivered} placement="top" arrow>
+              <button
+                onClick={() => {
+                  handlePreviosDayDetailDisplay("delivered");
+                }}
+              >
+                {params.row.delivered}
+              </button>
+            </CustomTooltip>
+          ),
+        },
         {
           field: "undelivered",
           headerName: "Undelivered",
           flex: 1,
           minWidth: 110,
+
+          renderCell: (params) => (
+            <CustomTooltip title={params.row.undelivered} placement="top" arrow>
+              <button
+                onClick={() => {
+                  handlePreviosDayDetailDisplay("undelivered");
+                }}
+              >
+                {params.row.undelivered}
+              </button>
+            </CustomTooltip>
+          ),
         },
         {
           field: "drNotAvailable",
@@ -528,6 +621,102 @@ const SmsReports = () => {
       toast.error("Something went wrong.");
     } finally {
       setIsFetching(false);
+    }
+  };
+
+  const handlePreviosDayDetailDisplay = async (col) => {
+    const data = {
+      summaryType: col,
+      mobileNo: "",
+      fromDate: new Date(previousDataToFilter.fromDate).toLocaleDateString(
+        "en-GB"
+      ),
+      toDate: new Date(previousDataToFilter.toDate).toLocaleDateString("en-GB"),
+      page: "0",
+      source: "api",
+    };
+
+    setPreviousDayDetailsDialog(true);
+    setSelectedColDetails(col); 
+    try {
+      const res = await getPreviousCampaignDetails(data);
+
+      setPreviousDayColumn([
+        { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
+        {
+          field: "que_time",
+          headerName: "Created on",
+          flex: 1,
+          minWidth: 120,
+        },
+        {
+          field: "smsunit",
+          headerName: "Sms Unit",
+          flex: 1,
+          minWidth: 120,
+        },
+        {
+          field: "mobile_no",
+          headerName: "Mobile Number",
+          flex: 1,
+          minWidth: 120,
+        },
+        {
+          field: "source",
+          headerName: "Sms Source",
+          flex: 1,
+          minWidth: 120,
+        },
+        {
+          field: "message",
+          headerName: "Message",
+          flex: 1,
+          minWidth: 120,
+        },
+        {
+          field: "sent_time",
+          headerName: "Sent Time",
+          flex: 1,
+          minWidth: 120,
+        },
+        {
+          field: "source",
+          headerName: "Sms Source",
+          flex: 1,
+          minWidth: 120,
+        },
+        {
+          field: "senderid",
+          headerName: "SenderId",
+          flex: 1,
+          minWidth: 120,
+        },
+        {
+          field: "total",
+          headerName: "Total",
+          flex: 1,
+          minWidth: 120,
+        },
+        {
+          field: "status",
+          headerName: "Status",
+          flex: 1,
+          minWidth: 120,
+        },
+      ]);
+
+      setPreviousDayRows(
+        Array.isArray(res)
+          ? res.map((item, index) => ({
+              sn: index + 1,
+              id: index + 1,
+              ...item,
+            }))
+          : []
+      );
+    } catch (e) {
+      console.log(e);
+      toast.error("Something went wrong.");
     }
   };
 
@@ -1464,6 +1653,25 @@ const SmsReports = () => {
             </div>
           )}
         </div>
+      </Dialog>
+
+      <Dialog
+        header={selectedColDetails}
+        visible={previousDayDetailsDialog}
+        onHide={() => {
+          setPreviousDayDetailsDialog(false);
+          setPreviousDayRows([]);
+          setPreviousDayColumn([]);
+        }}
+        className="w-full h-full"
+        draggable={false}
+      >
+        <DataTable
+          id="previousdaydetailstable"
+          name="previousdaydetailstable"
+          rows={previousDayRows}
+          col={previousDayColumn}
+        />
       </Dialog>
     </div>
   );
