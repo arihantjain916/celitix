@@ -34,7 +34,7 @@ import CustomTooltip from "../../whatsapp/components/CustomTooltip";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import UniversalSkeleton from "../../whatsapp/components/UniversalSkeleton";
 import { useNavigate } from "react-router-dom";
-import { resolveEnvPrefix } from "vite";
+import DownloadForOfflineOutlinedIcon from '@mui/icons-material/DownloadForOfflineOutlined';
 
 const SmsReports = () => {
   const navigate = useNavigate();
@@ -360,51 +360,72 @@ const SmsReports = () => {
         "en-GB"
       ),
       toDate: new Date(daywiseDataToFilter.toDate).toLocaleDateString("en-GB"),
+      summaryType: "date,user",
+      smsType: daywiseDataToFilter.smsType ?? 1,
     };
-
-    console.log(data);
 
     try {
       setIsFetching(true);
       const res = await getSummaryReport(data);
       console.log(res);
-      // setColumns([
-      //   { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
-      //   {
-      //     field: "sending_user_id",
-      //     headerName: "User",
-      //     flex: 1,
-      //     minWidth: 120,
-      //   },
-      //   { field: "TOTALSMS", headerName: "Total SMS", flex: 1, minWidth: 120 },
-      //   { field: "Pending", headerName: "Pending", flex: 1, minWidth: 90 },
-      //   { field: "failed", headerName: "Failed", flex: 1, minWidth: 70 },
-      //   { field: "Sent", headerName: "Sent", flex: 1, minWidth: 60 },
-      //   { field: "delivered", headerName: "Delivered", flex: 1, minWidth: 90 },
-      //   {
-      //     field: "undelivered",
-      //     headerName: "Undelivered",
-      //     flex: 1,
-      //     minWidth: 110,
-      //   },
-      //   {
-      //     field: "drNotAvailable",
-      //     headerName: "Pending DR",
-      //     flex: 1,
-      //     minWidth: 110,
-      //   },
-      //   { field: "NDNCDenied", headerName: "NDNC", flex: 1, minWidth: 70 },
-      // ]);
+      setColumns([
+        { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
+        { field: "queuedate", headerName: "Que Date", flex: 1, minWidth: 50 },
+        { field: "smscount", headerName: "SMS Count", flex: 1, minWidth: 50 },
+        { field: "smsunits", headerName: "SMS Units", flex: 1, minWidth: 50 },
+        { field: "pending", headerName: "Pending", flex: 1, minWidth: 50 },
+        { field: "failed", headerName: "Failed", flex: 1, minWidth: 50 },
+        { field: "blocked", headerName: "Blocked", flex: 1, minWidth: 50 },
+        { field: "sent", headerName: "Sent", flex: 1, minWidth: 50 },
+        { field: "delivered", headerName: "Delivered", flex: 1, minWidth: 50 },
+        {
+          field: "not_delivered",
+          headerName: "Not delivered",
+          flex: 1,
+          minWidth: 50,
+        },
+        {
+          field: "pending",
+          headerName: "Pending DR",
+          flex: 1,
+          minWidth: 50,
+        },
+        {
+          field: "action",
+          headerName: "Action",
+          flex: 1,
+          minWidth: 50,
+          renderCell: (params) => (
+            <>
+              <CustomTooltip title="Download" placement="top" arrow>
+                <IconButton
+                  className="no-xs"
+                  onClick={() => {
+                    console.log(params.row);
+                  }}
+                >
+                  <DownloadForOfflineOutlinedIcon
+                    sx={{
+                      fontSize: "1.2rem",
+                      color: "green",
+                    }}
+                  />
+                </IconButton>
+              </CustomTooltip>
+            </>
+          ),
+        },
+      ]);
 
-      // setRows(
-      //   Array.isArray(res)
-      //     ? res.map((item, i) => ({
-      //         id: i + 1,
-      //         sn: i + 1,
-      //         ...item,
-      //       }))
-      //     : []
-      // );
+      setRows(
+        Array.isArray(res)
+          ? res.map((item, i) => ({
+              id: i + 1,
+              sn: i + 1,
+              ...item,
+            }))
+          : []
+      );
     } catch (e) {
       console.log(e);
       toast.error("Something went wrong.");
@@ -806,7 +827,12 @@ const SmsReports = () => {
             </div>
           ) : (
             <div className="w-full">
-              <DayWiseSummaryTableSms />
+              <DataTable
+                id="DayWiseSummaryTableSms"
+                name="DayWiseSummaryTableSms"
+                col={columns}
+                rows={rows}
+              />
             </div>
           )}
         </CustomTabPanel>

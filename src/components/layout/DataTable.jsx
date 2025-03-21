@@ -4,6 +4,7 @@ import { DataGrid, GridFooterContainer } from "@mui/x-data-grid";
 import { Paper, Typography, Box, Button } from "@mui/material";
 import { useState } from "react";
 import CustomNoRowsOverlay from "../../whatsapp/components/CustomNoRowsOverlay";
+import toast from "react-hot-toast";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -74,6 +75,15 @@ export const DataTable = ({
   setSelectedRows,
   selectedRows,
 }) => {
+  
+  if(!col){
+    toast.error("Please insert col");
+    return;
+  }
+  if(!rows){
+    toast.error("Please insert col");
+    return;
+  }
 
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
