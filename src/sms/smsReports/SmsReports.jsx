@@ -21,7 +21,12 @@ import DropdownWithSearch from "../../whatsapp/components/DropdownWithSearch";
 import UniversalLabel from "../../whatsapp/components/UniversalLabel";
 import { Checkbox } from "primereact/checkbox";
 import toast from "react-hot-toast";
-import { fetchCampaignData } from "../../apis/sms/sms";
+import {
+  fetchCampaignData,
+  fetchPreviousDayReport,
+  getPreviousCampaignDetails,
+  getSummaryReport,
+} from "../../apis/sms/sms";
 import { DataTable } from "../../components/layout/DataTable";
 import IconButton from "@mui/material/IconButton";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
@@ -29,6 +34,7 @@ import CustomTooltip from "../../whatsapp/components/CustomTooltip";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import UniversalSkeleton from "../../whatsapp/components/UniversalSkeleton";
 import { useNavigate } from "react-router-dom";
+import { resolveEnvPrefix } from "vite";
 
 const SmsReports = () => {
   const navigate = useNavigate();
@@ -64,6 +70,30 @@ const SmsReports = () => {
   });
   const [campaignTableData, setCampaignTableData] = useState([]);
 
+  //previous Day State
+  const [previousDataToFilter, setPreviousDataToFilter] = useState({
+    fromDate: new Date(),
+    toDate: new Date(),
+    campaingName: "",
+    mobilesnodata: "",
+    campaingType: "1",
+    senderId: "",
+    message: "",
+    source: "api",
+    searchSrNo: "",
+    searchUserId: "",
+  });
+  const [previousTableData, setPreviousTableData] = useState([]);
+
+  //day wise State
+  const [daywiseDataToFilter, setDaywiseDataToFilter] = useState({
+    summaryType: "date,user",
+    smsType: "",
+    fromDate: new Date(),
+    toDate: new Date(),
+  });
+  const [daywiseTableData, setDaywiseTableData] = useState([]);
+
   const templatetypeOptions = [
     { label: "Transactional", value: "Transactional" },
     { label: "Promotional", value: "Promotional" },
@@ -82,6 +112,8 @@ const SmsReports = () => {
 
     if (e.checked) _campaigncolumns.push(e.value);
     else _campaigncolumns.splice(_campaigncolumns.indexOf(e.value), 1);
+
+    console.log(_campaigncolumns);
 
     setCampaignColumns(_campaigncolumns);
   };
@@ -159,6 +191,8 @@ const SmsReports = () => {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
+    setColumns([]);
+    setRows([]);
   };
 
   const handleCampaignSearch = async () => {
@@ -254,6 +288,123 @@ const SmsReports = () => {
             }))
           : []
       );
+    } catch (e) {
+      console.log(e);
+      toast.error("Something went wrong.");
+    } finally {
+      setIsFetching(false);
+    }
+  };
+
+  const handlePreviousDaysSearch = async () => {
+    const data = {
+      ...previousDataToFilter,
+      fromDate: new Date(previousDataToFilter.fromDate).toLocaleDateString(
+        "en-GB"
+      ),
+      toDate: new Date(previousDataToFilter.toDate).toLocaleDateString("en-GB"),
+    };
+
+    try {
+      setIsFetching(true);
+      const res = await fetchPreviousDayReport(data);
+      setColumns([
+        { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
+        {
+          field: "sending_user_id",
+          headerName: "User",
+          flex: 1,
+          minWidth: 120,
+        },
+        { field: "TOTALSMS", headerName: "Total SMS", flex: 1, minWidth: 120 },
+        { field: "Pending", headerName: "Pending", flex: 1, minWidth: 90 },
+        { field: "failed", headerName: "Failed", flex: 1, minWidth: 70 },
+        { field: "Sent", headerName: "Sent", flex: 1, minWidth: 60 },
+        { field: "delivered", headerName: "Delivered", flex: 1, minWidth: 90 },
+        {
+          field: "undelivered",
+          headerName: "Undelivered",
+          flex: 1,
+          minWidth: 110,
+        },
+        {
+          field: "drNotAvailable",
+          headerName: "Pending DR",
+          flex: 1,
+          minWidth: 110,
+        },
+        { field: "NDNCDenied", headerName: "NDNC", flex: 1, minWidth: 70 },
+      ]);
+
+      setRows(
+        Array.isArray(res)
+          ? res.map((item, i) => ({
+              id: i + 1,
+              sn: i + 1,
+              ...item,
+            }))
+          : []
+      );
+    } catch (e) {
+      console.log(e);
+      toast.error("Something went wrong.");
+    } finally {
+      setIsFetching(false);
+    }
+  };
+
+  const handleDayWiseSummary = async () => {
+    const data = {
+      ...daywiseDataToFilter,
+      fromDate: new Date(daywiseDataToFilter.fromDate).toLocaleDateString(
+        "en-GB"
+      ),
+      toDate: new Date(daywiseDataToFilter.toDate).toLocaleDateString("en-GB"),
+    };
+
+    console.log(data);
+
+    try {
+      setIsFetching(true);
+      const res = await getSummaryReport(data);
+      console.log(res);
+      // setColumns([
+      //   { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
+      //   {
+      //     field: "sending_user_id",
+      //     headerName: "User",
+      //     flex: 1,
+      //     minWidth: 120,
+      //   },
+      //   { field: "TOTALSMS", headerName: "Total SMS", flex: 1, minWidth: 120 },
+      //   { field: "Pending", headerName: "Pending", flex: 1, minWidth: 90 },
+      //   { field: "failed", headerName: "Failed", flex: 1, minWidth: 70 },
+      //   { field: "Sent", headerName: "Sent", flex: 1, minWidth: 60 },
+      //   { field: "delivered", headerName: "Delivered", flex: 1, minWidth: 90 },
+      //   {
+      //     field: "undelivered",
+      //     headerName: "Undelivered",
+      //     flex: 1,
+      //     minWidth: 110,
+      //   },
+      //   {
+      //     field: "drNotAvailable",
+      //     headerName: "Pending DR",
+      //     flex: 1,
+      //     minWidth: 110,
+      //   },
+      //   { field: "NDNCDenied", headerName: "NDNC", flex: 1, minWidth: 70 },
+      // ]);
+
+      // setRows(
+      //   Array.isArray(res)
+      //     ? res.map((item, i) => ({
+      //         id: i + 1,
+      //         sn: i + 1,
+      //         ...item,
+      //       }))
+      //     : []
+      // );
     } catch (e) {
       console.log(e);
       toast.error("Something went wrong.");
@@ -452,6 +603,14 @@ const SmsReports = () => {
                   label="From Date"
                   id="previousfromDate"
                   name="previousfromDate"
+                  placeholder="Select From Date"
+                  value={previousDataToFilter.fromDate}
+                  onChange={(value) => {
+                    setPreviousDataToFilter((prev) => ({
+                      ...prev,
+                      fromDate: value,
+                    }));
+                  }}
                 />
               </div>
               <div className="w-full sm:w-56">
@@ -459,6 +618,14 @@ const SmsReports = () => {
                   label="To Date"
                   id="previoustodate"
                   name="previoustodate"
+                  placeholder="Select To Date"
+                  value={previousDataToFilter.toDate}
+                  onChange={(value) => {
+                    setPreviousDataToFilter((prev) => ({
+                      ...prev,
+                      toDate: value,
+                    }));
+                  }}
                 />
               </div>
               <div className="w-full sm:w-56">
@@ -467,6 +634,13 @@ const SmsReports = () => {
                   id="previousnumber"
                   name="previousnumber"
                   placeholder="Enter Mobile Number"
+                  value={previousDataToFilter.mobilesnodata}
+                  onChange={(e) => {
+                    setPreviousDataToFilter((prev) => ({
+                      ...prev,
+                      mobilesnodata: e.target.value,
+                    }));
+                  }}
                 />
               </div>
               <div className="w-full sm:w-56">
@@ -475,9 +649,14 @@ const SmsReports = () => {
                   id="previousType"
                   name="previousType"
                   options={previousoptions}
-                  value={selectprevious}
                   placeholder="Select Type"
-                  onChange={(value) => setSelectPrevious(value)}
+                  value={previousDataToFilter.campaingType}
+                  onChange={(value) => {
+                    setPreviousDataToFilter((prev) => ({
+                      ...prev,
+                      campaingType: value,
+                    }));
+                  }}
                 />
               </div>
               <div className="w-full sm:w-56">
@@ -486,6 +665,13 @@ const SmsReports = () => {
                   id="previoussenderid"
                   name="previoussenderid"
                   placeholder="Enter Sender ID"
+                  value={previousDataToFilter.senderId}
+                  onChange={(e) => {
+                    setPreviousDataToFilter((prev) => ({
+                      ...prev,
+                      senderId: e.target.value,
+                    }));
+                  }}
                 />
               </div>
               <div className="w-full sm:w-56">
@@ -494,6 +680,13 @@ const SmsReports = () => {
                   id="previouscontent"
                   name="previouscontent"
                   placeholder="Enter Content ID"
+                  value={previousDataToFilter.message}
+                  onChange={(e) => {
+                    setPreviousDataToFilter((prev) => ({
+                      ...prev,
+                      message: e.target.value,
+                    }));
+                  }}
                 />
               </div>
 
@@ -504,6 +697,7 @@ const SmsReports = () => {
                     id="previousshow"
                     name="previousshow"
                     variant="primary"
+                    onClick={handlePreviousDaysSearch}
                   />
                 </div>
               </div>
@@ -515,7 +709,12 @@ const SmsReports = () => {
             </div>
           ) : (
             <div className="w-full">
-              <PreviousDaysTableSms />
+              <DataTable
+                id="PreviousDaysTableSms"
+                name="PreviousDaysTableSms"
+                rows={rows}
+                col={columns}
+              />
             </div>
           )}
         </CustomTabPanel>
@@ -527,6 +726,13 @@ const SmsReports = () => {
                   label="From Date"
                   id="summaryfromDate"
                   name="summaryfromDate"
+                  value={daywiseDataToFilter.fromDate}
+                  onChange={(e) => {
+                    setDaywiseDataToFilter((prev) => ({
+                      ...prev,
+                      fromDate: e,
+                    }));
+                  }}
                 />
               </div>
               <div className="w-full sm:w-56">
@@ -534,44 +740,33 @@ const SmsReports = () => {
                   label="To Date"
                   id="summarytodate"
                   name="summarytodate"
+                  value={daywiseDataToFilter.toDate}
+                  onChange={(e) => {
+                    setDaywiseDataToFilter((prev) => ({
+                      ...prev,
+                      toDate: e,
+                    }));
+                  }}
                 />
               </div>
               <div className="flex flex-wrap w-full gap-4 sm:w-108">
-                <div className="flex-1 px-2 py-2 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="smsOption1"
-                      name="smsredio"
-                      value="1"
-                      onChange={handleChangesmsReports}
-                      checked={smsStatus === "1"}
-                    />
-                    <label
-                      htmlFor="smsOption1"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Day Wise
-                    </label>
-                  </div>
-                </div>
-
-                <div className="flex-1 px-2 py-2 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="smsOption2"
-                      name="smsredio"
-                      value="0"
-                      onChange={handleChangesmsReports}
-                      checked={smsStatus === "0"}
-                    />
-                    <label
-                      htmlFor="smsOption2"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Sms Type Wise
-                    </label>
-                  </div>
-                </div>
+                <AnimatedDropdown
+                  label="SmsType"
+                  id="SmsTyoe"
+                  name="SmsType"
+                  options={[
+                    { value: 1, label: "Day Wise" },
+                    { value: 1, label: "Sms type Wise" },
+                  ]}
+                  value={daywiseDataToFilter.smsType}
+                  placeholder="Select Type"
+                  onChange={(value) => {
+                    setDaywiseDataToFilter((prev) => ({
+                      ...prev,
+                      smsType: value,
+                    }));
+                  }}
+                />
               </div>
 
               <div className="w-full sm:w-56">
@@ -580,10 +775,15 @@ const SmsReports = () => {
                   id="summaryType"
                   name="summaryType"
                   options={summaryoptions}
-                  value={selectsummary}
+                  value={daywiseDataToFilter.summaryType}
                   placeholder="Select Type"
-                  onChange={(value) => setSelectSummary(value)}
-                  disabled={smsStatus === "1"}
+                  onChange={(value) => {
+                    setDaywiseDataToFilter((prev) => ({
+                      ...prev,
+                      summaryType: value,
+                    }));
+                  }}
+                  disabled={daywiseDataToFilter.smsType === 1}
                 />
               </div>
               <div className="w-full sm:w-56">
@@ -593,6 +793,7 @@ const SmsReports = () => {
                     id="summaryshow"
                     name="summaryshow"
                     variant="primary"
+                    onClick={handleDayWiseSummary}
                   />
                 </div>
               </div>

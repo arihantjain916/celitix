@@ -8,8 +8,15 @@ export const fetchCampaignData = async (data) => {
   });
 };
 
-export const getPreviousDaysCampaignReport = async (data) => {
+export const fetchPreviousDayReport = async (data) => {
   return await fetchWithAuth("/proCpaasRest/getSMSPrevoiusDaysCampaignReport", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+
+export const getPreviousDaysCampaignReport = async (data) => {
+  return await fetchWithAuth("/proCpaasRest/getPreviousSMSCampaignDetails", {
     method: "POST",
     body: JSON.stringify(data),
   });

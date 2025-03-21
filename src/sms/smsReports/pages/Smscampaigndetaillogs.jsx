@@ -83,6 +83,7 @@ const Smscampaigndetaillogs = () => {
               sn: i + 1,
               id: i + 1,
               ...item,
+              actual_status: item.actual_status === " " ? "-" : "-",
             }))
           : []
       );
