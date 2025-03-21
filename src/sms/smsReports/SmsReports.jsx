@@ -481,7 +481,11 @@ const SmsReports = () => {
               <CustomTooltip title="Detailed Log" placement="top" arrow>
                 <IconButton
                   className="no-xs"
-                  onClick={() => navigate("/download")}
+                  onClick={() =>
+                    navigate("/smsAttachmentdetaillog", {
+                      state: { id: params.row.campaign_srno },
+                    })
+                  }
                 >
                   <DescriptionOutlinedIcon
                     sx={{

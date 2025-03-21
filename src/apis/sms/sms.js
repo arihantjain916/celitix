@@ -68,9 +68,9 @@ export const searchDetailLogsByMobileNo = async (srno, mobile) => {
   );
 };
 
-export const fetchDetailsAttachment = async (data) => {
+export const fetchDetailsAttachment = async (srno, mbno) => {
   return await fetchWithAuth(
-    `/proCpaasRest/downloadDetailedLogs?campaignSrNo=${data}`,
+    `/proCpaasRest/searchDetailLogsByMobileNo?campaignSrNo=${srno}&mobileNo=${mbno}`,
     {
       method: "POST",
     }
