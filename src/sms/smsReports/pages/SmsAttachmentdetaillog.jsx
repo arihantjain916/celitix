@@ -74,6 +74,8 @@ const SmsAttachmentdetaillog = () => {
             name="detailslogmobile"
             type="number"
             placeholder="Enter Mobile Number"
+            value={mobileNo}
+            onChange={(e) => setMobileNo(e.target.value)}
           />
         </div>
 
@@ -85,6 +87,7 @@ const SmsAttachmentdetaillog = () => {
               name="detailslogsearch"
               variant="primary"
               icon={<IoSearch />}
+              onClick={handleFetchAttachmentDetails}
             />
           </div>
         </div>
