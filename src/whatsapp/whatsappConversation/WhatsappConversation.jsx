@@ -90,6 +90,10 @@ const WhatsappConversation = () => {
     console.log(currentPage)
     handleSearch()
   }, [currentPage]);
+  
+  useEffect(() => {
+    console.log(paginationModel)
+  }, [paginationModel]);
 
   return (
     <div className="w-full">

@@ -90,6 +90,9 @@ const WhatsappConversationTable = ({
   totalPage,
 }) => {
   const [selectedRows, setSelectedRows] = useState([]);
+  const totalPages = Math.floor(totalPage / paginationModel.pageSize);
+  
+  console.log("totalPages",totalPages);
 
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
@@ -129,7 +132,6 @@ const WhatsappConversationTable = ({
       }))
     : [];
 
-  const totalPages = Math.ceil(totalPage / paginationModel.pageSize);
 
   const CustomFooter = () => {
     return (
@@ -162,7 +164,7 @@ const WhatsappConversationTable = ({
           )}
 
           <Typography variant="body2">
-            Total Records: <span className="font-semibold">{rows.length}</span>
+            Total Records: <span className="font-semibold">{data?.total || 0}</span>
           </Typography>
         </Box>
 
@@ -191,16 +193,12 @@ const WhatsappConversationTable = ({
         name={name}
         rows={rows}
         columns={columns}
-        initialState={{ pagination: { paginationModel } }}
-        pageSizeOptions={[10, 20, 50]}
-        pagination
-        paginationModel={paginationModel}
-        onPaginationModelChange={setPaginationModel}
         rowHeight={45}
         slots={{
           footer: CustomFooter,
           noRowsOverlay: CustomNoRowsOverlay,
         }}
+        slotProps={{ footer: { totalRecords: totalPage } }}
         onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
         disableRowSelectionOnClick
         disableColumnResize
