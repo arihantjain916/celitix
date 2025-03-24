@@ -13,6 +13,7 @@ import {
   getaccountInfo,
   getSmsRate,
 } from "../../apis/user/user";
+import Loader from "../../whatsapp/components/Loader";
 
 import { getCountryList } from "../../apis/common/common";
 
@@ -88,6 +89,7 @@ function AccountInfoModal({ show, handleClose }) {
   const [whatsapprate, setWhatsAppRate] = useState([]);
   const [accountInfo, setAccountInfo] = useState([]);
   const [countryList, setCountryList] = useState([]);
+  const [isFetching, setIsFetching] = useState(false);
 
   useEffect(() => {
     async function getRcsRateData() {
@@ -103,8 +105,10 @@ function AccountInfoModal({ show, handleClose }) {
     }
 
     async function getaccountInfoData() {
+      setIsFetching(true);
       const data = await getaccountInfo();
       setAccountInfo(Array(data));
+      setIsFetching(false);
     }
 
     async function getCountryListData() {
@@ -212,7 +216,7 @@ function AccountInfoModal({ show, handleClose }) {
         item?.isoCode?.toString().includes(searchTerm.toString())
     );
     setFilteredWhatsAppData(filtered);
-    setSearchTerm("")
+    setSearchTerm("");
   };
 
   const [paginationModel, setPaginationModel] = useState({
@@ -357,59 +361,65 @@ function AccountInfoModal({ show, handleClose }) {
         modal
         draggable={false}
       >
-        <div className="flex justify-end mb-3">
-          <span className="px-3 py-1 font-medium text-blue-700 bg-blue-100 rounded-md">
-            Account Expiry: {accountInfo[0]?.expiryDate}
-          </span>
-        </div>
-
-        {new Date() < new Date(accountInfo[0]?.expiryDate) ? (
-          <Paper sx={{ height: "auto" }}>
-            <DataGrid
-              rows={accountrows}
-              columns={accountcolumns}
-              initialState={{ pagination: { paginationModel } }}
-              pageSizeOptions={[10, 20, 50]}
-              pagination
-              paginationModel={paginationModel}
-              onPaginationModelChange={setPaginationModel}
-              // checkboxSelection
-              rowHeight={45}
-              slots={{ footer: CustomFooter }}
-              // slotProps={{ footer: { totalRecords: rows.length } }}
-              onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
-              disableRowSelectionOnClick
-              // autoPageSize
-              disableColumnResize
-              disableColumnMenu
-              sx={{
-                border: 0,
-                "& .MuiDataGrid-cellCheckbox": {
-                  outline: "none !important",
-                },
-                "& .MuiDataGrid-cell": {
-                  outline: "none !important",
-                },
-                "& .MuiDataGrid-columnHeaders": {
-                  color: "#193cb8",
-                  fontSize: "14px",
-                  fontWeight: "bold !important",
-                },
-                "& .MuiDataGrid-row--borderBottom": {
-                  backgroundColor: "#e6f4ff !important",
-                },
-                "& .MuiDataGrid-columnSeparator": {
-                  // display: "none",
-                  color: "#ccc",
-                },
-              }}
-            />
-          </Paper>
+        {isFetching ? (
+          <Loader />
         ) : (
-          <h1>
-            Your account is expired. Please contact Admin to activate your
-            account.
-          </h1>
+          <>
+            <div className="flex justify-end mb-3">
+              <span className="px-3 py-1 font-medium text-blue-700 bg-blue-100 rounded-md">
+                Account Expiry: {accountInfo[0]?.expiryDate}
+              </span>
+            </div>
+
+            {new Date() < new Date(accountInfo[0]?.expiryDate) ? (
+              <Paper sx={{ height: "auto" }}>
+                <DataGrid
+                  rows={accountrows}
+                  columns={accountcolumns}
+                  initialState={{ pagination: { paginationModel } }}
+                  pageSizeOptions={[10, 20, 50]}
+                  pagination
+                  paginationModel={paginationModel}
+                  onPaginationModelChange={setPaginationModel}
+                  // checkboxSelection
+                  rowHeight={45}
+                  slots={{ footer: CustomFooter }}
+                  // slotProps={{ footer: { totalRecords: rows.length } }}
+                  onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
+                  disableRowSelectionOnClick
+                  // autoPageSize
+                  disableColumnResize
+                  disableColumnMenu
+                  sx={{
+                    border: 0,
+                    "& .MuiDataGrid-cellCheckbox": {
+                      outline: "none !important",
+                    },
+                    "& .MuiDataGrid-cell": {
+                      outline: "none !important",
+                    },
+                    "& .MuiDataGrid-columnHeaders": {
+                      color: "#193cb8",
+                      fontSize: "14px",
+                      fontWeight: "bold !important",
+                    },
+                    "& .MuiDataGrid-row--borderBottom": {
+                      backgroundColor: "#e6f4ff !important",
+                    },
+                    "& .MuiDataGrid-columnSeparator": {
+                      // display: "none",
+                      color: "#ccc",
+                    },
+                  }}
+                />
+              </Paper>
+            ) : (
+              <h1>
+                Your account is expired. Please contact Admin to activate your
+                account.
+              </h1>
+            )}
+          </>
         )}
       </Dialog>
 
