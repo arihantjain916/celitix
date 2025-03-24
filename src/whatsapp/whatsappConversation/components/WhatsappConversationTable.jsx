@@ -90,9 +90,8 @@ const WhatsappConversationTable = ({
   totalPage,
 }) => {
   const [selectedRows, setSelectedRows] = useState([]);
-  const totalPages = Math.floor(totalPage / paginationModel.pageSize);
-  
-  console.log("totalPages",totalPages);
+  const totalPages = Math.ceil(totalPage / paginationModel.pageSize);
+
 
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },

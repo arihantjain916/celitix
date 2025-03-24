@@ -35,6 +35,7 @@ const WhatsappConversation = () => {
   });
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPage, setTotalPage] = useState(1);
+  const [isMobileSearched, setIsMobileSearched] = useState(false);
 
   // Fetch WABA List
   useEffect(() => {
@@ -61,39 +62,42 @@ const WhatsappConversation = () => {
 
   // Handle Search Click
   const handleSearch = async () => {
-    if (!filters.wabaSrno) {
-      toast.error("Please select WABA");
-      return;
+    if (!filters.wabaSrno) return toast.error("Please select WABA");
+
+    const isNewSearch = filters.mobileNo && !isMobileSearched;
+    const page = isNewSearch ? 0 : currentPage;
+
+    if (isNewSearch) {
+      setIsMobileSearched(true);
+      // setPaginationModel({ page: 0, pageSize: 10 });
     }
 
-    setIsFetching(true);
+    // console.log("isNewSearch" + isNewSearch);
+
     try {
+      setIsFetching(true);
+
       const formattedData = {
         ...filters,
-        fromDate: formatDate(filters.fromDate),
-        toDate: formatDate(filters.toDate),
-        mobileNo: filters.mobileNo || "",
-        page: currentPage,
+        fromDate: formatDate(filters?.fromDate),
+        toDate: formatDate(filters?.toDate),
+        mobileNo: filters?.mobileNo || "",
+        page,
       };
+
       const res = await getConversationReport(formattedData);
-      console.log(res.data);
       setData(res);
-      setTotalPage(res.total);
+      setTotalPage(res?.total || 0);
     } catch (e) {
-      toast.error("Error fetching Whatsapp Conversation");
+      toast.error("Error fetching WhatsApp Conversation");
     } finally {
       setIsFetching(false);
     }
   };
 
   useEffect(() => {
-    console.log(currentPage)
-    handleSearch()
+    handleSearch();
   }, [currentPage]);
-  
-  useEffect(() => {
-    console.log(paginationModel)
-  }, [paginationModel]);
 
   return (
     <div className="w-full">
