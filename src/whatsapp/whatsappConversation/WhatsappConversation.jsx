@@ -1,29 +1,37 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { IoSearch } from "react-icons/io5";
-import toast from 'react-hot-toast';
+import toast from "react-hot-toast";
 
-
-import AnimatedDropdown from '../components/AnimatedDropdown';
-import UniversalDatePicker from '../components/UniversalDatePicker';
-import InputField from '../components/InputField';
+import AnimatedDropdown from "../components/AnimatedDropdown";
+import UniversalDatePicker from "../components/UniversalDatePicker";
+import InputField from "../components/InputField";
 import { HiOutlineChat } from "react-icons/hi";
-import WhatsappConversationTable from './components/WhatsappConversationTable';
-import UniversalButton from '../components/UniversalButton';
-import UniversalSkeleton from '../components/UniversalSkeleton';
-import Loader from '../components/Loader';
-import { getWabaList } from '../../apis/whatsapp/whatsapp.js';
-
+import WhatsappConversationTable from "./components/WhatsappConversationTable";
+import UniversalButton from "../components/UniversalButton";
+import UniversalSkeleton from "../components/UniversalSkeleton";
+import Loader from "../components/Loader";
+import {
+  getConversationReport,
+  getWabaList,
+} from "../../apis/whatsapp/whatsapp.js";
+import { data } from "autoprefixer";
+import { set } from "date-fns";
 
 const WhatsappConversation = () => {
-  const [selectedWaba, setSelectedWaba] = useState('');
+  const [selectedWaba, setSelectedWaba] = useState("");
   const [selectedDateFrom, setSelectedDateFrom] = useState(null);
   const [selectedDateTo, setSelectedDateTo] = useState(null);
   const [inputMobile, setInputMobile] = useState("");
   const [isFetching, setIsFetching] = useState(false);
-  const [filteredData, setFilteredData] = useState([]);
+  const [dataToBeFiltered, setdataToBeFiltered] = useState({
+    wabaSrno: "",
+    fromDate: new Date(),
+    toDate: new Date(),
+    mobileNo: "",
+    page: 0,
+  });
   const [isLoading, setIsLoading] = useState(true);
   const [wabaList, setWabaList] = useState(null);
-
 
   // WABA LIST
   useEffect(() => {
@@ -47,45 +55,57 @@ const WhatsappConversation = () => {
     fetchWabaList();
   }, []);
 
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  };
+
   // ✅ Handle Search Click
   const handleSearch = async () => {
-    console.log("🔍 Search Filters:");
-    console.log({
-      waba: selectedWaba,
-      FromDate: selectedDateFrom,
-      ToDate: selectedDateTo,
-      mobileNumber: inputMobile,
-    });
-
-    if (!selectedDateFrom || !selectedDateTo) {
-      alert("Please select a valid date range.");
+    if (!dataToBeFiltered.wabaSrno) {
+      toast.error("Please select WABA");
       return;
     }
 
-    setIsFetching(true);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setIsFetching(false);
-    setFilteredData([]);
+    const data = {
+      ...dataToBeFiltered,
+      fromDate: formatDate(dataToBeFiltered.fromDate),
+      toDate: formatDate(dataToBeFiltered.toDate),
+      mobileNo: dataToBeFiltered.mobileNo ?? "",
+    };
+    console.log(data);
+    try {
+      setIsFetching(true);
+      const res = await getConversationReport(data);
+      console.log(res);
+    } catch (e) {
+      console.log(e);
+      toast.error("Error fetching Whatsapp Conversation");
+    } finally {
+      setIsFetching(false);
+    }
   };
 
-
   return (
-    <div className='w-full'>
+    <div className="w-full">
       {isLoading ? (
         <>
           <Loader />
         </>
       ) : (
         <>
-          <div className='flex  justify-center gap-1' >
-            <div className='pt-1' >
-              <HiOutlineChat
-                className='text-2xl text-green-600'
-              />
+          <div className="flex justify-center gap-1">
+            <div className="pt-1">
+              <HiOutlineChat className="text-2xl text-green-600" />
             </div>
-            <h1 className='text-xl text-center font-m font-semibold text-green-600 mb-5'> Whatsapp Conversation</h1>
+            <h1 className="mb-5 text-xl font-semibold text-center text-green-600 font-m">
+              Whatsapp Conversation
+            </h1>
           </div>
-          <div className="flex flex-wrap gap-4 items-end justify-start align-middle mb-5 w-full">
+          <div className="flex flex-wrap items-end justify-start w-full gap-4 mb-5 align-middle">
             {/* Select WABA Dropdown */}
             <div className="w-full sm:w-56">
               <AnimatedDropdown
@@ -94,11 +114,16 @@ const WhatsappConversation = () => {
                 label="Select WABA"
                 placeholder="Select WABA"
                 options={wabaList?.map((waba) => ({
-                  value: waba.mobileNo,
+                  value: waba.wabaSrno,
                   label: waba.name,
                 }))}
-                value={selectedWaba}
-                onChange={(value) => setSelectedWaba(value)}
+                value={dataToBeFiltered.wabaSrno}
+                onChange={(value) => {
+                  setdataToBeFiltered((prevData) => ({
+                    ...prevData,
+                    wabaSrno: value,
+                  }));
+                }}
               />
             </div>
 
@@ -108,10 +133,15 @@ const WhatsappConversation = () => {
                 id="conversationfrom"
                 name="conversationfrom"
                 label="From Date"
-                value={selectedDateFrom}
-                onChange={(newValue) => setSelectedDateFrom(newValue)}
-                error={!selectedDateFrom}
+                error={!dataToBeFiltered.fromDate}
                 errorText="Please select a valid date"
+                value={dataToBeFiltered.fromDate}
+                onChange={(value) => {
+                  setdataToBeFiltered((prevData) => ({
+                    ...prevData,
+                    fromDate: value,
+                  }));
+                }}
               />
             </div>
 
@@ -121,10 +151,15 @@ const WhatsappConversation = () => {
                 id="conversationto"
                 name="conversationto"
                 label="To Date"
-                value={selectedDateTo}
-                onChange={(newValue) => setSelectedDateTo(newValue)}
-                error={!selectedDateTo}
                 errorText="Please select a valid date"
+                error={!dataToBeFiltered.toDate}
+                value={dataToBeFiltered.toDate}
+                onChange={(value) => {
+                  setdataToBeFiltered((prevData) => ({
+                    ...prevData,
+                    toDate: value,
+                  }));
+                }}
               />
             </div>
 
@@ -134,10 +169,15 @@ const WhatsappConversation = () => {
                 id="conversationmobile"
                 name="conversationmobile"
                 label="Mobile Number"
-                value={inputMobile}
                 type="number"
-                onChange={(e) => setInputMobile(e.target.value)}
                 placeholder="Enter Mobile Number"
+                value={dataToBeFiltered.mobileNo}
+                onChange={(e) => {
+                  setdataToBeFiltered((prevData) => ({
+                    ...prevData,
+                    mobileNo: e.target.value,
+                  }));
+                }}
               />
             </div>
 
@@ -180,7 +220,7 @@ const WhatsappConversation = () => {
         </>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default WhatsappConversation
+export default WhatsappConversation;

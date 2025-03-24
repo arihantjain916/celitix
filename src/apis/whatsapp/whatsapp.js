@@ -196,7 +196,7 @@ export const sendTemplatetoApi = async (data) => {
 
 export const getConversationReport = async (data) => {
   return await fetchWithAuth(
-    `/proCpaasRest/whatsapp/getConversationReport?wabaSrno=${data.srno}&fromDate=${data.fromDate}&toDate=${data.toDate}&mobileNo=${data.mobileNo}&page=${data.page}`,
+    `/proCpaasRest/whatsapp/getConversationReport?wabaSrno=${data.wabaSrno}&fromDate=${data.fromDate}&toDate=${data.toDate}&mobileNo=${data.mobileNo}&page=${data.page}`,
     {
       method: "POST",
     }
