@@ -202,3 +202,12 @@ export const getConversationReport = async (data) => {
     }
   );
 };
+
+export const syncStatus = async (srno) => {
+  return await fetchWithAuth(
+    `/proCpaasRest/whatsapptemplate/sync?wabaSrno=${srno}`,
+    {
+      method: "POST",
+    }
+  );
+};
