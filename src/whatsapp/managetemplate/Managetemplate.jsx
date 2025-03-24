@@ -166,6 +166,7 @@ const ManageTemplate = () => {
       toast(
         `InsertCount: ${res.InsertCount}, \nApproved: ${res.Approved},\nRejectedCount: ${res.Rejected}, \nInsertCount: ${res.InsertCount}, \nDuplicateCount: ${res.DuplicateCount}`
       );
+      setSyncStatusVisible(false)
     } catch (e) {
       console.log(e);
       toast.error("Failed to sync template.");

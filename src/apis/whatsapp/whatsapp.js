@@ -211,3 +211,12 @@ export const syncStatus = async (srno) => {
     }
   );
 };
+
+export const refreshWhatsApp = async (srno) => {
+  return await fetchWithAuth(
+    `proCpaasRest/whatsapptemplate/refreshWabaDetails?wabaSrno=${srno}`,
+    {
+      method: "POST",
+    }
+  );
+};
