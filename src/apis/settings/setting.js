@@ -7,6 +7,12 @@ export const getApiKey = async () => {
   });
 };
 
+export const getOldApiKey = async() =>{
+  return await fetchWithAuth(`/proCpaasRest/settings/getApikey`,{
+    method:"POST"
+  })
+}
+
 // Update API KEY
 export const updateApiKey = async (newAPIKey) => {
   return await fetchWithAuth(

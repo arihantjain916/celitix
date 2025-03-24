@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -12,7 +12,11 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import GeneratePasswordSettings from "../components/GeneratePasswordSettings";
 import UniversalButton from "../../whatsapp/components/UniversalButton";
 import outlined from "@material-tailwind/react/theme/components/timeline/timelineIconColors/outlined";
-import { getApiKey, updateApiKey } from "../../apis/settings/setting";
+import {
+  getApiKey,
+  getOldApiKey,
+  updateApiKey,
+} from "../../apis/settings/setting";
 import toast from "react-hot-toast";
 
 function CustomTabPanel(props) {
@@ -43,6 +47,7 @@ const Settings = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [value, setValue] = useState(0);
   const [newAPIKey, setNewAPIKey] = useState("");
+  const [oldApiKey, setOldApiKey] = useState("");
 
   // Handler for the button click to generate a new API key.
   const handleGenerateAPIKey = async () => {
@@ -57,6 +62,19 @@ const Settings = () => {
     setShowPassword((prevState) => !prevState);
   };
 
+  async function handlegetOldApiKey() {
+    try {
+      const res = await getOldApiKey();
+      if (res.status === 200) {
+        setOldApiKey(res.oldkey);
+      } else {
+        toast.error("Error fetching old API Key else");
+      }
+    } catch (e) {
+      console.log(e);
+      toast.error("Error fetching old API Key");
+    }
+  }
   const updateapiKey = async () => {
     if (!newAPIKey) {
       toast.error("Please Generate a new API Key");
@@ -67,10 +85,15 @@ const Settings = () => {
 
     if (response.message === "Api Key update succesfully") {
       toast.success(response.message);
+      await handlegetOldApiKey();
     } else {
       toast.error(response.message);
     }
   };
+
+  useEffect(() => {
+    handlegetOldApiKey();
+  }, []);
 
   return (
     <div className="w-full">
@@ -197,6 +220,7 @@ const Settings = () => {
                 type="text"
                 label="Old key"
                 placeholder="Enter Old key"
+                value={oldApiKey}
               />
               <div className="flex items-end gap-2">
                 <div className="flex-1 ">
