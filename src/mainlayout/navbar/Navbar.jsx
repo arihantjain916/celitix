@@ -20,6 +20,7 @@ import {
   History as HistoryIcon,
   Logout as LogoutIcon,
 } from "@mui/icons-material";
+import { fetchBalance } from "../../apis/settings/setting";
 
 const Navbar = ({ isCollapsed, setIsCollapsed }) => {
   const [showModal, setShowModal] = useState(false);
@@ -27,7 +28,15 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
   const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width: 768px)");
+  const [balance, setBalance] = useState(0);
 
+  const handleBalance = async () => {
+    const res = await fetchBalance();
+    setBalance(res.balance);
+  };
+  useEffect(() => {
+    handleBalance();
+  }, []);
   // ✅ Sidebar Toggle
   const toggleSidebar = useCallback(
     () => setIsCollapsed((prev) => !prev),
@@ -89,7 +98,10 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
               Icon: InfoIcon,
               action: () => setShowModal(true),
             },
-            { title: "Add Funds", Icon: PaymentsIcon },
+            {
+              title: balance,
+              Icon: PaymentsIcon,
+            },
             { title: "Wallet", Icon: WalletIcon },
             { title: "Downloads", Icon: DownloadIcon },
           ].map(({ title, Icon, action }, idx) => (
@@ -167,7 +179,7 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
                 icon: <InfoIcon />,
                 action: () => setShowModal(true),
               },
-              { text: "Money", icon: <PaymentsIcon /> },
+              { text: "Balance", icon: <PaymentsIcon /> },
               { text: "Wallet", icon: <WalletIcon /> },
               { text: "Download", icon: <DownloadIcon /> },
               {
@@ -188,7 +200,14 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
                 sx={{ fontSize: "15px", fontWeight: "500" }}
                 onClick={action}
               >
-                {icon} <span className="ml-2">{text}</span>
+                <div>
+                  {icon} <span className="ml-2">{text}</span>
+                  {balance && text === "Balance" && (
+                    <span className="ml-2 text-xs text-gray-500">
+                      {balance}
+                    </span>
+                  )}
+                </div>
               </MenuItem>
             ))}
           </Menu>
