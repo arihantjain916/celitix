@@ -164,10 +164,13 @@ export const getWhatsappCampaignDetailsReport = async (data) => {
 // fetch Summary Report
 export const getSummaryReport = async (data) => {
   try {
-    const response = await fetchWithAuth("/proCpaasRest/whatsapp/getSummeryReport", {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
+    const response = await fetchWithAuth(
+      "/proCpaasRest/whatsapp/getSummeryReport",
+      {
+        method: "POST",
+        body: JSON.stringify(data),
+      }
+    );
     return response;
   } catch (error) {
     console.error("Error fetching summary report:", error);
@@ -176,16 +179,26 @@ export const getSummaryReport = async (data) => {
 
 //send template to api
 
-
-
 export const sendTemplatetoApi = async (data) => {
   try {
-    const response = await fetchWithAuth("/proCpaasRest/whatsapptemplate/savewhatsapp", {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
+    const response = await fetchWithAuth(
+      "/proCpaasRest/whatsapptemplate/savewhatsapp",
+      {
+        method: "POST",
+        body: JSON.stringify(data),
+      }
+    );
     return response;
   } catch (error) {
     console.error("Error fetching summary report:", error);
   }
+};
+
+export const getConversationReport = async (data) => {
+  return await fetchWithAuth(
+    `/proCpaasRest/whatsapp/getConversationReport?wabaSrno=${data.srno}&fromDate=${data.fromDate}&toDate=${data.toDate}&mobileNo=${data.mobileNo}&page=${data.page}`,
+    {
+      method: "POST",
+    }
+  );
 };
